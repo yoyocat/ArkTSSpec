@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>13. Compilation Units, Packages, and Modules &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="14. Ambient Declarations" href="14_ambients.html" />
+    <link rel="prev" title="12. Error Handling" href="12_errors.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="compilation-units-packages-and-modules">
+<span id="modules-and-compilation-units"></span><h1><span class="section-number">13. </span>Compilation Units, Packages, and Modules<a class="headerlink" href="#compilation-units-packages-and-modules" title="Permalink to this heading">¶</a></h1>
+<p>Programs are structured as sequences of elements ready for compilation, i.e.,
+compilation units. Each compilation unit creates its own scope (see
+<a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>). The compilation unit’s variables, functions, classes,
+interfaces, or other declarations are only accessible within such scope if
+not explicitly exported.</p>
+<p>A variable, function, class, interface, or other declarations exported from a
+different compilation unit must be imported first.</p>
+<p>Compilation units are <strong>separate modules</strong> or <strong>packages</strong>. Packages are
+described in the chapter Experimental Features (see <a class="reference internal" href="17_experimental.html#packages"><span class="std std-ref">Packages</span></a>).</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">compilationUnit</span>:
+<span class="w">    </span><span class="nc">separateModuleDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">packageDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">packageDeclaration</span>:
+<span class="w">    </span><span class="nc">packageModule</span>+
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>All modules are stored in a file system or a database (see
+<a class="reference internal" href="#compilation-units-in-host-system"><span class="std std-ref">Compilation Units in Host System</span></a>).</p>
+<div class="line-block" id="index-0">
+<div class="line"><br /></div>
+</div>
+<section id="separate-modules">
+<span id="id1"></span><h2><span class="section-number">13.1. </span>Separate Modules<a class="headerlink" href="#separate-modules" title="Permalink to this heading">¶</a></h2>
+<p>A <em>separate module</em> is a module without a package header. It optionally
+consists of the following four parts:</p>
+<ol class="arabic simple">
+<li><p>Import directives that enable referring imported declarations in a module;</p></li>
+<li><p>Top-level declarations;</p></li>
+<li><p>Top-level statements; and</p></li>
+<li><p>Re-export directives.</p></li>
+</ol>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">separateModuleDeclaration</span>:
+<span class="w">    </span><span class="nc">importDirective</span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="nc">topDeclaration</span><span class="w"> </span>|<span class="w"> </span><span class="nc">topLevelStatements</span><span class="w"> </span>|<span class="w"> </span><span class="nc">exportDirective</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Every module automatically imports all exported entities from essential kernel
+packages of the standard library (see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>).</p>
+<p>All entities from these packages are accessible as simple names, like the
+<em>console</em> variable:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="c1">// Hello, world! module</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-1">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="compilation-units-in-host-system">
+<span id="id2"></span><h2><span class="section-number">13.2. </span>Compilation Units in Host System<a class="headerlink" href="#compilation-units-in-host-system" title="Permalink to this heading">¶</a></h2>
+<p>Modules and packages are created and stored in a manner that is determined by a
+host system.</p>
+<p>The exact way modules and packages are stored in a file system is
+determined by a particular implementation of the compiler and other
+tools.</p>
+<p>In a simple implementation:</p>
+<ul class="simple">
+<li><p>A module (package module) is stored in a single file.</p></li>
+<li><p>Files corresponding to a package module are stored in a single folder.</p></li>
+<li><p>A folder can store several separate modules (one source file to contain a
+separate module or a package module).</p></li>
+<li><p>A folder that stores a single package must contain neither separate module
+files nor package modules from other packages.</p></li>
+</ul>
+<div class="line-block" id="index-2">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="import-directives">
+<span id="id3"></span><h2><span class="section-number">13.3. </span>Import Directives<a class="headerlink" href="#import-directives" title="Permalink to this heading">¶</a></h2>
+<p>Import directives import entities exported from other compilation units, and
+provide such entities with bindings in the current module.</p>
+<p>An import declaration has the following two parts:</p>
+<ul class="simple">
+<li><p>Import path that determines a compilation unit to import from;</p></li>
+<li><p>Import binding that defines what entities, and in what form—qualified
+or unqualified—can be used by the current module.</p></li>
+</ul>
+<div class="highlight-abnf notranslate" id="index-3"><div class="highlight"><pre><span></span><span class="nc">importDirective</span>:
+<span class="w">    </span>&#39;<span class="nc">import</span>&#39;<span class="w"> </span><span class="nc">fileBinding</span>|<span class="nc">selectiveBindigns</span>|<span class="nc">defaultBinding</span>|<span class="nc">typeBinding</span>
+<span class="w">    </span>&#39;<span class="nc">from</span>&#39;<span class="w"> </span><span class="nc">importPath</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">fileBinding</span>:
+<span class="w">    </span>&#39;<span class="o">*</span>&#39;<span class="w"> </span><span class="nc">importAlias</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">qualifiedName</span><span class="w"> </span>&#39;.&#39;<span class="w"> </span>&#39;<span class="o">*</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">selectiveBindigns</span>:
+<span class="w">    </span>&#39;{&#39;<span class="w"> </span><span class="nc">importBinding</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">importBinding</span><span class="p">)</span><span class="o">*</span><span class="w"> </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">defaultBinding</span>:
+<span class="w">    </span><span class="nc">Identifier</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">typeBinding</span>:
+<span class="w">    </span>&#39;<span class="nc">type</span>&#39;<span class="w"> </span><span class="nc">selectiveBindigns</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">importBinding</span>:
+<span class="w">    </span><span class="nc">qualifiedName</span><span class="w"> </span><span class="nc">importAlias</span>?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">importAlias</span>:
+<span class="w">    </span>&#39;<span class="nc">as</span>&#39;<span class="w"> </span><span class="nc">Identifier</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">importPath</span>:
+<span class="w">    </span><span class="nc">StringLiteral</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Each binding adds a declaration or declarations to the scope of a module
+or a package (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).
+Any declaration added so must be distinguishable in the declaration scope (see
+<a class="reference internal" href="4_names.html#distinguishable-declarations"><span class="std std-ref">Distinguishable Declarations</span></a>). Otherwise, a <span class="target" id="index-4"></span>compile-time error
+occurs.</p>
+<p>Some import constructions are specific for packages. They are described in the
+chapter Experimental Features (see <a class="reference internal" href="17_experimental.html#packages"><span class="std std-ref">Packages</span></a>).</p>
+<section id="bind-all-with-qualified-access">
+<span id="index-5"></span><span id="id4"></span><h3><span class="section-number">13.3.1. </span>Bind All with Qualified Access<a class="headerlink" href="#bind-all-with-qualified-access" title="Permalink to this heading">¶</a></h3>
+<p>The import binding ‘* as A’ binds the single named entity ‘A’ to the
+declaration scope of the current module.</p>
+<p>A qualified name, which consists of ‘A’ and the name of entity ‘<em>A.name</em>’,
+is used to access any entity exported from the compilation unit as defined
+by the <em>import path</em>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Import</p></th>
+<th class="head"></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="3"></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nb">Math</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This form of import is recommended because it simplifies the reading and
+understanding of the source code.</p>
+<div class="line-block" id="index-6">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="simple-name-binding">
+<span id="id5"></span><h3><span class="section-number">13.3.2. </span>Simple Name Binding<a class="headerlink" href="#simple-name-binding" title="Permalink to this heading">¶</a></h3>
+<p>The import binding ‘<em>qualifiedName</em>’ has two cases as follows:</p>
+<ul class="simple">
+<li><p>A simple name (like <em>foo</em>); or</p></li>
+<li><p>A name containing several identifiers (like <em>A.foo</em>).</p></li>
+</ul>
+<p>The import binding ‘<em>ident</em>’ binds an exported entity with the name ‘<em>ident</em>’
+to the declaration scope of the current module. The name ‘<em>ident</em>’ can only
+correspond to several entities, where ‘<em>ident</em>’ denotes several overloaded
+functions (see <a class="reference internal" href="17_experimental.html#function-and-method-overloading"><span class="std std-ref">Function and Method Overloading</span></a>).</p>
+<p>The import binding ‘<em>ident</em> as A’ binds an exported entity (entities) with the
+name ‘<em>A</em>’ to the declaration scope of the current module.</p>
+<p>The bound entity is not accessible as ‘<em>ident</em>’ because this binding does not
+bind ‘<em>ident</em>’.</p>
+<p id="index-7">This is shown in the following module:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14</span>
+<span class="linenos">2</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">sin</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{}</span>
+</pre></div>
+</div>
+<p>The module’s import path is now irrelevant:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Import</p></th>
+<th class="head"></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="3"></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sin</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">f</span><span class="o">:</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td colspan="3"></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Sine</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">    ...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Sine</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sin</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="cm">/* Error ‘y’ is</span>
+<span class="cm">   not accessible */</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>A single import statement can list several names:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Import</p></th>
+<th class="head"></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="3"></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">,</span><span class="w"> </span><span class="nx">PI</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sin</span><span class="p">(</span><span class="nx">PI</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td colspan="3"></td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Sine</span><span class="p">,</span><span class="w"> </span><span class="nx">PI</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">  ...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Sine</span><span class="p">(</span><span class="nx">PI</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Complex cases with several bindings mixed on one import path are discussed
+below in <a class="reference internal" href="#several-bindings-for-one-import-path"><span class="std std-ref">Several Bindings for One Import Path</span></a>.</p>
+<div class="line-block" id="index-8">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="several-bindings-for-one-import-path">
+<span id="id6"></span><h3><span class="section-number">13.3.3. </span>Several Bindings for One Import Path<a class="headerlink" href="#several-bindings-for-one-import-path" title="Permalink to this heading">¶</a></h3>
+<p>The same bound entities can use several import bindings. The same bound
+entities can use one import directive, or several import directives with
+the same import path.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>In one import directive</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">,</span><span class="w"> </span><span class="nx">cos</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>In several import directives</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">cos</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>No conflict occurs in the above example, because the import bindings
+define disjoint sets of names.</p>
+<p>The order of import bindings in an import declaration has no influence
+on the outcome of the import.</p>
+<p>The rules below prescribe what names must be used to add bound entities
+to the declaration scope of the current module if multiple bindings are
+applied to a single name:</p>
+<table class="docutils align-default" id="index-9">
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Sample</p></th>
+<th class="head"><p>Rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A name is explicitly used
+without an alias in several
+bindings.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">,</span><span class="w"> </span><span class="nx">sin</span><span class="p">}</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><p>Ok. The compile-time
+warning is recommended.</p></td>
+</tr>
+<tr class="row-odd"><td><p>A name is used explicitly
+without alias in one
+binding.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">}</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><p>Ok. No warning.</p></td>
+</tr>
+<tr class="row-even"><td><p>A name is explicitly used
+without alias and implicitly
+with alias.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="p">}</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">M</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><p>Ok. Both the name and
+qualified name can be used:</p>
+<p>sin and M.sin are
+accessible.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>A name is explicitly used
+with alias.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Sine</span><span class="p">}</span>
+<span class="w">  </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><p>Ok. Only alias is accessible
+for the name, but not the
+original one:</p>
+<ul class="simple">
+<li><p>Sine is accessible;</p></li>
+<li><p>sin is not accessible.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>A name is explicitly
+used with alias and
+implicitly with alias.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Sine</span><span class="p">}</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+
+<span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">M</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><dl class="simple">
+<dt>Ok. Both variants</dt><dd><p>can be used:</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>Sine is accessible;</p></li>
+<li><p>M.sin is accessible.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>A name is explicitly used
+with alias several times.</p></td>
+<td><div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Sine</span><span class="p">,</span>
+<span class="w">   </span><span class="nx">sin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">SIN</span><span class="p">}</span>
+<span class="w">   </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</pre></div>
+</div>
+</td>
+<td><p>Compile-time error.
+Or warning?</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block" id="index-10">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="default-import-binding">
+<span id="id7"></span><h3><span class="section-number">13.3.4. </span>Default Import Binding<a class="headerlink" href="#default-import-binding" title="Permalink to this heading">¶</a></h3>
+<p>Default import binding allows importing a declaration exported from some
+module as default export. Knowing the actual name of the declaration is not
+required as the new name is given at importing.
+A <span class="target" id="index-11"></span>compile-time error occurs if another form of import is used to
+import an entity initially exported as default.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">import</span><span class="w"> </span><span class="nx">DefaultExportedItemBindedName</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;.../someFile&quot;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DefaultExportedItemBindedName</span><span class="p">()</span>
+<span class="linenos">4</span><span class="w">   </span><span class="c1">// instance of class &#39;SomeClass&#39; be created here</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="w"> </span><span class="c1">// SomeFile</span>
+<span class="linenos">8</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">SomeClass</span><span class="w"> </span><span class="p">{}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-12">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="type-binding">
+<span id="id8"></span><h3><span class="section-number">13.3.5. </span>Type Binding<a class="headerlink" href="#type-binding" title="Permalink to this heading">¶</a></h3>
+<p>Type import binding allows importing only the type declarations exported from
+some module or package. These declarations can be exported normally, or by
+using the <em>export type</em> form. The difference between <em>import</em> and
+<em>import type</em> is that the first form imports all top-level declarations
+which were exported, and the second imports only exported types.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="c1">// File module.ets</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Module initialization code&quot;</span><span class="p">)</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Class1</span><span class="w"> </span><span class="p">{</span><span class="cm">/*body*/</span><span class="p">}</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Class2</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="nx">Class2</span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="c1">// MainProgram.ets</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="w"> </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">Class1</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./module.ets&quot;</span>
+<span class="linenos">12</span><span class="w"> </span><span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="nx">Class2</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./module.ets&quot;</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Class1</span><span class="p">()</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="linenos">15</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Class2</span><span class="p">()</span><span class="w"> </span><span class="c1">// OK, the same</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="import-path">
+<span id="id9"></span><h3><span class="section-number">13.3.6. </span>Import Path<a class="headerlink" href="#import-path" title="Permalink to this heading">¶</a></h3>
+<p>Import path is a string literal—represented as a combination of the
+slash character ‘/’ and a sequence alpha-numeric characters—that determines
+how an imported compilation unit must be placed.</p>
+<p>The slash character ‘/’ is used in import paths irrespective of the host system.
+The backslash character is not used in this context.</p>
+<p>In most file systems, an import path looks like a file path. <em>Relative</em> (see
+below) and <em>non-relative</em> import paths have different <em>resolutions</em> that map
+the import path to a file path of the host system.</p>
+<p>The compiler uses the following rule to define the kind of imported
+compilation units, and the exact placement of the source code:</p>
+<ul class="simple">
+<li><p>If import path refers to a folder denoted by the last name in the resolved
+file path, then the compiler imports the package that resides in the
+folder. The source code of the package is all the ArkTS source files in
+the folder.</p></li>
+<li><p>Otherwise, the compiler imports the module that the import path refers to.
+The source code of the module is the file with the extension provided
+within the import path, or—if none is so provided—appended by the
+compiler.</p></li>
+</ul>
+<p id="index-13">A <em>relative import path</em> starts with ‘./’ or ‘../’ as in the following
+examples:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="s2">&quot;./components/entry&quot;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="s2">&quot;../constants/http&quot;</span>
+</pre></div>
+</div>
+<p>Resolving a <em>relative import</em> is relative to the importing file. <em>Relative
+import</em> is used on compilation units to maintain their relative location.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Utils</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./mytreeutils&quot;</span>
+</pre></div>
+</div>
+<p>Other import paths are <em>non-relative</em> as in the examples below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="s2">&quot;/net/http&quot;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="s2">&quot;std/components/treemap&quot;</span>
+</pre></div>
+</div>
+<p>Resolving a <em>non-relative path</em> depends on the compilation environment. The
+definition of the compiler environment can be particularly provided in a
+configuration file or environment variables.</p>
+<p>The <em>base URL</em> setting is used to resolve a path that starts with ‘/’.
+<em>Path mapping</em> is used in all other cases. Resolution details depend on
+the implementation.</p>
+<p>For example, the compilation configuration file can contain the following lines:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="s2">&quot;baseUrl&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/home/project&quot;</span><span class="p">,</span>
+<span class="linenos">2</span><span class="w"> </span><span class="s2">&quot;paths&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">     </span><span class="s2">&quot;std&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/arkts/stdlib&quot;</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In the example above, ‘<em>/net/http</em>’ is resolved to ‘<em>/home/project/net/http</em>’,
+and ‘<em>std/components/treemap</em>’ to ‘<em>/arkts/stdlib/components/treemap</em>’.</p>
+<p>File name, placement, and format are implementation-specific.</p>
+<div class="line-block" id="index-14">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="default-import">
+<span id="id10"></span><h2><span class="section-number">13.4. </span>Default Import<a class="headerlink" href="#default-import" title="Permalink to this heading">¶</a></h2>
+<p>Any compilation unit automatically imports all entities exported from the
+essential kernel packages of the standard library(see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>).
+All entities from this package can be accessed as simple names.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">myException</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Exception</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w">     </span><span class="c1">// class &#39;Exception&#39; is defined in the standard library</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="linenos">7</span><span class="w">     </span><span class="c1">// variable &#39;console&#39; is defined in the standard library too</span>
+<span class="linenos">8</span>
+<span class="linenos">9</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-15">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="top-level-declarations">
+<span id="id11"></span><h2><span class="section-number">13.5. </span>Top-Level Declarations<a class="headerlink" href="#top-level-declarations" title="Permalink to this heading">¶</a></h2>
+<p><em>Top-level declarations</em> declare top-level types (<em>class</em>, <em>interface</em>,
+or <em>enum</em>), top-level variables, constants, or functions. Top-level
+declarations can be exported.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">topDeclaration</span>:
+<span class="w">    </span><span class="p">(</span>&#39;<span class="nc">export</span>&#39;<span class="w"> </span>&#39;<span class="nc">default</span>&#39;?<span class="p">)</span>?
+<span class="w">    </span><span class="p">(</span><span class="w"> </span><span class="nc">typeDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">typeAlias</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">variableDeclarations</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">constantDeclarations</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">functionDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">extensionFunctionDeclaration</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[],</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+<section id="exported-declarations">
+<span id="id12"></span><h3><span class="section-number">13.5.1. </span>Exported Declarations<a class="headerlink" href="#exported-declarations" title="Permalink to this heading">¶</a></h3>
+<p>Top-level declarations can use export modifiers that make the declarations
+accessible in other compilation units by using import (see <a class="reference internal" href="#import-directives"><span class="std std-ref">Import Directives</span></a>).
+The declarations not marked as exported can be used only inside the compilation
+unit they are declared in.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Point</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">Origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Point</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="linenos">3</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">Distance</span><span class="p">(</span><span class="nx">p1</span><span class="o">:</span><span class="w"> </span><span class="kt">Point</span><span class="p">,</span><span class="w"> </span><span class="nx">p2</span><span class="o">:</span><span class="w"> </span><span class="kt">Point</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">   </span><span class="c1">// ...</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In addition, only one top-level declaration can be exported by using the default
+export scheme. It allows specifying no declared name when importing (see
+<a class="reference internal" href="#default-import-binding"><span class="std std-ref">Default Import Binding</span></a> for details). A <span class="target" id="index-17"></span>compile-time error
+occurs if more than one top-level declaration is marked as <em>default</em>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.141592653589</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-18">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="export-directives">
+<span id="id13"></span><h2><span class="section-number">13.6. </span>Export Directives<a class="headerlink" href="#export-directives" title="Permalink to this heading">¶</a></h2>
+<p>The <em>export directive</em> allows the following:</p>
+<ul class="simple">
+<li><p>Specifying a selective list of exported declarations with optional
+renaming; or</p></li>
+<li><p>Re-exporting declarations from other compilation units.</p></li>
+</ul>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">exportDirective</span>:
+<span class="w">    </span><span class="nc">selectiveExportDirective</span><span class="w"> </span>|<span class="w"> </span><span class="nc">reExportDirective</span><span class="w"> </span>|<span class="w"> </span><span class="nc">exportTypeDirective</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-19">
+<div class="line"><br /></div>
+</div>
+<section id="selective-export-directive">
+<span id="id14"></span><h3><span class="section-number">13.6.1. </span>Selective Export Directive<a class="headerlink" href="#selective-export-directive" title="Permalink to this heading">¶</a></h3>
+<p>In addition, each exported declaration can be marked as <em>exported</em> by
+explicitly listing the names of exported declarations. Renaming is optional.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">selectiveExportDirective</span>:
+<span class="w">    </span>&#39;<span class="nc">export</span>&#39;<span class="w"> </span><span class="nc">selectiveBindigns</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>An export list directive uses the same syntax as an import directive with
+<em>selective bindings</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">d1</span><span class="p">,</span><span class="w"> </span><span class="nx">d2</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">d3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The above directive exports ‘d1’ by its name, and ‘d2’ as ‘d3’. The name ‘d2’
+is not accessible in the modules that import this module.</p>
+<div class="line-block" id="index-20">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="export-type-directive">
+<span id="id15"></span><h3><span class="section-number">13.6.2. </span>Export Type Directive<a class="headerlink" href="#export-type-directive" title="Permalink to this heading">¶</a></h3>
+<p>In addition to export that is attached to some declaration, a programmer can
+use the <em>export type</em> directive in order to do the following:</p>
+<ul class="simple">
+<li><p>Export as a type a particular class or interface already declared; or</p></li>
+<li><p>Export an already declared type under a different name.</p></li>
+</ul>
+<p>The appropriate syntax is presented below:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">exportTypeDirective</span>:
+<span class="w">    </span>&#39;<span class="nc">export</span>&#39;<span class="w"> </span>&#39;<span class="nc">type</span>&#39;<span class="w"> </span><span class="nc">selectiveBindigns</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>If a class or an interface is exported in this manner, then its usage is
+limited similarly to the limitations described for <em>import type</em> directives
+(see <a class="reference internal" href="#type-binding"><span class="std std-ref">Type Binding</span></a>).</p>
+<p>A compile-time error occurs if a class or interface is declared exported,
+but then <em>export type</em> is applied to the same class or interface name.</p>
+<p>The following example is an illustration of how this can be used:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="nx">A</span><span class="p">}</span><span class="w">  </span><span class="c1">// export already declared class type</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">MyA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="c1">// name MyA is declared and exported</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="nx">MyA</span><span class="p">}</span><span class="w"> </span><span class="c1">// compile-time error as MyA was already exported</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="re-export-directive">
+<span id="id16"></span><h3><span class="section-number">13.6.3. </span>Re-Export Directive<a class="headerlink" href="#re-export-directive" title="Permalink to this heading">¶</a></h3>
+<p>In addition to exporting what is declared in the module, it is possible to
+re-export declarations that are part of other modules’ export. Only
+limited re-export possibilities are currently supported.</p>
+<p>It is possible to re-export a particular declaration or all declarations
+from a module. When re-exporting, new names can be given. This action is
+similar to importing but with the opposite direction.</p>
+<p>The appropriate grammar is presented below:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">reExportDirective</span>:
+<span class="w">    </span>&#39;<span class="nc">export</span>&#39;<span class="w"> </span><span class="p">(</span>&#39;<span class="o">*</span>&#39;<span class="w"> </span>|<span class="w"> </span><span class="nc">selectiveBindigns</span><span class="p">)</span><span class="w"> </span>&#39;<span class="nc">from</span>&#39;<span class="w"> </span><span class="nc">importPath</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The following examples illustrate the re-exporting in practice:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;path_to_the_module&quot;</span><span class="w"> </span><span class="c1">// re-export all exported declarations</span>
+<span class="linenos">2</span><span class="w"> </span><span class="k">export</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">d1</span><span class="p">,</span><span class="w"> </span><span class="nx">d2</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">d3</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;path_to_the_module&quot;</span>
+<span class="linenos">3</span><span class="w">    </span><span class="c1">// re-export particular declarations some under new name</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="top-level-statements">
+<span id="index-21"></span><span id="id17"></span><h2><span class="section-number">13.7. </span>Top-Level Statements<a class="headerlink" href="#top-level-statements" title="Permalink to this heading">¶</a></h2>
+<p>A separate module can contain sequences of statements that logically
+comprise one sequence of statements:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">topLevelStatements</span>:
+<span class="w">    </span><span class="nc">statements</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A module can contain any number of top-level statements that logically
+merge into a single sequence in the textual order:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">   </span><span class="nx">statements_1</span>
+<span class="linenos">2</span><span class="w">   </span><span class="cm">/* top-declarations */</span>
+<span class="linenos">3</span><span class="w">   </span><span class="nx">statements_2</span>
+</pre></div>
+</div>
+<p>The sequence above is equal to the following:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">   </span><span class="cm">/* top-declarations */</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">statements_1</span><span class="p">;</span><span class="w"> </span><span class="nx">statements_2</span>
+</pre></div>
+</div>
+<ul class="simple" id="index-22">
+<li><p>If a separate module is imported by some other module, then the semantics of
+top-level statements is to initialize the imported module. It means that all
+top-level statements are executed only once before a call to any other
+function, or before the access to any top-level variable of the separate
+module.</p></li>
+<li><p>If a separate module is used a program, then top-level statements are used as
+a program entry point (see <a class="reference internal" href="#program-entry-point-main"><span class="std std-ref">Program Entry Point (main)</span></a>). If the separate
+module has the <code class="docutils literal notranslate"><span class="pre">main</span></code> function, then it is executed after the execution of
+the top-level statements.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w">   </span><span class="c1">// Source file A</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="c1">// Block form</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;A.top-level statements&quot;</span><span class="p">)</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="c1">// Source file B</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;Source file A &quot;</span>
+<span class="linenos"> 8</span><span class="w">   </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;B.main&quot;</span><span class="p">)</span>
+<span class="linenos">10</span><span class="w">   </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The output is as follows:</p>
+<ol class="upperalpha simple">
+<li><p>Top-level statements,</p></li>
+<li><p>Main.</p></li>
+</ol>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">   </span><span class="c1">// One source file</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;A.Top-level statements&quot;</span><span class="p">)</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;B.main&quot;</span><span class="p">)</span>
+<span class="linenos">5</span><span class="w">   </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-23"></span>compile-time error occurs if a top-level statement contains a
+return statement (<a class="reference internal" href="8_statements.html#expression-statements"><span class="std std-ref">Expression Statements</span></a>).</p>
+<div class="line-block" id="index-24">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="program-entry-point-main">
+<span id="id18"></span><h2><span class="section-number">13.8. </span>Program Entry Point (<cite>main</cite>)<a class="headerlink" href="#program-entry-point-main" title="Permalink to this heading">¶</a></h2>
+<p>Separate modules can act as programs (applications). The two kinds of program
+(application) entry points are as follows:</p>
+<ul class="simple">
+<li><p>Top-level statements (see <a class="reference internal" href="#top-level-statements"><span class="std std-ref">Top-Level Statements</span></a>);</p></li>
+<li><p>Top-level <code class="docutils literal notranslate"><span class="pre">main</span></code> function (see below).</p></li>
+</ul>
+<p>Thus, a separate module may have:</p>
+<ul class="simple">
+<li><p>Only a top-level <code class="docutils literal notranslate"><span class="pre">main</span></code> function (that is the entry point);</p></li>
+<li><p>Only top-level statements (that are entry points);</p></li>
+<li><p>Both top-level <code class="docutils literal notranslate"><span class="pre">main</span></code> function and statements (same as above, plus <code class="docutils literal notranslate"><span class="pre">main</span></code>
+is called after the top-level statement execution is completed).</p></li>
+</ul>
+<p>The top-level <code class="docutils literal notranslate"><span class="pre">main</span></code> function must have either no parameters, or one
+parameter of string  type <code class="docutils literal notranslate"><span class="pre">[]</span></code> that provides access to the arguments of
+program command-line. Its return type is either <code class="docutils literal notranslate"><span class="pre">void</span></code> or <code class="docutils literal notranslate"><span class="pre">int</span></code>.
+No overloading is allowed for an entry point function.</p>
+<p>Different forms of valid and invalid entry points are shown in the example
+below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="c1">// Option 1: a return type is inferred, must be void or int</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="c1">// Option 2: explicit :void - no return in the function body required</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kr">int</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">   </span><span class="c1">// Option 3: explicit :int - return is required</span>
+<span class="linenos">11</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// compile-time error: incorrect main signature</span>
+<span class="linenos">15</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">16</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// compile-time error: incorrect main signature</span>
+<span class="linenos">19</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="w"> </span><span class="c1">// Option 4: top-level statement is the entry point</span>
+<span class="linenos">22</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. Compilation Units, Packages, and Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#separate-modules">13.1. Separate Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation-units-in-host-system">13.2. Compilation Units in Host System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-directives">13.3. Import Directives</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bind-all-with-qualified-access">13.3.1. Bind All with Qualified Access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-name-binding">13.3.2. Simple Name Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#several-bindings-for-one-import-path">13.3.3. Several Bindings for One Import Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-import-binding">13.3.4. Default Import Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-binding">13.3.5. Type Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-path">13.3.6. Import Path</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#default-import">13.4. Default Import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-declarations">13.5. Top-Level Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exported-declarations">13.5.1. Exported Declarations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#export-directives">13.6. Export Directives</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#selective-export-directive">13.6.1. Selective Export Directive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-type-directive">13.6.2. Export Type Directive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#re-export-directive">13.6.3. Re-Export Directive</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-statements">13.7. Top-Level Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#program-entry-point-main">13.8. Program Entry Point (<cite>main</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="12_errors.html" title="previous chapter"><span class="section-number">12. </span>Error Handling</a></li>
+      <li>Next: <a href="14_ambients.html" title="next chapter"><span class="section-number">14. </span>Ambient Declarations</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/13_modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

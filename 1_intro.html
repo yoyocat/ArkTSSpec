@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1. Introduction &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Lexical Elements" href="2_lexical.html" />
+    <link rel="prev" title="ArkTS Specification" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="introduction">
+<span id="id1"></span><h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h1>
+<p>This document presents complete information on the new common-purpose,
+multi-paradigm programming language called ArkTS.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="common-description">
+<span id="id2"></span><h2><span class="section-number">1.1. </span>Common Description<a class="headerlink" href="#common-description" title="Permalink to this heading">¶</a></h2>
+<p>The ArkTS language combines and supports features that are in use in many
+well-known programming languages, where these tools have already proven
+helpful and powerful.</p>
+<p>ArkTS supports imperative, object-oriented, functional, and generic
+programming paradigms, and combines  them safely and consistently.</p>
+<p>At the same time, ArkTS does not support features that allow software
+developers writing dangerous, unsafe, or inefficient code. In particular,
+the language uses the strong static typing principle. It allows no dynamic
+type changes, as object types are determined by their declarations. Their
+semantic correctness is checked at compile time.</p>
+<p>The following major aspects characterize the ArkTS language as a whole:</p>
+<ul>
+<li><p>Object orientation</p>
+<p>The ArkTS language supports conventional class-based, <em>object-oriented
+approach</em> to programming (OOP). The major notions of this approach are
+as follows:</p>
+<ul class="simple">
+<li><p>Classes with single inheritance,</p></li>
+<li><p>Interfaces as abstractions to be implemented by classes, and</p></li>
+<li><p>Virtual functions (class members) with a dynamically dispatched
+overriding mechanism.</p></li>
+</ul>
+<p>Common in many (if not all) modern programming languages, object orientation
+enables powerful, flexible, safe, clear, and adequate software design.</p>
+</li>
+</ul>
+<ul id="index-0">
+<li><p>Modularity</p>
+<p>The ArkTS language supports the <em>component programming approach</em>. It
+presumes that software is designed and implemented as a composition
+of <em>compilation units</em>. A compilation unit is typically represented as
+a <em>module</em> or as a package.</p>
+<p>A module in ArkTS is a standalone, independently compiled unit that
+combines various programming resources (types, classes, functions, and so
+on). A module can communicate with other modules by exporting all or some
+of its resources to, or importing from other modules.</p>
+<p>This feature provides a high level of software development process and
+software maintainability, supports flexible module reuse and efficient
+version control.</p>
+</li>
+</ul>
+<ul id="index-1">
+<li><p>Genericity</p>
+<p>Some program entities in ArkTS can be <em>type-parameterized</em>. This means that
+an entity can represent a very high-level (abstract) concept. Providing more
+concrete information makes the entity specialized for a particular use case.</p>
+<p>A classical illustration is the notion of a list that represents the
+‘idea’ of an abstract data structure. This abstract notion can be turned
+into a concrete list by providing additional information (the type of
+list elements).</p>
+<p>Supported by many programming languages, a similar feature (‘generics’
+or ‘templates’) serves as the basis of the generic programming
+paradigm. It enables making programs and program structures more
+generic and reusable.</p>
+</li>
+</ul>
+<ul id="index-2">
+<li><p>Multi-targeting</p>
+<p>ArkTS provides an efficient application development solution for a wide
+range of devices. The language ecosystem is a developer-friendly, uniform
+programming environment for a range of popular platforms (‘cross-platform
+development’). It can generate optimized applications capable of operating
+under the limitations of lightweight devices, or realizing the full
+potential of any specific target hardware.</p>
+</li>
+</ul>
+<p id="index-3">ArkTS is designed as a part of the modern language manifold. To provide an
+efficient and safely executable code, the language takes flexibility and
+power from TypeScript and its predecessor JavaScript, and the static
+typing principle from Java and Kotlin.</p>
+<p>The overall design keeps the ArkTS’ syntax style similar to that of those
+languages, and some of its important constructs are almost identical to theirs
+on purpose.</p>
+<p>In other words, there is a significant <em>common subset</em> of features of ArkTS
+on the one hand, and of TypeScript, JavaScript, Java, and Kotlin on the other.
+Consequently, the ArkTS’ style and constructs are no puzzle for the TypeScript and
+Java users who can sense the meaning of most constructs of the new language
+even if not understand them completely.</p>
+<p>This stylistic and semantic similarity permits migrating the applications
+originally written in TypeScript, Java, or Kotlin smoothly to ArkTS.</p>
+<p>Like its predecessors, ArkTS is a relatively high-level language. It means
+that the language provides no access to low-level machine representations.
+As a high-level language, ArkTS supports automatic storage management. It
+means that dynamically created objects are deallocated automatically soon
+after they are no longer available, and explicitly deallocating them is not
+required.</p>
+<p>ArkTS is not merely a language, but rather a comprehensive software
+development ecosystem that facilitates the creation of software solutions
+in various application domains.</p>
+<p>The ArkTS ecosystem includes the language  along with its compiler,
+accompanying documents, guidelines, tutorials, the standard library
+(see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>), and a set of additional tools that perform
+automatic or semi-automatic transition from other languages (currently,
+TypeScript and Java) to ArkTS.</p>
+<div class="line-block" id="index-4">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="lexical-and-syntactic-notation">
+<span id="id3"></span><h2><span class="section-number">1.2. </span>Lexical and Syntactic Notation<a class="headerlink" href="#lexical-and-syntactic-notation" title="Permalink to this heading">¶</a></h2>
+<p>This section introduces the notation known as <em>context-free grammar</em>. It is
+used in this specification to define the lexical and syntactic structure of
+a program.</p>
+<p id="index-5">The ArkTS lexical notation defines a set of productions (rules) that specify
+the structure of the elementary language parts called ‘tokens’. All tokens are
+defined in <a class="reference internal" href="2_lexical.html#lexical-elements"><span class="std std-ref">Lexical Elements</span></a>. The set of tokens (identifiers, keywords,
+numbers/numeric literals, operator signs, delimiters), special characters
+(white spaces and line separators), and comments comprises the language’s
+<em>alphabet</em>.</p>
+<p id="index-6">The tokens defined by the lexical grammar are terminal symbols of the syntactic
+notation. The syntactic notation defines a set of productions starting from the
+goal symbol <em>compilationUnit</em> (see <a class="reference internal" href="13_modules.html#modules-and-compilation-units"><span class="std std-ref">Compilation Units, Packages, and Modules</span></a>). It is
+a sentence that consists of a single distinguished nonterminal, and describes
+how sequences of tokens can form syntactically correct programs.</p>
+<p id="index-7">Lexical and syntactic grammars are defined as a range of productions. Each
+production:</p>
+<ul class="simple">
+<li><p>Is comprised of an abstract symbol (<em>nonterminal</em>) as its left-hand side,
+and a sequence of one or more <em>nonterminal</em> and <em>terminal</em> symbols as its
+<em>right-hand side</em>.</p></li>
+<li><p>Includes the ‘:’ character as a separator between the left-hand and the
+right-hand sides, and the ‘;’ character as the end marker.</p></li>
+</ul>
+<p id="index-8">Grammars draw terminal symbols from a fixed width form. Starting from the
+goal symbol, grammars specify the language itself, i.e., the set of possible
+sequences of terminal symbols that can result from repeatedly replacing
+any nonterminal in the left-hand-side sequence for a right-hand side of the
+production.</p>
+<p id="index-9">Grammars can use the following additional symbols—sometimes called
+<em>metasymbols</em>—in the right-hand side of a grammar production along
+with terminal and nonterminal symbols:</p>
+<ul class="simple">
+<li><p>Vertical line ‘|’ to specify alternatives.</p></li>
+<li><p>Question mark ‘?’ to specify the optional (zero- or one-time) occurrence
+of the preceding terminal or nonterminal.</p></li>
+<li><p>Asterisk ‘*’ to mark a <em>terminal</em> or <em>nonterminal</em> that can occur zero
+or more times.</p></li>
+<li><p>Parentheses ‘(’ and ‘)’ to enclose any sequence of terminals and/or
+nonterminals marked with the ‘?’ or ‘*’ metasymbols.</p></li>
+</ul>
+<p id="index-10">Such additional symbols specify the structuring rules for terminal and
+nonterminal sequences. However, they are not part of the terminal symbol
+sequences that comprise the resultant program text.</p>
+<p>The production below is an example that specifies a list of expressions:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">expressionList</span>:
+<span class="w">  </span><span class="nc">expression</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">expression</span><span class="p">)</span><span class="o">*</span><span class="w"> </span>&#39;,&#39;?
+<span class="w">  </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>This production introduces the following structure defined by the
+nonterminal <em>expressionList</em>. The expression list must consist of the
+sequence of <em>expression</em>s separated by the ‘,’ terminal symbol. The
+sequence must have at least one <em>expression</em>. The list is optionally
+terminated by the ‘,’ terminal symbol.</p>
+<p>All grammar rules are presented in the Grammar section of this specification.</p>
+</section>
+<section id="terms-and-definitions">
+<span id="index-11"></span><h2><span class="section-number">1.3. </span>Terms and Definitions<a class="headerlink" href="#terms-and-definitions" title="Permalink to this heading">¶</a></h2>
+<p>This section contains the alphabetical list of important terms found in the
+Specification, and their ArkTS-specific definitions. Such definitions are
+not generic and can differ significantly from the definitions of same terms
+as used in other languages, application areas, or industries.</p>
+<dl class="glossary">
+<dt id="term-abstract-declaration">abstract declaration<a class="headerlink" href="#term-abstract-declaration" title="Permalink to this term">¶</a></dt><dd><p>– ordinary interface method declaration that specifies the method’s name
+and signature.</p>
+</dd>
+<dt id="term-casting-conversion">casting conversion<a class="headerlink" href="#term-casting-conversion" title="Permalink to this term">¶</a></dt><dd><p>– conversion of an operand of a cast expression to an explicitly
+specified type.</p>
+</dd>
+<dt id="term-class-level-scope">class level scope<a class="headerlink" href="#term-class-level-scope" title="Permalink to this term">¶</a></dt><dd><p>– name declared inside a class. It is accessible inside and sometimes—by
+means of an access modifier, or via a derived class—outside  that class.</p>
+</dd>
+<dt id="term-comment">comment<a class="headerlink" href="#term-comment" title="Permalink to this term">¶</a></dt><dd><p>– a piece of text, insignificant for the syntactic grammar, that is
+added to the stream in order to document and compliment the source code.</p>
+</dd>
+<dt id="term-constant">constant<a class="headerlink" href="#term-constant" title="Permalink to this term">¶</a></dt><dd><p>– see <em>constant declaration</em>.</p>
+</dd>
+<dt id="term-constant-declaration">constant declaration<a class="headerlink" href="#term-constant-declaration" title="Permalink to this term">¶</a></dt><dd><p>– declaration that introduces a new variable to which an immutable
+initial value can be assigned only once at the time of instantiation.</p>
+</dd>
+<dt id="term-context-free-grammar">context-free grammar<a class="headerlink" href="#term-context-free-grammar" title="Permalink to this term">¶</a></dt><dd><p>– grammar in which the left-hand side of each production rule consists
+of only a single nonterminal symbol.</p>
+</dd>
+<dt id="term-default-catch-clause">default <em>catch</em> clause<a class="headerlink" href="#term-default-catch-clause" title="Permalink to this term">¶</a></dt><dd><p>– <em>catch</em> clause that has its exception parameter type omitted, and can
+handle any exception or error that is not handled by a preceding clause.</p>
+</dd>
+<dt id="term-enum-level-scope">enum level scope<a class="headerlink" href="#term-enum-level-scope" title="Permalink to this term">¶</a></dt><dd><p>– scope of enumeration that defines a type inside a package or module.
+Enum level scope is identical to a corresponding package or module level
+scope. An enumeration constant scope is identical to the enumeration
+itself.</p>
+</dd>
+<dt id="term-expression">expression<a class="headerlink" href="#term-expression" title="Permalink to this term">¶</a></dt><dd><p>– a formula for calculating values. An expression has the syntactic
+form that is a composition of operators and parentheses, where
+parentheses are used to change the order of calculation. By default,
+the order of calculation is determined by operator preferences.</p>
+</dd>
+<dt id="term-function-declaration">function declaration<a class="headerlink" href="#term-function-declaration" title="Permalink to this term">¶</a></dt><dd><p>– declaration that specifies names, signatures, and bodies when
+introducing a named function.</p>
+</dd>
+<dt id="term-function-parameter-scope">function parameter scope<a class="headerlink" href="#term-function-parameter-scope" title="Permalink to this term">¶</a></dt><dd><p>– scope of a type parameter name in a function declaration. It is
+identical to that entire declaration.</p>
+</dd>
+<dt id="term-function-scope">function scope<a class="headerlink" href="#term-function-scope" title="Permalink to this term">¶</a></dt><dd><p>– same as <em>method scope</em>.</p>
+</dd>
+<dt id="term-function-types-conversion">function types conversion<a class="headerlink" href="#term-function-types-conversion" title="Permalink to this term">¶</a></dt><dd><p>– conversion of one function type to another.</p>
+</dd>
+<dt id="term-generic">generic<a class="headerlink" href="#term-generic" title="Permalink to this term">¶</a></dt><dd><p>– see <em>generic type</em>.</p>
+</dd>
+<dt id="term-generic-type">generic type<a class="headerlink" href="#term-generic-type" title="Permalink to this term">¶</a></dt><dd><p>– named type (class or interface) that has type parameters.</p>
+</dd>
+<dt id="term-goal-symbol">goal symbol<a class="headerlink" href="#term-goal-symbol" title="Permalink to this term">¶</a></dt><dd><p>– sentence that consists of a single distinguished nonterminal
+(<em>compilationUnit</em>). The <em>goal symbol</em> describes how sequences of
+tokens can form syntactically correct programs.</p>
+</dd>
+<dt id="term-grammar">grammar<a class="headerlink" href="#term-grammar" title="Permalink to this term">¶</a></dt><dd><p>– set of rules that describe what possible sequences of terminal and
+nonterminal symbols a programming language interprets as correct.</p>
+<p>Grammar is a range of productions. Each production comprises an
+abstract symbol (nonterminal) as its left-hand side, and a sequence
+of nonterminal and terminal symbols as its right-hand side.
+Each production has the character ‘:’ as a separator between the left-hand
+and right-hand sides, and the character ‘;’ as the end marker.</p>
+</dd>
+<dt id="term-interface-level-scope">interface level scope<a class="headerlink" href="#term-interface-level-scope" title="Permalink to this term">¶</a></dt><dd><p>– name declared inside an interface. It is accessible inside and outside
+that interface.</p>
+</dd>
+<dt id="term-keyword">keyword<a class="headerlink" href="#term-keyword" title="Permalink to this term">¶</a></dt><dd><p>– one of the <em>reserved words</em> that have their meanings permanently
+predefined in the language.</p>
+</dd>
+<dt id="term-linearization">linearization<a class="headerlink" href="#term-linearization" title="Permalink to this term">¶</a></dt><dd><p>– de-nesting of all nested types in a union type to present them in
+the form of a flat line that has no more union types included.</p>
+</dd>
+<dt id="term-literal">literal<a class="headerlink" href="#term-literal" title="Permalink to this term">¶</a></dt><dd><p>– representation of a certain value type.</p>
+</dd>
+<dt id="term-metasymbol">metasymbol<a class="headerlink" href="#term-metasymbol" title="Permalink to this term">¶</a></dt><dd><p>– additional symbols ‘|’, ‘?’, ‘*’, ‘(’, and ‘)’ that can be used
+along with terminal and nonterminal symbols in the right-hand side
+of a grammar production.</p>
+</dd>
+<dt id="term-method">method<a class="headerlink" href="#term-method" title="Permalink to this term">¶</a></dt><dd><p>– ordered 4-tuple consisting of type parameters, argument types,
+return type, and a ‘<em>throws</em>’/’<em>rethrows</em>’ clause.</p>
+</dd>
+<dt id="term-method-scope">method scope<a class="headerlink" href="#term-method-scope" title="Permalink to this term">¶</a></dt><dd><p>– scope of a name declared immediately inside the body of a method
+(function) declaration. Method scope is identical to the body of that
+method (function) declaration from the place of declaration, and up to
+the end of the body.</p>
+</dd>
+<dt id="term-module-level-scope">module level scope<a class="headerlink" href="#term-module-level-scope" title="Permalink to this term">¶</a></dt><dd><p>– name that is applicable for separate modules only. It is accessible
+throughout the entire module and in other packages if exported.</p>
+</dd>
+<dt id="term-narrowing-conversion">narrowing conversion<a class="headerlink" href="#term-narrowing-conversion" title="Permalink to this term">¶</a></dt><dd><p>– conversion that can cause a loss information about the overall
+magnitude of a numeric value, and potentially a loss of precision
+and range.</p>
+</dd>
+<dt id="term-non-generic">non-generic<a class="headerlink" href="#term-non-generic" title="Permalink to this term">¶</a></dt><dd><p>– see <em>non-generic type</em>.</p>
+</dd>
+<dt id="term-non-generic-type">non-generic type<a class="headerlink" href="#term-non-generic-type" title="Permalink to this term">¶</a></dt><dd><p>– named type (class or interface) that has no type parameters.</p>
+</dd>
+<dt id="term-nonterminal">nonterminal<a class="headerlink" href="#term-nonterminal" title="Permalink to this term">¶</a></dt><dd><p>– see <em>nonterminal symbol</em>.</p>
+</dd>
+<dt id="term-nonterminal-symbol">nonterminal symbol<a class="headerlink" href="#term-nonterminal-symbol" title="Permalink to this term">¶</a></dt><dd><p>– syntactically variable token that results from the successive
+application of the production rules.</p>
+</dd>
+<dt id="term-nullable-type">nullable type<a class="headerlink" href="#term-nullable-type" title="Permalink to this term">¶</a></dt><dd><p>– variable declared to have the value <em>null</em>, or <cite>type T | null</cite> that can
+hold values of type <em>T</em> and its derived types.</p>
+</dd>
+<dt id="term-nullish-value">nullish value<a class="headerlink" href="#term-nullish-value" title="Permalink to this term">¶</a></dt><dd><p>– reference which is null or undefined.</p>
+</dd>
+<dt id="term-operand">operand<a class="headerlink" href="#term-operand" title="Permalink to this term">¶</a></dt><dd><p>– an argument of an operation. Syntactically, operands have the form of
+simple or qualified identifiers that refer to variables or members of
+structured objects. In turn, operands can be operators whose preferences
+(‘priorities’) are higher than the preference of the given operator.</p>
+</dd>
+<dt id="term-operation">operation<a class="headerlink" href="#term-operation" title="Permalink to this term">¶</a></dt><dd><p>– the informal notion that means an action or a process of operator
+evaluation.</p>
+</dd>
+<dt id="term-operation-sign">operation sign<a class="headerlink" href="#term-operation-sign" title="Permalink to this term">¶</a></dt><dd><p>– a language token that signifies an operator and conventionally
+denotes a usual mathematical operator, for example, ‘+’ for additional
+operator, ‘/’ for division etc. However, some languages allow using
+identifiers to denote operators, and/or arbitrarily combining characters
+that are not tokens in the alphabet of that language, i.e., operator
+signs.</p>
+</dd>
+<dt id="term-operator-in-programming-languages">operator (in programming languages)<a class="headerlink" href="#term-operator-in-programming-languages" title="Permalink to this term">¶</a></dt><dd><p>– the term can have several meanings.</p>
+<p>(1) token that denotes the action to be performed on a value (addition,
+subtraction, comparisons, etc.).</p>
+<p>(2) a syntactic construct that denotes an elementary calculation within
+an expression. Normally, an operator consists of an operator sign and
+one or more operands.</p>
+<p>In unary operators that have a single operand, the operator sign can be
+placed either in front of an operand (<em>prefix</em> unary operator), or after
+the operand (<em>postfix</em> unary operator).</p>
+<p>If both operands are available, then the operator sign can be placed
+between the two (<em>infix</em> binary operator). A conditional operator with
+three operands is called <em>ternary</em>.</p>
+<p>Some operators have special notations. For example, the indexing
+operator, while formally being a binary operator, has a conventional
+form like a[i].</p>
+<p>Some languages treat operators as ‘syntactic sugar’—a conventional
+version of a more common construct, i.e., <em>function call</em>. Therefore,
+an operator like <code class="docutils literal notranslate"><span class="pre">a+b</span></code> is conceptually treated as the call <code class="docutils literal notranslate"><span class="pre">+(a,b)</span></code>,
+where the operator sign plays the role of the function name, and the
+operands are function call arguments.</p>
+</dd>
+<dt id="term-overload-signature">overload signature<a class="headerlink" href="#term-overload-signature" title="Permalink to this term">¶</a></dt><dd><p>– signatures that have several function (or method) headers with the same
+name and different signatures, and are followed by one implementation.</p>
+</dd>
+<dt id="term-overloading">overloading<a class="headerlink" href="#term-overloading" title="Permalink to this term">¶</a></dt><dd><p>– situation where different imported functions, or a function of
+the current module and an imported function have the same name but
+different signatures.</p>
+</dd>
+<dt id="term-package-level-scope">package level scope<a class="headerlink" href="#term-package-level-scope" title="Permalink to this term">¶</a></dt><dd><p>– name that is declared on the package level, and accessible throughout
+the entire package and in other packages if exported.</p>
+</dd>
+<dt id="term-primitive-type">primitive type<a class="headerlink" href="#term-primitive-type" title="Permalink to this term">¶</a></dt><dd><p>– numeric value types, character, and boolean value types whose names
+are reserved, and cannot be used for user-defined type names.</p>
+</dd>
+<dt id="term-production">production<a class="headerlink" href="#term-production" title="Permalink to this term">¶</a></dt><dd><p>– a sequence of terminal and nonterminal symbols that a programming
+language interprets as correct.</p>
+</dd>
+<dt id="term-punctuator">punctuator<a class="headerlink" href="#term-punctuator" title="Permalink to this term">¶</a></dt><dd><p>– token that serves for separating, completing, or otherwise organizing
+program elements and parts: commas, semicolons, parentheses, square
+brackets, etc.</p>
+</dd>
+<dt id="term-qualified-name">qualified name<a class="headerlink" href="#term-qualified-name" title="Permalink to this term">¶</a></dt><dd><p>– name that consists of a sequence of identifiers separated with the ‘.’
+token.</p>
+</dd>
+<dt id="term-scope-of-a-name">scope of a name<a class="headerlink" href="#term-scope-of-a-name" title="Permalink to this term">¶</a></dt><dd><p>– region of the program code within which the entity—as declared by
+that name—can be accessed or referred to by its simple name without
+any qualification.</p>
+</dd>
+<dt id="term-shadowing">shadowing<a class="headerlink" href="#term-shadowing" title="Permalink to this term">¶</a></dt><dd><p>– situation where a function of the current module and an imported
+function have the same name and signature. Shadowing causes a
+compile-time error where function declarations are duplicated (i.e.,
+the name and override-equivalent signatures of an imported function are
+the same as those of a function declared in the current compilation unit).</p>
+</dd>
+<dt id="term-simple-name">simple name<a class="headerlink" href="#term-simple-name" title="Permalink to this term">¶</a></dt><dd><p>– name that consists of a single identifier.</p>
+</dd>
+<dt id="term-static-member">static member<a class="headerlink" href="#term-static-member" title="Permalink to this term">¶</a></dt><dd><p>– a class or interface member that is not related to a particular class
+instance. A static member can be used across an entire program by using
+a qualified name notation (qualification is the name of a class or
+an interface).</p>
+</dd>
+<dt id="term-terminal">terminal<a class="headerlink" href="#term-terminal" title="Permalink to this term">¶</a></dt><dd><p>– see <em>terminal symbol</em>.</p>
+</dd>
+<dt id="term-terminal-symbol">terminal symbol<a class="headerlink" href="#term-terminal-symbol" title="Permalink to this term">¶</a></dt><dd><p>– a syntactically invariable token (i.e., a syntactic notation defined
+directly by an invariable form of the lexical grammar that defines a
+set of productions starting from the <a class="reference internal" href="#term-goal-symbol"><span class="xref std std-term">goal symbol</span></a>).</p>
+</dd>
+<dt id="term-token">token<a class="headerlink" href="#term-token" title="Permalink to this term">¶</a></dt><dd><p>– an elementary part of a programming language: identifier, keyword,
+operator and punctuator, or literal. Tokens are lexical input elements
+that form the vocabulary of a language, and can act as terminal symbols
+of the language’s syntactic grammar.</p>
+</dd>
+<dt id="term-tokenization">tokenization<a class="headerlink" href="#term-tokenization" title="Permalink to this term">¶</a></dt><dd><p>– the establishing of tokens in the process of codebase reading by
+a machine. The process of tokenization presumes finding the longest
+sequence of characters that form a valid token.</p>
+</dd>
+<dt id="term-truthiness">truthiness<a class="headerlink" href="#term-truthiness" title="Permalink to this term">¶</a></dt><dd><p>– concept that extends the Boolean logic to operands and results
+of non-Boolean types, and allows treating the value of any valid
+expression of a non-void type as <em>Truthy</em> or <em>Falsy</em>, depending on
+the kind of the value type.</p>
+</dd>
+<dt id="term-type-parameter-scope">type parameter scope<a class="headerlink" href="#term-type-parameter-scope" title="Permalink to this term">¶</a></dt><dd><p>– name of a type parameter declared in a class or an interface. The type
+parameter scope is identical to the entire declaration (except static
+member declarations).</p>
+</dd>
+<dt id="term-type-reference">type reference<a class="headerlink" href="#term-type-reference" title="Permalink to this term">¶</a></dt><dd><p>– references that refer to named types by specifying their type names,
+and (where applicable) type arguments to be substituted for the type
+parameters of the named type.</p>
+</dd>
+<dt id="term-variable">variable<a class="headerlink" href="#term-variable" title="Permalink to this term">¶</a></dt><dd><p>– see <em>variable declaration</em>.</p>
+</dd>
+<dt id="term-variable-declaration">variable declaration<a class="headerlink" href="#term-variable-declaration" title="Permalink to this term">¶</a></dt><dd><p>– declaration that introduces a new named variable to which a
+modifiable initial value can be assigned.</p>
+</dd>
+<dt id="term-white-space">white space<a class="headerlink" href="#term-white-space" title="Permalink to this term">¶</a></dt><dd><p>– one of lexical input elements that separate tokens from one another
+in order to improve the source code readability and avoid ambiguities.</p>
+</dd>
+<dt id="term-widening-conversion">widening conversion<a class="headerlink" href="#term-widening-conversion" title="Permalink to this term">¶</a></dt><dd><p>– conversion that causes no loss of information about the overall
+magnitude of a numeric value.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#common-description">1.1. Common Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lexical-and-syntactic-notation">1.2. Lexical and Syntactic Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#terms-and-definitions">1.3. Terms and Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">ArkTS Specification</a></li>
+      <li>Next: <a href="2_lexical.html" title="next chapter"><span class="section-number">2. </span>Lexical Elements</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/1_intro.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

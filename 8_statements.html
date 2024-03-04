@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>8. Statements &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="9. Classes" href="9_classes.html" />
+    <link rel="prev" title="7. Expressions" href="7_expressions.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="statements">
+<span id="id1"></span><h1><span class="section-number">8. </span>Statements<a class="headerlink" href="#statements" title="Permalink to this heading">¶</a></h1>
+<p>Statements are designed to control the execution:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">statement</span>:
+<span class="w">    </span><span class="nc">expressionStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">block</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">localDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">ifStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">loopStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">breakStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">continueStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">returnStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">switchStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">throwStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">tryStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">assertStatement</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="normal-and-abrupt-statement-execution">
+<span id="id2"></span><h2><span class="section-number">8.1. </span>Normal and Abrupt Statement Execution<a class="headerlink" href="#normal-and-abrupt-statement-execution" title="Permalink to this heading">¶</a></h2>
+<p>The actions that every statement performs in a normal mode of execution are
+specific for the particular kind of that statement. The normal modes of
+evaluation for each kind of statement are described in the following
+sections.</p>
+<p>A statement execution is considered to <em>complete normally</em> if the desired
+action is performed without an exception or an error being thrown.</p>
+<p>On the contrary, a statement execution is considered to <em>complete abruptly</em>
+if it causes an exception or an error to be thrown.</p>
+<div class="line-block" id="index-0">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="expression-statements">
+<span id="id3"></span><h2><span class="section-number">8.2. </span>Expression Statements<a class="headerlink" href="#expression-statements" title="Permalink to this heading">¶</a></h2>
+<p>Any expression can be used as a statement:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">expressionStatement</span>:
+<span class="w">    </span><span class="nc">expression</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The execution of a statement leads to the execution of the expression. The
+result of such execution is discarded.</p>
+<div class="line-block" id="index-1">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="block">
+<span id="id4"></span><h2><span class="section-number">8.3. </span>Block<a class="headerlink" href="#block" title="Permalink to this heading">¶</a></h2>
+<p>A sequence of statements enclosed in balanced braces forms a <em>block</em>:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">block</span>:
+<span class="w">    </span>&#39;{&#39;<span class="w"> </span><span class="nc">statement</span><span class="o">*</span><span class="w"> </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The execution of a block means that all block statements, except type
+declarations, are executed one by one in the textual order of their
+appearance within the block if no exception, error, or return occurs.</p>
+<p>If a block is the body of a <em>functionDeclaration</em> or a <em>classMethodDeclaration</em>,
+which was declared implicitly or explicitly with return type <em>void</em>, then the
+block can contain no return statement at all. Such a block is equivalent to a
+block ending in the <em>return</em> statement, and is executed accordingly.</p>
+<div class="line-block" id="index-2">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="local-declarations">
+<span id="id5"></span><h2><span class="section-number">8.4. </span>Local Declarations<a class="headerlink" href="#local-declarations" title="Permalink to this heading">¶</a></h2>
+<p>Local declarations define new mutable or immutable variables or
+types within the enclosing context.</p>
+<p><em>Let</em> and <em>const</em> declarations have the initialization part that
+presumes execution, and actually act as statements:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">localDeclaration</span>:
+<span class="w">    </span><span class="nc">variableDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">constantDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">typeDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The visibility of a local declaration name is determined by the function
+(method) and block scope rules (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p>
+<div class="line-block" id="index-3">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="if-statements">
+<span id="id6"></span><h2><span class="section-number">8.5. </span><code class="docutils literal notranslate"><span class="pre">if</span></code>  Statements<a class="headerlink" href="#if-statements" title="Permalink to this heading">¶</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">if</span></code> statement allows executing alternative statements (if provided) under
+certain conditions:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">ifStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">if</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">statement1</span>
+<span class="w">    </span><span class="p">(</span>&#39;<span class="nc">else</span>&#39;<span class="w"> </span><span class="nc">statement2</span><span class="p">)</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>If an expression represents a condition and is successfully evaluated as
+<em>true</em>, then <em>statement1</em> is executed. Otherwise, <em>statement2</em> is executed
+(if provided). A compile-time error occurs if the expression type is not
+<em>boolean</em>.</p>
+<p>Any <code class="docutils literal notranslate"><span class="pre">else</span></code> matches the first <code class="docutils literal notranslate"><span class="pre">if</span></code> of an <code class="docutils literal notranslate"><span class="pre">if</span></code> statement:</p>
+<div class="highlight-typescript notranslate" id="index-4"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">Cond1</span><span class="p">)</span>
+<span class="linenos">2</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">Cond2</span><span class="p">)</span><span class="w"> </span><span class="nx">statement1</span>
+<span class="linenos">3</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nx">statement2</span><span class="w"> </span><span class="c1">// Executes only if: Cond1 &amp;&amp; !Cond2</span>
+</pre></div>
+</div>
+<p>A list of statements in braces (see <a class="reference internal" href="#block"><span class="std std-ref">Block</span></a>) is used to combine the
+<code class="docutils literal notranslate"><span class="pre">else</span></code> part with the first <code class="docutils literal notranslate"><span class="pre">if</span></code>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">Cond1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">Cond2</span><span class="p">)</span><span class="w"> </span><span class="nx">statement1</span>
+<span class="linenos">3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nx">statement2</span><span class="w"> </span><span class="c1">// Executes if: !Cond1</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="loop-statements">
+<span id="id7"></span><h2><span class="section-number">8.6. </span><code class="docutils literal notranslate"><span class="pre">loop</span></code> Statements<a class="headerlink" href="#loop-statements" title="Permalink to this heading">¶</a></h2>
+<p>ArkTS has four kinds of loops. A loop of each kind can have an optional loop
+label that can be used only by <code class="docutils literal notranslate"><span class="pre">break</span></code> and <code class="docutils literal notranslate"><span class="pre">continue</span></code> statements contained
+in the body of the loop. The label is characterized by an <em>identifier</em> as shown
+below:</p>
+<div class="highlight-abnf notranslate" id="index-5"><div class="highlight"><pre><span></span><span class="nc">loopStatement</span>:
+<span class="w">    </span><span class="p">(</span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="p">)</span>?
+<span class="w">    </span><span class="nc">whileStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">doStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">forStatement</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">forOfStatement</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="while-statements-and-do-statements">
+<span id="id8"></span><h2><span class="section-number">8.7. </span><code class="docutils literal notranslate"><span class="pre">while</span></code> Statements and <code class="docutils literal notranslate"><span class="pre">do</span></code> Statements<a class="headerlink" href="#while-statements-and-do-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">while</span></code> statement and a <code class="docutils literal notranslate"><span class="pre">do</span></code> statement evaluate an <em>expression</em> and
+execute a <em>statement</em> repeatedly till the <em>expression</em> value is <em>true</em>.
+The key difference is that <em>whileStatement</em> first evaluates and checks the
+<em>expression</em> value, and <em>doStatement</em> first executes the <em>statement</em>:</p>
+<div class="highlight-abnf notranslate" id="index-6"><div class="highlight"><pre><span></span><span class="nc">whileStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">while</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">statement</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">doStatement</span>
+<span class="w">    </span>:<span class="w"> </span>&#39;<span class="nc">do</span>&#39;<span class="w"> </span><span class="nc">statement</span><span class="w"> </span>&#39;<span class="nc">while</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="for-statements">
+<span id="id9"></span><h2><span class="section-number">8.8. </span><code class="docutils literal notranslate"><span class="pre">for</span></code> Statements<a class="headerlink" href="#for-statements" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-abnf notranslate" id="index-7"><div class="highlight"><pre><span></span><span class="nc">forStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">for</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">forInit</span>?<span class="w"> </span>&#39;<span class="c1">;&#39; expression? &#39;;&#39; forUpdate? &#39;)&#39; statement</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">forInit</span>:
+<span class="w">    </span><span class="nc">expressionSequence</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">variableDeclarations</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">forUpdate</span>:
+<span class="w">    </span><span class="nc">expressionSequence</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="c1">// existing variable</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="c1">// new variable, explicit type:</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="linenos">10</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="w"> </span><span class="c1">// new variable, implicit type</span>
+<span class="linenos">13</span><span class="w"> </span><span class="c1">// inferred from variable declaration</span>
+<span class="linenos">14</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="linenos">16</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="for-of-statements">
+<span id="id10"></span><h2><span class="section-number">8.9. </span><code class="docutils literal notranslate"><span class="pre">for-of</span></code> Statements<a class="headerlink" href="#for-of-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">for-of</span></code> loop iterates elements of <em>array</em> or <em>string</em>, or an instance
+of <em>iterable</em> class or interface (see <a class="reference internal" href="17_experimental.html#iterable-types"><span class="std std-ref">Iterable Types</span></a>):</p>
+<div class="highlight-abnf notranslate" id="index-8"><div class="highlight"><pre><span></span><span class="nc">forOfStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">for</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">forVariable</span><span class="w"> </span>&#39;<span class="nc">of</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">statement</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">forVariable</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span>|<span class="w"> </span><span class="p">(</span>&#39;<span class="nc">let</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">const</span>&#39;<span class="p">)</span><span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="p">(</span>&#39;:&#39;<span class="w"> </span><span class="nc">type</span><span class="p">)</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A compile-time error occurs if the type of an expression is not
+<em>array</em>, <em>string</em>, or <em>iterable type</em>.</p>
+<p>The execution of a <code class="docutils literal notranslate"><span class="pre">for-of</span></code> loop starts with the evaluation of <code class="docutils literal notranslate"><span class="pre">expression</span></code>.
+If the evaluation is successful, then the resultant expression is used for
+loop iterations (execution of the <code class="docutils literal notranslate"><span class="pre">statement</span></code>). On each iteration,
+<em>forVariable</em> is set to successive elements of the <em>array</em>, <em>string</em>, or
+result of class iterator advancing.</p>
+<p id="index-9">If <em>forVariable</em> has the modifiers <code class="docutils literal notranslate"><span class="pre">let</span></code> or <code class="docutils literal notranslate"><span class="pre">const</span></code>, then a new variable
+is used inside the loop. Otherwise, the variable is as declared above.
+The modifier <code class="docutils literal notranslate"><span class="pre">const</span></code> prohibits assignments into <em>forVariable</em>,
+while <code class="docutils literal notranslate"><span class="pre">let</span></code> allows modifications.</p>
+<p>Explicit type annotation of <em>forVariable</em> is allowed as an experimental
+feature (see <a class="reference internal" href="17_experimental.html#for-of-type-annotation"><span class="std std-ref">For-of Type Annotation</span></a>).</p>
+<div class="highlight-typescript notranslate" id="index-10"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="c1">// existing variable &#39;ch&#39;</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">ch</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">char</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">ch</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="s2">&quot;a string object&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="c1">// new variable &#39;ch&#39;, its type is</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="c1">// inferred from expression</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">ch</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="s2">&quot;a string object&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+<span class="linenos">11</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w"> </span><span class="c1">// new variable &#39;element&#39;, its type is</span>
+<span class="linenos">14</span><span class="w"> </span><span class="c1">// inferred from expression, and it</span>
+<span class="linenos">15</span><span class="w"> </span><span class="c1">// cannot be assigned with a new value</span>
+<span class="linenos">16</span><span class="w"> </span><span class="c1">// in the loop body</span>
+<span class="linenos">17</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">18</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span>
+<span class="linenos">19</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="break-statements">
+<span id="id11"></span><h2><span class="section-number">8.10. </span><code class="docutils literal notranslate"><span class="pre">break</span></code>  Statements<a class="headerlink" href="#break-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">break</span></code> statement transfers control out of the enclosing <em>loopStatement</em>
+or <em>switchStatement</em>:</p>
+<div class="highlight-abnf notranslate" id="index-11"><div class="highlight"><pre><span></span><span class="nc">breakStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">break</span>&#39;<span class="w"> </span><span class="nc">identifier</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">break</span></code> statement with the label <em>identifier</em> transfers control out of the
+enclosing statement with the same label <em>identifier</em>. A compile-time error
+occurs if such a statement is not found within the body of the surrounding
+function or method.</p>
+<p>A statement without a label transfers control out of the innermost enclosing
+<code class="docutils literal notranslate"><span class="pre">switch</span></code>, <code class="docutils literal notranslate"><span class="pre">while</span></code>, <code class="docutils literal notranslate"><span class="pre">do</span></code>, <code class="docutils literal notranslate"><span class="pre">for</span></code>, or <code class="docutils literal notranslate"><span class="pre">for-of</span></code> statement.</p>
+<p>A compile-time error occurs if the <em>breakStatement</em> is not found within
+<em>loopStatment</em> or <em>switchStatement</em>.</p>
+<div class="line-block" id="index-12">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="continue-statements">
+<span id="id12"></span><h2><span class="section-number">8.11. </span><code class="docutils literal notranslate"><span class="pre">continue</span></code> Statements<a class="headerlink" href="#continue-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">continue</span></code> statement stops the execution of the current loop iteration,
+and transfers control to the next iteration. Appropriate checks of loop
+exit conditions depend on the kind of the loop.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">continueStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">continue</span>&#39;<span class="w"> </span><span class="nc">identifier</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">continue</span></code> statement with the label <em>identifier</em> transfers control out
+of the enclosing loop statement with the same label <em>identifier</em>.
+A compile-time error occurs if such a statement is not found within the body
+of the surrounding function or method.</p>
+<p>A compile-time error occurs if no <em>continueStatement</em> is found within
+<em>loopStatment</em>.</p>
+<div class="line-block" id="index-13">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="return-statements">
+<span id="id13"></span><h2><span class="section-number">8.12. </span><code class="docutils literal notranslate"><span class="pre">return</span></code> Statements<a class="headerlink" href="#return-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">return</span></code> statement can have or not have an expression.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">returnStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">return</span>&#39;<span class="w"> </span><span class="nc">expression</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A ‘<em>return expression</em>’ statement can only occur inside a function or a method body.</p>
+<p id="index-14">A <code class="docutils literal notranslate"><span class="pre">return</span></code> statement (with no expression) can occur in one of the following
+situations:</p>
+<ul class="simple">
+<li><p>Inside a class initializer;</p></li>
+<li><p>Inside a constructor body; or</p></li>
+<li><p>Inside a function or a method body with return type <code class="docutils literal notranslate"><span class="pre">void</span></code>.</p></li>
+</ul>
+<p>A compile-time error occurs if a <code class="docutils literal notranslate"><span class="pre">return</span></code> statement is found in:</p>
+<ul class="simple">
+<li><p>Top-level statements (see <a class="reference internal" href="13_modules.html#top-level-statements"><span class="std std-ref">Top-Level Statements</span></a>);</p></li>
+<li><p>Class initializers (see <a class="reference internal" href="9_classes.html#class-initializer"><span class="std std-ref">Class Initializer</span></a>) and constructors (see
+<a class="reference internal" href="9_classes.html#constructor-declaration"><span class="std std-ref">Constructor Declaration</span></a>), where it has an expression;</p></li>
+<li><p>A function or a method with return type <code class="docutils literal notranslate"><span class="pre">void</span></code>, where it has
+an expression;</p></li>
+<li><p>A function or a method with a non-<code class="docutils literal notranslate"><span class="pre">void</span></code> return type, where it has no
+expression.</p></li>
+</ul>
+<p id="index-15">The execution of <em>returnStatement</em> leads to the termination of the
+surrounding function or method. If an <em>expression</em> is provided,
+the resultant value is the evaluated <em>expression</em>.</p>
+<p>In case of constructors, class initializers, and top-level statements, the
+control is transferred out of the scope of the construction in question, but
+no result is required. Other statements of the surrounding function, method
+body, class initializer, or top-level statement are not executed.</p>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="switch-statements">
+<span id="id14"></span><h2><span class="section-number">8.13. </span><code class="docutils literal notranslate"><span class="pre">switch</span></code> Statements<a class="headerlink" href="#switch-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement transfers control to a statement or a block by using the
+result of successful evaluation of the value of a <code class="docutils literal notranslate"><span class="pre">switch</span></code> expression.</p>
+<div class="highlight-abnf notranslate" id="index-17"><div class="highlight"><pre><span></span><span class="nc">switchStatement</span>:
+<span class="w">    </span><span class="p">(</span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="p">)</span>?<span class="w"> </span>&#39;<span class="nc">switch</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">switchBlock</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">switchBlock</span>
+<span class="w">    </span>:<span class="w"> </span>&#39;{&#39;<span class="w"> </span><span class="nc">caseClause</span><span class="o">*</span><span class="w"> </span><span class="nc">defaultClause</span>?<span class="w"> </span><span class="nc">caseClause</span><span class="o">*</span><span class="w"> </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">caseClause</span>
+<span class="w">    </span>:<span class="w"> </span>&#39;<span class="nc">case</span>&#39;<span class="w"> </span><span class="nc">expression</span><span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="p">(</span><span class="nc">statement</span>+<span class="w"> </span>|<span class="w"> </span><span class="nc">block</span><span class="p">)</span>?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">defaultClause</span>
+<span class="w">    </span>:<span class="w"> </span>&#39;<span class="nc">default</span>&#39;<span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="p">(</span><span class="nc">statement</span>+<span class="w"> </span>|<span class="w"> </span><span class="nc">block</span><span class="p">)</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The switch <em>expression</em> type must be of type <em>char</em>, <em>byte</em>, <em>short</em>, <em>int</em>,
+<em>long</em>, <em>Char</em>, <em>Byte</em>, <em>Short</em>, <em>Int</em>, <em>Long</em>, <em>string</em>, or <em>enum</em>.</p>
+<p id="index-18">A compile-time error occurs if not <strong>all</strong> of the following is true:</p>
+<ul class="simple">
+<li><p>Every case expression type associated with a <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement is
+compatible (see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>) with the type of the <code class="docutils literal notranslate"><span class="pre">switch</span></code>
+statement’s expression.</p></li>
+<li><p>In a <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement expression of type <em>enum</em>, every case expression
+associated with the <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement is of type <em>enum</em>.</p></li>
+<li><p>No two case expressions associated with the <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement have
+identical values.</p></li>
+<li><p>No case expression associated with the <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement is <em>null</em>.</p></li>
+</ul>
+<div class="line-block" id="index-19">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">prompt</span><span class="p">(</span><span class="s2">&quot;Enter a value?&quot;</span><span class="p">);</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">:</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="o">:</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;One or zero&#39;</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">break</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="o">:</span>
+<span class="linenos"> 8</span><span class="w">     </span><span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Two&#39;</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="k">break</span>
+<span class="linenos">10</span><span class="w">   </span><span class="nx">default</span><span class="o">:</span>
+<span class="linenos">11</span><span class="w">     </span><span class="kt">alert</span><span class="p">(</span><span class="s1">&#39;An unknown value&#39;</span><span class="p">)</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The execution of a <code class="docutils literal notranslate"><span class="pre">switch</span></code> statement starts from the evaluation of the
+<code class="docutils literal notranslate"><span class="pre">switch</span></code> <em>expression</em>. If the evaluation result is of type <em>Char</em>, <em>Byte</em>,
+<em>Short</em>, or <em>Int</em>, then the unboxing conversion follows.</p>
+<p>Otherwise, the value of the <code class="docutils literal notranslate"><span class="pre">switch</span></code> expression is compared repeatedly to the
+value of each case expression.</p>
+<p>If a case expression value equals the value of the <code class="docutils literal notranslate"><span class="pre">switch</span></code> expression in
+terms of the operator ‘<span class="math notranslate nohighlight">\(==\)</span>’, then the case label <em>matches</em>.</p>
+<p>However, if the expression value is a <em>string</em>, then the equality for strings
+determines the equality.</p>
+<div class="line-block" id="index-20">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="throw-statements">
+<span id="id15"></span><h2><span class="section-number">8.14. </span><code class="docutils literal notranslate"><span class="pre">throw</span></code> Statements<a class="headerlink" href="#throw-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">throw</span></code> statement causes <em>exception</em> or <em>error</em> to be thrown (see
+<a class="reference internal" href="12_errors.html#error-handling"><span class="std std-ref">Error Handling</span></a>). It immediately transfers control, and can exit multiple
+statements, constructors, functions, and method calls until a <code class="docutils literal notranslate"><span class="pre">try</span></code> statement
+(see <a class="reference internal" href="#try-statements"><span class="std std-ref">try Statements</span></a>) is found that catches the thrown value. If no
+<code class="docutils literal notranslate"><span class="pre">try</span></code> statement is found, then <em>UncatchedExceptionError</em> is thrown.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">throwStatement</span>:
+<span class="w">    </span>&#39;<span class="nc">throw</span>&#39;<span class="w"> </span><span class="nc">expression</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The <em>expression</em>’s type must be assignable (see <a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>) to
+type <em>Exception</em> or <em>Error</em>. Otherwise, a compile-time error occurs.</p>
+<p>This implies that the thrown object is never <em>null</em>.</p>
+<p>It is necessary to check at compile time that a <code class="docutils literal notranslate"><span class="pre">throw</span></code> statement, which
+throws an exception, is placed in the <code class="docutils literal notranslate"><span class="pre">try</span></code> block of a <code class="docutils literal notranslate"><span class="pre">try</span></code> statement,
+or in a <em>throwing function</em> (see <a class="reference internal" href="17_experimental.html#throwing-functions"><span class="std std-ref">Throwing Functions</span></a>). Errors can
+be thrown at any place in the code.</p>
+<div class="line-block" id="index-21">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="try-statements">
+<span id="id16"></span><h2><span class="section-number">8.15. </span><code class="docutils literal notranslate"><span class="pre">try</span></code> Statements<a class="headerlink" href="#try-statements" title="Permalink to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">try</span></code> statement runs blocks of code, and provides sets of catch clauses
+to handle different exceptions and errors (see <a class="reference internal" href="12_errors.html#error-handling"><span class="std std-ref">Error Handling</span></a>).</p>
+<div class="highlight-abnf notranslate" id="index-22"><div class="highlight"><pre><span></span><span class="nc">tryStatement</span>:
+<span class="w">      </span>&#39;<span class="nc">try</span>&#39;<span class="w"> </span><span class="nc">block</span><span class="w"> </span><span class="nc">catchClauses</span><span class="w"> </span><span class="nc">finallyClause</span>?
+<span class="w">      </span><span class="c1">;</span>
+
+<span class="nc">catchClauses</span>:
+<span class="w">      </span><span class="nc">typedCatchClause</span><span class="o">*</span><span class="w"> </span><span class="nc">catchClause</span>?
+<span class="w">      </span><span class="c1">;</span>
+
+<span class="nc">catchClause</span>:
+<span class="w">      </span>&#39;<span class="nc">catch</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">block</span>
+<span class="w">      </span><span class="c1">;</span>
+
+<span class="nc">typedCatchClause</span>:
+<span class="w">      </span>&#39;<span class="nc">catch</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="nc">typeReference</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">block</span>
+<span class="w">      </span><span class="c1">;</span>
+
+<span class="nc">finallyClause</span>:
+<span class="w">      </span>&#39;<span class="nc">finally</span>&#39;<span class="w"> </span><span class="nc">block</span>
+<span class="w">      </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The ArkTS programming language supports <em>multiple typed catch clauses</em> as
+an experimental feature (see <a class="reference internal" href="#try-statements"><span class="std std-ref">try Statements</span></a>).</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">try</span></code> statement must contain either a <code class="docutils literal notranslate"><span class="pre">finally</span></code> clause, or at least one
+<code class="docutils literal notranslate"><span class="pre">catch</span></code> clause. Otherwise, a compile-time error occurs.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">try</span></code> block completes normally, then no action is taken, and no
+<code class="docutils literal notranslate"><span class="pre">catch</span></code> clause block is executed.</p>
+<p>If an error is thrown in the <code class="docutils literal notranslate"><span class="pre">try</span></code> block directly or indirectly, then the
+control is transferred to the <code class="docutils literal notranslate"><span class="pre">catch</span></code> clause.</p>
+<div class="line-block" id="index-23">
+<div class="line"><br /></div>
+</div>
+<section id="catch-clause">
+<span id="catch-statements"></span><h3><span class="section-number">8.15.1. </span><code class="docutils literal notranslate"><span class="pre">catch</span></code> Clause<a class="headerlink" href="#catch-clause" title="Permalink to this heading">¶</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">catch</span></code> clause consists of two parts:</p>
+<ul class="simple">
+<li><p><em>Catch identifier</em> that provides access to the object associated with
+the error thrown; and</p></li>
+<li><p>Block of code that handles the situation.</p></li>
+</ul>
+<p>The type of <em>catch identifier</em> is <em>Object</em>.</p>
+<p id="index-24">See <a class="reference internal" href="17_experimental.html#multiple-catch-clauses-in-try-statements"><span class="std std-ref">Multiple Catch Clauses in Try Statements</span></a> for the details of
+<em>typed catch clause</em>.</p>
+<div class="line-block" id="index-25">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">ZeroDivisor</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="ne">Error</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">divide</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">b</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">ZeroDivisor</span><span class="p">()</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">b</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">process</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">   </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">divide</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">     </span><span class="c1">// further processing ...</span>
+<span class="linenos">14</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w">   </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="nx">e</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nx">ZeroDivisor</span><span class="o">?</span><span class="w"> </span><span class="o">-</span><span class="nx">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">0</span>
+<span class="linenos">17</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">18</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">catch</span></code> clause handles all errors at runtime. It returns ‘<em>-1</em>’ for
+the <em>ZeroDivisor</em>, and ‘<em>0</em>’  for all other errors.</p>
+<div class="line-block" id="index-26">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="finally-clause">
+<span id="id17"></span><h3><span class="section-number">8.15.2. </span><code class="docutils literal notranslate"><span class="pre">finally</span></code> Clause<a class="headerlink" href="#finally-clause" title="Permalink to this heading">¶</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">finally</span></code> clause defines the set of actions in the form of a block to be
+executed without regard to whether a <code class="docutils literal notranslate"><span class="pre">try-catch</span></code> completes normally or
+abruptly.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">finallyClause</span>:
+<span class="w">    </span>&#39;<span class="nc">finally</span>&#39;<span class="w"> </span><span class="nc">block</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">finally</span></code> block is executed without regard to how (by reaching
+<em>exception</em>, <em>error</em>, <em>return</em>, or <em>try-catch</em> end) the program control
+is transferred out. The <code class="docutils literal notranslate"><span class="pre">finally</span></code> block is particularly useful to ensure
+proper resource management.</p>
+<p>Any required actions (e.g., flush buffers and close file descriptors)
+can be performed while leaving the <code class="docutils literal notranslate"><span class="pre">try-catch</span></code>:</p>
+<div class="highlight-typescript notranslate" id="index-27"><div class="highlight"><pre><span></span><span class="kd">class</span><span class="w"> </span><span class="nx">SomeResource</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// some API</span>
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="w">  </span><span class="nx">close</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">ProcessFile</span><span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">SomeResource</span><span class="p">()</span>
+<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// some processing</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// finally clause will be executed after try-catch is</span>
+<span class="w">        </span><span class="nx">executed</span><span class="w"> </span><span class="nx">normally</span><span class="w"> </span><span class="nx">or</span><span class="w"> </span><span class="nx">abruptly</span>
+<span class="w">    </span><span class="nx">r</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="try-statement-execution">
+<span id="id18"></span><h3><span class="section-number">8.15.3. </span><code class="docutils literal notranslate"><span class="pre">try</span></code> Statement Execution<a class="headerlink" href="#try-statement-execution" title="Permalink to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">try</span></code> block and the entire <code class="docutils literal notranslate"><span class="pre">try</span></code> statement complete normally if no
+<code class="docutils literal notranslate"><span class="pre">catch</span></code> block is executed.
+The execution of a <code class="docutils literal notranslate"><span class="pre">try</span></code> block completes abruptly if an <em>exception</em> or
+an <em>error</em> is thrown inside the <code class="docutils literal notranslate"><span class="pre">try</span></code> block.
+<code class="docutils literal notranslate"><span class="pre">Catch</span></code> clauses are checked in the textual order of their position in the
+source code.</p></li>
+<li><p>The execution of a <code class="docutils literal notranslate"><span class="pre">try</span></code> block completes abruptly if <em>exception</em> or
+<em>error</em> <em>x</em> is thrown inside the <code class="docutils literal notranslate"><span class="pre">try</span></code> block.
+If the runtime type of <em>x</em> is compatible (see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>) with
+the <em>exception</em> class of the <em>exception</em> parameter (i.e., the <code class="docutils literal notranslate"><span class="pre">catch</span></code>
+clause matches <em>x</em>), and the execution of the body of the <code class="docutils literal notranslate"><span class="pre">catch</span></code> clause
+completes normally, then the entire <code class="docutils literal notranslate"><span class="pre">try</span></code> statement completes normally.
+Otherwise, the <code class="docutils literal notranslate"><span class="pre">try</span></code> statement completes abruptly.</p></li>
+<li><p>If no <code class="docutils literal notranslate"><span class="pre">catch</span></code> clause can handle an <em>exception</em> or an <em>error</em>, then those
+propagate to the surrounding scope. If the surrounding scope is a function,
+method, or constructor, then the execution depends on whether the surrounding
+scope is a <em>throwing function</em> (see <a class="reference internal" href="17_experimental.html#throwing-functions"><span class="std std-ref">Throwing Functions</span></a>). If so, then
+the <em>exception</em> propagates to the caller context. Otherwise,
+<em>UncatchedExceptionError</em> is thrown.</p></li>
+</ol>
+<div class="line-block" id="index-28">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="assert-statements">
+<span id="id19"></span><h2><span class="section-number">8.16. </span><code class="docutils literal notranslate"><span class="pre">Assert</span></code> Statements<a class="headerlink" href="#assert-statements" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">assert</span></code> statements are described in the chapter Experimental Features
+(see <a class="reference internal" href="17_experimental.html#assert-statements-experimental"><span class="std std-ref">Assert Statements</span></a>).</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Statements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#normal-and-abrupt-statement-execution">8.1. Normal and Abrupt Statement Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#expression-statements">8.2. Expression Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#block">8.3. Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#local-declarations">8.4. Local Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#if-statements">8.5. <code class="docutils literal notranslate"><span class="pre">if</span></code>  Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loop-statements">8.6. <code class="docutils literal notranslate"><span class="pre">loop</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#while-statements-and-do-statements">8.7. <code class="docutils literal notranslate"><span class="pre">while</span></code> Statements and <code class="docutils literal notranslate"><span class="pre">do</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-statements">8.8. <code class="docutils literal notranslate"><span class="pre">for</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-of-statements">8.9. <code class="docutils literal notranslate"><span class="pre">for-of</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#break-statements">8.10. <code class="docutils literal notranslate"><span class="pre">break</span></code>  Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continue-statements">8.11. <code class="docutils literal notranslate"><span class="pre">continue</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#return-statements">8.12. <code class="docutils literal notranslate"><span class="pre">return</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#switch-statements">8.13. <code class="docutils literal notranslate"><span class="pre">switch</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#throw-statements">8.14. <code class="docutils literal notranslate"><span class="pre">throw</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#try-statements">8.15. <code class="docutils literal notranslate"><span class="pre">try</span></code> Statements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#catch-clause">8.15.1. <code class="docutils literal notranslate"><span class="pre">catch</span></code> Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#finally-clause">8.15.2. <code class="docutils literal notranslate"><span class="pre">finally</span></code> Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#try-statement-execution">8.15.3. <code class="docutils literal notranslate"><span class="pre">try</span></code> Statement Execution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#assert-statements">8.16. <code class="docutils literal notranslate"><span class="pre">Assert</span></code> Statements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="7_expressions.html" title="previous chapter"><span class="section-number">7. </span>Expressions</a></li>
+      <li>Next: <a href="9_classes.html" title="next chapter"><span class="section-number">9. </span>Classes</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/8_statements.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

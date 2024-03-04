@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3. Types &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. Names, Declarations and Scopes" href="4_names.html" />
+    <link rel="prev" title="2. Lexical Elements" href="2_lexical.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="types">
+<span id="id1"></span><h1><span class="section-number">3. </span>Types<a class="headerlink" href="#types" title="Permalink to this heading">¶</a></h1>
+<p>This chapter introduces the notion of type that is one of the fundamental
+concepts of ArkTS and other programming languages.
+Type classification as accepted in ArkTS is discussed below—along
+with all aspects of using types in programs written in the language.</p>
+<p>Conventionally, the type of an entity is defined as the set of <em>values</em> the
+entity can take, and the set of <em>operators</em> applicable to the entity of
+a given type.</p>
+<p>ArkTS is a statically typed language. It means that the type of every
+declared entity and every expression is known at compile time. The type of
+an entity is either set explicitly by a developer, or inferred implicitly
+by the compiler.</p>
+<p>There are two categories of types:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#value-types"><span class="std std-ref">Value Types</span></a>, and</p></li>
+<li><p><a class="reference internal" href="#reference-types"><span class="std std-ref">Reference Types</span></a>.</p></li>
+</ol>
+<p>The types integral to ArkTS are called <em>predefined types</em> (see
+<a class="reference internal" href="#predefined-types"><span class="std std-ref">Predefined Types</span></a>).</p>
+<p>The types introduced, declared, and defined by a developer are called
+<em>user-defined types</em>.
+All <em>user-defined types</em> must always have a complete type definition
+presented as source code in ArkTS.</p>
+<div class="line-block" id="index-0">
+<div class="line"><br /></div>
+</div>
+<section id="predefined-types">
+<span id="id2"></span><h2><span class="section-number">3.1. </span>Predefined Types<a class="headerlink" href="#predefined-types" title="Permalink to this heading">¶</a></h2>
+<p>Predefined types include the following:</p>
+<ul>
+<li><p>Basic numeric value type: <em>number</em></p></li>
+<li><p>High-performance value types:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Numeric types: <em>byte</em>, <em>short</em>, <em>int</em>, <em>long</em>, <em>float</em>, and <em>double</em>;</p></li>
+<li><p>Character type: <em>char</em>;</p></li>
+<li><p>Boolean type: <em>boolean</em>;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Reference types: <em>object</em>, <em>string</em>, <code class="docutils literal notranslate"><span class="pre">[]</span></code> (<em>array</em>), <em>bigint</em>,
+<em>void</em>, <em>never</em>, and <em>undefined</em>;</p></li>
+<li><p>Class types: <em>Object</em>, <em>String</em>, <em>Array&lt;T&gt;</em>, and <em>BigInt</em>.</p></li>
+</ul>
+<p>Each predefined value type has a corresponding predefined class type that wraps
+the value of the predefined value type: <em>Number</em>, <em>Byte</em>, <em>Short</em>, <em>Int</em>,
+<em>Long</em>, <em>Float</em>, <em>Double</em>, <em>Char</em>, and <em>Boolean</em>.</p>
+<p>The predefined value types are called <em>primitive types</em>. Primitive type names
+are reserved, i.e., they cannot be used for user-defined type names.</p>
+<p>Type <em>double</em> is an alias to <em>number</em>. Type <em>Double</em> is an alias
+to <em>Number</em>.</p>
+<div class="line-block" id="index-1">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="user-defined-types">
+<span id="id3"></span><h2><span class="section-number">3.2. </span>User-Defined Types<a class="headerlink" href="#user-defined-types" title="Permalink to this heading">¶</a></h2>
+<p><em>User-defined</em> types include the following:</p>
+<ul class="simple">
+<li><p>Class types (see <a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>);</p></li>
+<li><p>Interface types (see <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>);</p></li>
+<li><p>Enumeration types (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>);</p></li>
+<li><p>Array types (see <a class="reference internal" href="#array-types"><span class="std std-ref">Array Types</span></a>);</p></li>
+<li><p>Function types (see <a class="reference internal" href="#function-types"><span class="std std-ref">Function Types</span></a>);</p></li>
+<li><p>Tuple types (see <a class="reference internal" href="#tuple-types"><span class="std std-ref">Tuple Types</span></a>);</p></li>
+<li><p>Union types (see <a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>); and</p></li>
+<li><p>Type parameters (see <a class="reference internal" href="5_generics.html#generic-parameters"><span class="std std-ref">Generic Parameters</span></a>).</p></li>
+</ul>
+<div class="line-block" id="index-2">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="types-by-category">
+<span id="id4"></span><h2><span class="section-number">3.3. </span>Types by Category<a class="headerlink" href="#types-by-category" title="Permalink to this heading">¶</a></h2>
+<p>All ArkTS types are summarized in the following table:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>Predefined Types</p></th>
+<th class="head" colspan="2"><p>User-Defined Types</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Value Types
+(Primitive Types)</p></td>
+<td><p>Reference Types</p></td>
+<td><p>Value Types</p></td>
+<td><p>Reference Types</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>number</em>, <em>byte</em>,
+<em>short</em>, <em>int</em>,
+<em>long</em>, <em>float</em>,
+<em>double</em>, <em>char</em>,
+<em>boolean</em></p></td>
+<td><p><em>Number</em>, <em>Byte</em>,
+<em>Short</em>, <em>Int</em>,
+<em>Long</em>, <em>Float</em>,
+<em>Double</em>, <em>Char</em>,
+<em>Boolean</em>,
+<em>Object</em>, <em>object</em>,
+<em>void</em>, <em>null</em>,
+<em>String</em>, <em>string</em>,
+<em>BigInt</em>, <em>bigint</em>,
+<em>never</em></p></td>
+<td><p><em>enum</em> types</p></td>
+<td><p>class types,
+interface types,
+array types,
+function types,
+tuple types,
+union types,
+type parameters</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block" id="index-3">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="using-types">
+<span id="id5"></span><h2><span class="section-number">3.4. </span>Using Types<a class="headerlink" href="#using-types" title="Permalink to this heading">¶</a></h2>
+<p>A type can be referred to in source code by the following:</p>
+<ul class="simple">
+<li><p>A reserved name for a primitive type;</p></li>
+<li><p>A type reference for a named type (see <a class="reference internal" href="#named-types"><span class="std std-ref">Named Types</span></a>), or a type alias
+(see <a class="reference internal" href="4_names.html#type-alias-declaration"><span class="std std-ref">Type Alias Declaration</span></a>);</p></li>
+<li><p>An in-place type definition for an array type (see <a class="reference internal" href="#array-types"><span class="std std-ref">Array Types</span></a>), a
+function type (see <a class="reference internal" href="#function-types"><span class="std std-ref">Function Types</span></a>), a tuple type (see <a class="reference internal" href="#tuple-types"><span class="std std-ref">Tuple Types</span></a>),
+or a union type (see <a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>).</p></li>
+</ul>
+<div class="highlight-abnf notranslate" id="index-4"><div class="highlight"><pre><span></span><span class="nc">type</span>:
+<span class="w">    </span><span class="nc">predefinedType</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">typeReference</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">arrayType</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">tupleType</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">functionType</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">unionType</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">keyofType</span>
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">type</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>It is presented by the example below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w">  </span><span class="c1">// using primitive value type name</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w">   </span><span class="c1">// using primitive value type name</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">o</span><span class="o">:</span><span class="w"> </span><span class="kt">Object</span><span class="w">   </span><span class="c1">// using predefined class type name</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="c1">// using array type</span>
+</pre></div>
+</div>
+<p>Parentheses in types (where a type is a combination of array, function, or
+union types) are used to specify the required type structure.
+Without parentheses, the symbol ‘<code class="docutils literal notranslate"><span class="pre">|</span></code>’ that constructs a union type
+has the lowest precedence as presented in the following example:</p>
+<div class="highlight-typescript notranslate" id="index-5"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="c1">// a nullable array with elements of type string:</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">s</span><span class="w">    </span><span class="c1">// ok</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c1">// ok, a is nullable</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="c1">// an array with elements whose types are string or null:</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">)[]</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c1">// error, b is an array and is not nullable</span>
+<span class="linenos">10</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;aa&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">]</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="w"> </span><span class="c1">// a function type that returns string or null</span>
+<span class="linenos">13</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">14</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c1">// error, c is not nullable</span>
+<span class="linenos">15</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="w"> </span><span class="c1">// (a function type that returns string) or null</span>
+<span class="linenos">18</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">19</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c1">// ok, d is nullable</span>
+<span class="linenos">20</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;hi&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// ok</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="named-types">
+<span id="id6"></span><h2><span class="section-number">3.5. </span>Named Types<a class="headerlink" href="#named-types" title="Permalink to this heading">¶</a></h2>
+<p>Classes, interfaces, enumerations, and unions are named types. Respective
+named types are introduced by the following:</p>
+<ul class="simple">
+<li><p>Class declarations (see <a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>),</p></li>
+<li><p>Interface declarations (see <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>),</p></li>
+<li><p>Enumeration declarations (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>), and</p></li>
+<li><p>Union declarations (see <a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>).</p></li>
+</ul>
+<p>Classes and interfaces with type parameters are <em>generic types</em> (see
+<a class="reference internal" href="5_generics.html#generics"><span class="std std-ref">Generics</span></a>). Named types without type parameters are <em>non-generic types</em>.</p>
+<p><em>Type references</em> (see <a class="reference internal" href="#type-references"><span class="std std-ref">Type References</span></a>) refer to named types by
+specifying their type names, and (where applicable) by type arguments to be
+substituted for the type parameters of the named type.</p>
+<div class="line-block" id="index-6">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="type-references">
+<span id="id7"></span><h2><span class="section-number">3.6. </span>Type References<a class="headerlink" href="#type-references" title="Permalink to this heading">¶</a></h2>
+<p>A type reference refers to a type by one of the following:</p>
+<ul class="simple">
+<li><p><em>Simple</em> or <em>qualified</em> type name (see <a class="reference internal" href="4_names.html#names"><span class="std std-ref">Names</span></a>),</p></li>
+<li><p>Type alias (see <a class="reference internal" href="4_names.html#type-alias-declaration"><span class="std std-ref">Type Alias Declaration</span></a>), or</p></li>
+<li><p>Type parameter (see <a class="reference internal" href="5_generics.html#generic-parameters"><span class="std std-ref">Generic Parameters</span></a>) name with ‘!’ sign
+(see <a class="reference internal" href="17_experimental.html#nonnullish-type-parameter"><span class="std std-ref">NonNullish Type Parameter</span></a>).</p></li>
+</ul>
+<p>If the referred type is a class or an interface type, then each identifier in
+a name or an alias can be optionally followed by a type argument (see
+<a class="reference internal" href="5_generics.html#type-arguments"><span class="std std-ref">Type Arguments</span></a>):</p>
+<div class="highlight-abnf notranslate" id="index-7"><div class="highlight"><pre><span></span><span class="nc">typeReference</span>:
+<span class="w">    </span><span class="nc">typeReferencePart</span><span class="w"> </span><span class="p">(</span>&#39;.&#39;<span class="w"> </span><span class="nc">typeReferencePart</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span>|<span class="w">  </span><span class="nc">Identifier</span><span class="w"> </span>&#39;!&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">typeReferencePart</span>:
+<span class="w">    </span><span class="nc">Identifier</span><span class="w"> </span><span class="nc">typeArguments</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">map</span><span class="o">:</span><span class="w"> </span><span class="kt">Map</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">number</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="value-types">
+<span id="id8"></span><h2><span class="section-number">3.7. </span>Value Types<a class="headerlink" href="#value-types" title="Permalink to this heading">¶</a></h2>
+<p>Predefined integer types (see <a class="reference internal" href="#integer-types-and-operations"><span class="std std-ref">Integer Types and Operations</span></a>),
+floating-point types (see <a class="reference internal" href="#floating-point-types-and-operations"><span class="std std-ref">Floating-Point Types and Operations</span></a>), the
+boolean type (see <a class="reference internal" href="#boolean-types-and-operations"><span class="std std-ref">Boolean Types and Operations</span></a>), character types
+(see <a class="reference internal" href="17_experimental.html#character-type-and-operations"><span class="std std-ref">Character Type and Operations</span></a>), and user-defined enumeration
+types (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>) are <em>value types</em>.</p>
+<p>The values of such types do <em>not</em> share state with other values.</p>
+<div class="line-block" id="index-8">
+<div class="line"><br /></div>
+</div>
+<section id="integer-types-and-operations">
+<span id="id9"></span><h3><span class="section-number">3.7.1. </span>Integer Types and Operations<a class="headerlink" href="#integer-types-and-operations" title="Permalink to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Type’s Set of Values</p></th>
+<th class="head"><p>Corresponding Class Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>byte</em></p></td>
+<td><p>All signed 8-bit integers (<span class="math notranslate nohighlight">\(-2^7\)</span> to <span class="math notranslate nohighlight">\(2^7-1\)</span>)</p></td>
+<td><p><em>Byte</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>short</em></p></td>
+<td><p>All signed 16-bit integers (<span class="math notranslate nohighlight">\(-2^{15}\)</span> to <span class="math notranslate nohighlight">\(2^{15}-1\)</span>)</p></td>
+<td><p><em>Short</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>int</em></p></td>
+<td><p>All signed 32-bit integers (<span class="math notranslate nohighlight">\(-2^{31}\)</span> to <span class="math notranslate nohighlight">\(2^{31} - 1\)</span>)</p></td>
+<td><p><em>Int</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>long</em></p></td>
+<td><p>All signed 64-bit integers (<span class="math notranslate nohighlight">\(-2^{63}\)</span> to <span class="math notranslate nohighlight">\(2^{63} - 1\)</span>)</p></td>
+<td><p><em>Long</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>bigint</em></p></td>
+<td><p>All integers with no limits</p></td>
+<td><p><em>BigInt</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>ArkTS provides a number of operators to act on integer values as discussed
+below.</p>
+<ul class="simple">
+<li><p>Comparison operators that produce a value of type <em>boolean</em>:</p>
+<ul>
+<li><p>Numerical comparison operators ‘&lt;’, ‘&lt;=’, ‘&gt;’, and ‘&gt;=’ (see <a class="reference internal" href="7_expressions.html#numerical-comparison-operators"><span class="std std-ref">Numerical Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</span></a>);</p></li>
+<li><p>Numerical equality operators ‘==’ and ‘!=’ (see <a class="reference internal" href="7_expressions.html#value-equality-for-numeric-types"><span class="std std-ref">Value Equality for Numeric Types</span></a>);</p></li>
+</ul>
+</li>
+<li><p>Numerical operators that produce a value of type <em>int</em>, <em>long</em>, or <em>bigint</em>:</p>
+<ul>
+<li><p>Unary plus ‘+’ and minus ‘-’ operators (see <a class="reference internal" href="7_expressions.html#unary-plus"><span class="std std-ref">Unary Plus</span></a> and <a class="reference internal" href="7_expressions.html#unary-minus"><span class="std std-ref">Unary Minus</span></a>);</p></li>
+<li><p>Multiplicative operators ‘*’, ‘/’, and ‘%’ (see <a class="reference internal" href="7_expressions.html#multiplicative-expressions"><span class="std std-ref">Multiplicative Expressions</span></a>);</p></li>
+<li><p>Additive operators ‘+’ and ‘-’ (see <a class="reference internal" href="7_expressions.html#additive-expressions"><span class="std std-ref">Additive Expressions</span></a>);</p></li>
+<li><p>Increment operator ‘++’ used as prefix (see <a class="reference internal" href="7_expressions.html#prefix-increment"><span class="std std-ref">Prefix Increment</span></a>)
+or postfix (see <a class="reference internal" href="7_expressions.html#postfix-increment"><span class="std std-ref">Postfix Increment</span></a>);</p></li>
+<li><p>Decrement operator ‘–’ used as prefix (see <a class="reference internal" href="7_expressions.html#prefix-decrement"><span class="std std-ref">Prefix Decrement</span></a>)
+or postfix (see <a class="reference internal" href="7_expressions.html#postfix-decrement"><span class="std std-ref">Postfix Decrement</span></a>);</p></li>
+<li><p>Signed and unsigned shift operators ‘&lt;&lt;’, ‘&gt;&gt;’, and ‘&gt;&gt;&gt;’ (see
+<a class="reference internal" href="7_expressions.html#shift-expressions"><span class="std std-ref">Shift Expressions</span></a>);</p></li>
+<li><p>Bitwise complement operator ‘~’ (see <a class="reference internal" href="7_expressions.html#bitwise-complement"><span class="std std-ref">Bitwise Complement</span></a>);</p></li>
+<li><p>Integer bitwise operators ‘&amp;’, ‘^’, and ‘|’ (see <a class="reference internal" href="7_expressions.html#integer-bitwise-operators"><span class="std std-ref">Integer Bitwise Operators &amp;, ^, and |</span></a>);</p></li>
+</ul>
+</li>
+<li><p>Conditional operator ‘?:’ (see <a class="reference internal" href="7_expressions.html#conditional-expressions"><span class="std std-ref">Conditional Expressions</span></a>);</p></li>
+<li><p>Cast operator (see <a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>) that converts an integer value
+to a value of any specified numeric type;</p></li>
+<li><p>String concatenation operator ‘+’ (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>) that, if
+one operand is <em>string</em> and the other is of an integer type, converts the
+<em>integer</em> operand to <em>string</em> with the decimal form
+and then creates a concatenation of the two strings as a new <em>string</em>.</p></li>
+</ul>
+<p id="index-9">The classes <em>Byte</em>, <em>Short</em>, <em>Int</em>, and <em>Long</em> predefine
+constructors, methods, and constants that are parts of the ArkTS standard
+library (see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>).</p>
+<p>If one operand is not of type <em>long</em>, then the numeric promotion (see
+<a class="reference internal" href="6_conversions.html#primitive-types-conversions"><span class="std std-ref">Primitive Types Conversions</span></a>) must be used first to widen
+it to type <em>long</em>.</p>
+<p>If neither operand is of type <em>long</em>, then:</p>
+<ul class="simple">
+<li><p>The operation implementation uses 32-bit precision.</p></li>
+<li><p>The result of the numerical operator is of type <em>int</em>.</p></li>
+</ul>
+<p>If one operand (or neither operand) is of type <em>int</em>, then the numeric
+promotion must be used first to widen it to type <em>int</em>.</p>
+<p>Any integer type value can be cast to or from any numeric type.</p>
+<p>Casts between types <em>integer</em> and <em>boolean</em> are not allowed.</p>
+<p>The integer operators cannot indicate an overflow or an underflow.</p>
+<p>An integer operator can throw errors (see <a class="reference internal" href="12_errors.html#error-handling"><span class="std std-ref">Error Handling</span></a>) as follows:</p>
+<ul class="simple">
+<li><p>An integer division operator ‘/’ (see <a class="reference internal" href="7_expressions.html#division"><span class="std std-ref">Division</span></a>), and an
+integer remainder operator ‘%’ (see <a class="reference internal" href="7_expressions.html#remainder"><span class="std std-ref">Remainder</span></a>) throw
+<em>ArithmeticError</em> if their right-hand operand is zero.</p></li>
+<li><p>An increment operator ‘++’ and a decrement operator ‘–’ (see
+<a class="reference internal" href="7_expressions.html#additive-expressions"><span class="std std-ref">Additive Expressions</span></a>) throw <em>OutOfMemoryError</em> if boxing
+conversion (see <a class="reference internal" href="6_conversions.html#boxing-conversions"><span class="std std-ref">Boxing Conversions</span></a>) is required
+but the available memory is not sufficient to perform it.</p></li>
+</ul>
+<div class="line-block" id="index-10">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="floating-point-types-and-operations">
+<span id="id10"></span><h3><span class="section-number">3.7.2. </span>Floating-Point Types and Operations<a class="headerlink" href="#floating-point-types-and-operations" title="Permalink to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Type’s Set of Values</p></th>
+<th class="head"><p>Corresponding Class Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>float</em></p></td>
+<td><p>The set of all IEEE 754 <a class="footnote-reference brackets" href="#id36" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 32-bit
+floating-point numbers
+floating-point numbers</p></td>
+<td><p><em>Float</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>number</em>,
+<em>double</em></p></td>
+<td><p>The set of all IEEE 754 64-bit
+floating-point numbers</p></td>
+<td><p><em>Number</em>
+<em>Double</em></p></td>
+</tr>
+</tbody>
+</table>
+<p id="index-11">ArkTS provides a number of operators to act on floating-point type values as
+discussed below.</p>
+<ul class="simple">
+<li><p>Comparison operators that produce a value of type <em>boolean</em>:</p>
+<ul>
+<li><p>Numerical comparison operators ‘&lt;’, ‘&lt;=’, ‘&gt;’, and ‘&gt;=’ (see
+<a class="reference internal" href="7_expressions.html#numerical-comparison-operators"><span class="std std-ref">Numerical Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</span></a>);</p></li>
+<li><p>Numerical equality operators ‘==’ and ‘!=’ (see
+<a class="reference internal" href="7_expressions.html#value-equality-for-numeric-types"><span class="std std-ref">Value Equality for Numeric Types</span></a>);</p></li>
+</ul>
+</li>
+<li><p>Numerical operators that produce values of type <em>float</em> or <em>double</em>:</p>
+<ul>
+<li><p>Unary plus ‘+’ and minus ‘-’ operators (see <a class="reference internal" href="7_expressions.html#unary-plus"><span class="std std-ref">Unary Plus</span></a> and <a class="reference internal" href="7_expressions.html#unary-minus"><span class="std std-ref">Unary Minus</span></a>);</p></li>
+<li><p>Multiplicative operators ‘*’, ‘/’, and ‘%’ (see <a class="reference internal" href="7_expressions.html#multiplicative-expressions"><span class="std std-ref">Multiplicative Expressions</span></a>);</p></li>
+<li><p>Additive operators ‘+’ and ‘-’ (see <a class="reference internal" href="7_expressions.html#additive-expressions"><span class="std std-ref">Additive Expressions</span></a>);</p></li>
+<li><p>Increment operator ‘++’ used as prefix (see <a class="reference internal" href="7_expressions.html#prefix-increment"><span class="std std-ref">Prefix Increment</span></a>) or
+postfix (see <a class="reference internal" href="7_expressions.html#postfix-increment"><span class="std std-ref">Postfix Increment</span></a>);</p></li>
+<li><p>Decrement operator ‘–’ used as prefix (see <a class="reference internal" href="7_expressions.html#prefix-decrement"><span class="std std-ref">Prefix Decrement</span></a>) or
+postfix (see <a class="reference internal" href="7_expressions.html#postfix-decrement"><span class="std std-ref">Postfix Decrement</span></a>);</p></li>
+</ul>
+</li>
+<li><p>Numerical operators that produce values of type <em>int</em> or <em>long</em>:</p>
+<ul>
+<li><p>Signed and unsigned shift operators ‘&lt;&lt;’, ‘&gt;&gt;’, and ‘&gt;&gt;&gt;’ (see <a class="reference internal" href="7_expressions.html#shift-expressions"><span class="std std-ref">Shift Expressions</span></a>);</p></li>
+<li><p>Bitwise complement operator ‘~’ (see <a class="reference internal" href="7_expressions.html#bitwise-complement"><span class="std std-ref">Bitwise Complement</span></a>);</p></li>
+<li><p>Integer bitwise operators ‘&amp;’, ‘^’, and ‘|’ (see <a class="reference internal" href="7_expressions.html#integer-bitwise-operators"><span class="std std-ref">Integer Bitwise Operators &amp;, ^, and |</span></a>);</p></li>
+</ul>
+</li>
+<li><p>Conditional operator ‘?:’ (see <a class="reference internal" href="7_expressions.html#conditional-expressions"><span class="std std-ref">Conditional Expressions</span></a>);</p></li>
+<li><p>Cast operator (see <a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>) that converts a floating-point
+value to a value of any specified numeric type;</p></li>
+<li><p>The string concatenation operator ‘+’ (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>) that,
+if one operand is of type <em>string</em> and the other is of type <em>floating-point</em>,
+converts the type <em>floating-point</em> operand to type <em>string</em> with a value
+represented in the decimal form (without the loss of information), and then
+creates a concatenation of the two strings as a new <em>string</em>.</p></li>
+</ul>
+<p id="index-12">The classes <em>Float</em> and <em>Double</em> predefine constructors, methods, and constants
+that are parts of the ArkTS standard library (see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>).</p>
+<p>An operation is called a <em>floating-point operation</em> if at least one of the
+operands in a binary operator is of the <em>floating-point</em> type (even if the
+other operand is integer).</p>
+<p>If at least one operand of the numerical operator is of type <em>double</em>,
+then the operation implementation uses 64-bit floating-point arithmetic. The
+result of the numerical operator is a value of type <em>double</em>.</p>
+<p>If the other operand is not of type <em>double</em>, then the numeric promotion (see
+<a class="reference internal" href="6_conversions.html#primitive-types-conversions"><span class="std std-ref">Primitive Types Conversions</span></a>) must be used first to widen it to type
+<em>double</em>.</p>
+<p>If neither operand is of type <em>double</em>, then the operation implementation
+is to use 32-bit floating-point arithmetic. The result of the numerical
+operator is a value of type <em>float</em>.</p>
+<p>If the other operand is not of type <em>float</em>, then the numeric promotion
+must be used first to widen it to type <em>float</em>.</p>
+<p>Any floating-point type value can be cast to or from any numeric type.</p>
+<p id="index-13">Casts between types <em>floating-point</em> and <em>boolean</em> are not allowed.</p>
+<p>Operators on floating-point numbers, except the remainder operator (see
+<a class="reference internal" href="7_expressions.html#remainder"><span class="std std-ref">Remainder</span></a>), behave in compliance with the IEEE 754 Standard.
+For example, ArkTS requires the support of IEEE 754 <em>denormalized</em>
+floating-point numbers and <em>gradual underflow</em> that make it easier to prove
+the desirable properties of a particular numerical algorithm. Floating-point
+operations do not ‘<em>flush to zero</em>’ if the calculated result is a
+denormalized number.</p>
+<p>ArkTS requires floating-point arithmetic to behave as if the floating-point
+result of every floating-point operator is rounded to the result precision. An
+<em>inexact</em> result is rounded to the representable value nearest to the infinitely
+precise result. ArkTS uses the ‘<em>round to nearest</em>’ principle (the default
+rounding mode in IEEE 754), and prefers the representable value with the least
+significant bit zero out of any two equally near representable values.</p>
+<p id="index-14">ArkTS uses ‘<em>round toward zero</em>’ to convert a <em>floating-point</em> value to an
+<em>integer</em> (see <a class="reference internal" href="6_conversions.html#primitive-types-conversions"><span class="std std-ref">Primitive Types Conversions</span></a>). In this case it acts as
+if the number is truncated, and the mantissa bits are discarded.
+The result of <em>rounding toward zero</em> is the value of that format that is
+closest to and no greater in magnitude than the infinitely precise result.</p>
+<p>A floating-point operation with overflow produces a signed infinity.</p>
+<p>A floating-point operation with underflow produces a denormalized value
+or a signed zero.</p>
+<p>A floating-point operation with no mathematically definite result
+produces NaN.</p>
+<p>All numeric operations with a NaN operand result in NaN.</p>
+<p>A floating-point operator (the increment ‘++’ operator and decrement ‘–’
+operator, see <a class="reference internal" href="7_expressions.html#additive-expressions"><span class="std std-ref">Additive Expressions</span></a>) can throw <em>OutOfMemoryError</em>
+(see <a class="reference internal" href="12_errors.html#error-handling"><span class="std std-ref">Error Handling</span></a>) if boxing conversion (see
+<a class="reference internal" href="6_conversions.html#boxing-conversions"><span class="std std-ref">Boxing Conversions</span></a>) is required but the available
+memory is not sufficient to perform it.</p>
+<div class="line-block" id="index-15">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="numeric-types-hierarchy">
+<span id="id12"></span><h3><span class="section-number">3.7.3. </span>Numeric Types Hierarchy<a class="headerlink" href="#numeric-types-hierarchy" title="Permalink to this heading">¶</a></h3>
+<p><em>Integer</em> and <em>floating-point</em> types are <em>numeric types</em>.</p>
+<p>Larger types include smaller types or their values:</p>
+<ul class="simple">
+<li><p><em>double</em> &gt; <em>float</em> &gt; <em>long</em> &gt; <em>int</em> &gt; <em>short</em> &gt; <em>byte</em></p></li>
+</ul>
+<p>A value of a smaller type can be assigned to a variable of a larger type.</p>
+<p>Type <em>bigint</em> does not belong to the hierarchy. There is no implicit conversion
+from a numeric type to <em>bigint</em>. Standard library class <em>BigInt</em> must be used
+to create <em>bigint</em> values from numeric types.</p>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="boolean-types-and-operations">
+<span id="id13"></span><h3><span class="section-number">3.7.4. </span>Boolean Types and Operations<a class="headerlink" href="#boolean-types-and-operations" title="Permalink to this heading">¶</a></h3>
+<p>Type <em>boolean</em> represents logical values <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code> that
+correspond to the class type <em>Boolean</em>.</p>
+<p>The boolean operators are as follows:</p>
+<ul class="simple">
+<li><p>Relational operators ‘==’ and ‘!=’ (see <a class="reference internal" href="7_expressions.html#relational-expressions"><span class="std std-ref">Relational Expressions</span></a>);</p></li>
+<li><p>Logical complement operator ‘!’ (see <a class="reference internal" href="7_expressions.html#logical-complement"><span class="std std-ref">Logical Complement</span></a>);</p></li>
+<li><p>Logical operators ‘&amp;’, ‘^’, and ‘<code class="docutils literal notranslate"><span class="pre">|</span></code>’ (see <a class="reference internal" href="7_expressions.html#integer-bitwise-operators"><span class="std std-ref">Integer Bitwise Operators &amp;, ^, and |</span></a>);</p></li>
+<li><p>Conditional-and operator ‘&amp;&amp;’ (see <a class="reference internal" href="7_expressions.html#conditional-and-expression"><span class="std std-ref">Conditional-And Expression</span></a>) and
+conditional-or operator ‘<code class="docutils literal notranslate"><span class="pre">||</span></code>’ (see <a class="reference internal" href="7_expressions.html#conditional-or-expression"><span class="std std-ref">Conditional-Or Expression</span></a>);</p></li>
+<li><p>Conditional operator ‘?:’ (see <a class="reference internal" href="7_expressions.html#conditional-expressions"><span class="std std-ref">Conditional Expressions</span></a>);</p></li>
+<li><p>String concatenation operator ‘+’ (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>)
+that converts an operand of type <em>boolean</em> to type <em>string</em> (<code class="docutils literal notranslate"><span class="pre">true</span></code> or
+<code class="docutils literal notranslate"><span class="pre">false</span></code>), and then creates a concatenation of the two strings as a new
+<em>string</em>.</p></li>
+</ul>
+<p>The conversion of an integer or floating-point expression <em>x</em> to a boolean
+value must follow the <em>C</em> language convention—any nonzero value is converted
+to <code class="docutils literal notranslate"><span class="pre">true</span></code>, and the value of zero is converted to <code class="docutils literal notranslate"><span class="pre">false</span></code>. In other words,
+the result of expression <em>x</em>  conversion to type <em>boolean</em> is always the same
+as the result of comparison <em>x != 0</em>.</p>
+<div class="line-block" id="index-17">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="reference-types">
+<span id="id14"></span><h2><span class="section-number">3.8. </span>Reference Types<a class="headerlink" href="#reference-types" title="Permalink to this heading">¶</a></h2>
+<p><em>Reference types</em> can be of the following kinds:</p>
+<ul class="simple">
+<li><p><em>Class</em> types (see <a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>);</p></li>
+<li><p><em>Interface</em> types (see <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>);</p></li>
+<li><p><em>Array</em> types (see <a class="reference internal" href="#array-types"><span class="std std-ref">Array Types</span></a>);</p></li>
+<li><p><em>Function</em> types (see <a class="reference internal" href="#function-types"><span class="std std-ref">Function Types</span></a>);</p></li>
+<li><p><em>Union</em> types (see <a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>);</p></li>
+<li><p><em>String</em> types (see <a class="reference internal" href="#string-type"><span class="std std-ref">string Type</span></a>);</p></li>
+<li><p><em>Never</em> type (see <a class="reference internal" href="#never-type"><span class="std std-ref">never Type</span></a>), <em>null</em> type (see <a class="reference internal" href="#null-type"><span class="std std-ref">null Type</span></a>),
+<em>undefined</em> type (see <a class="reference internal" href="#undefined-type"><span class="std std-ref">undefined Type</span></a>), <em>void</em> type (see
+<a class="reference internal" href="#void-type"><span class="std std-ref">void Type</span></a>); and</p></li>
+<li><p>Type parameters (see <a class="reference internal" href="5_generics.html#generic-parameters"><span class="std std-ref">Generic Parameters</span></a>).</p></li>
+</ul>
+<div class="line-block" id="index-18">
+<div class="line"><br /></div>
+</div>
+<section id="objects">
+<span id="id15"></span><h3><span class="section-number">3.8.1. </span>Objects<a class="headerlink" href="#objects" title="Permalink to this heading">¶</a></h3>
+<p>An <em>object</em> can be a <em>class instance</em>, a <em>function instance</em>, or an <em>array</em>.
+The pointers to these objects are called <em>references</em> or reference values.</p>
+<p>A class instance creation expression (see <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>) explicitly
+creates a class instance.</p>
+<p>Referring to a declared function by its name, qualified name, or lambda
+expression (see <a class="reference internal" href="7_expressions.html#lambda-expressions"><span class="std std-ref">Lambda Expressions</span></a>) explicitly creates a function
+instance.</p>
+<p>An array creation expression explicitly creates an array (see
+<a class="reference internal" href="17_experimental.html#array-creation-expressions"><span class="std std-ref">Array Creation Expressions</span></a>).</p>
+<p>A string literal initialization explicitly creates a string.</p>
+<p>Other expressions can implicitly create a class instance (see
+<a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>), or an array (see <a class="reference internal" href="17_experimental.html#array-creation-expressions"><span class="std std-ref">Array Creation Expressions</span></a>).</p>
+<p id="index-19">The operations on references to objects are as follows:</p>
+<ul class="simple">
+<li><p>Field access that uses a qualified name or a field access expression (see
+<a class="reference internal" href="7_expressions.html#field-access-expressions"><span class="std std-ref">Field Access Expressions</span></a>);</p></li>
+<li><p>Call expression (see <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a> and <a class="reference internal" href="7_expressions.html#function-call-expression"><span class="std std-ref">Function Call Expression</span></a>);</p></li>
+<li><p>Cast expression (see <a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>);</p></li>
+<li><p>String concatenation operator (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>) that—given
+an operand of type <em>string</em> and a reference—calls the <em>toString</em> method
+of the referenced object, converts the reference to type <em>string</em>, and
+creates a concatenation of the two strings as a new <em>string</em>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">instanceof</span></code> operator (see <a class="reference internal" href="7_expressions.html#instanceof-expression"><span class="std std-ref">InstanceOf Expression</span></a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">typeof</span></code> operator (see <a class="reference internal" href="7_expressions.html#typeof-expression"><span class="std std-ref">TypeOf Expression</span></a>);</p></li>
+<li><p>Reference equality operators ‘==’ and ‘!=’ (see <a class="reference internal" href="7_expressions.html#reference-equality"><span class="std std-ref">Reference Equality</span></a>);</p></li>
+<li><p>Conditional operator ‘?:’ (see <a class="reference internal" href="7_expressions.html#conditional-expressions"><span class="std std-ref">Conditional Expressions</span></a>).</p></li>
+</ul>
+<p>Multiple references to an object are possible.</p>
+<p>Most objects have state. The state is stored in the field if an object is
+an instance of class, or in a variable that is an element of an array object.</p>
+<p>If two variables contain references to the same object, and the state of that
+object is modified in the reference of one variable, then the state so modified
+can be seen in the reference of the other variable.</p>
+<div class="line-block" id="index-20">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="object-class-type">
+<span id="id16"></span><h3><span class="section-number">3.8.2. </span><em>Object</em> Class Type<a class="headerlink" href="#object-class-type" title="Permalink to this heading">¶</a></h3>
+<p>The class <em>Object</em> is a supertype of all other classes, interfaces, string,
+arrays, unions, function types, and enum types. Thus all of them inherit (see
+<a class="reference internal" href="9_classes.html#inheritance"><span class="std std-ref">Inheritance</span></a>) the methods of the class <em>Object</em>. Full description of
+all methods of class <em>Object</em> is given in the standard library
+(see <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>) description.</p>
+<p>The method <em>toString</em> as used in the examples in this document returns a
+string representation of the object.</p>
+<p>Using <em>Object</em> is recommended in all cases (although the name <em>object</em> refers
+to type <em>Object</em>).</p>
+<div class="line-block" id="index-21">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="string-type">
+<span id="id17"></span><h3><span class="section-number">3.8.3. </span><em>string</em> Type<a class="headerlink" href="#string-type" title="Permalink to this heading">¶</a></h3>
+<p>Type <em>string</em> is a predefined type. It stores sequences of characters as
+Unicode UTF-16 code units. Type <em>string</em> includes all string literals, e.g.,
+‘<em>abc</em>’.</p>
+<p>The value of a string object cannot be changed after it is created, i.e.,
+a string object is immutable.</p>
+<p>The value of a string object can be shared.</p>
+<p>Type <em>string</em> has dual semantics:</p>
+<ul class="simple">
+<li><p>If a string is assigned or passed as an argument, then it behaves like a
+reference type (see <a class="reference internal" href="#reference-types"><span class="std std-ref">Reference Types</span></a>).</p></li>
+<li><p>All string operations (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a> and
+<a class="reference internal" href="7_expressions.html#string-comparison-operators"><span class="std std-ref">String Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</span></a>) handle strings as values (see
+<a class="reference internal" href="#value-types"><span class="std std-ref">Value Types</span></a>).</p></li>
+</ul>
+<p>If the result is not a constant expression (see <a class="reference internal" href="7_expressions.html#constant-expressions"><span class="std std-ref">Constant Expressions</span></a>),
+then the string concatenation operator ‘+’ (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>)
+implicitly creates a new string object.</p>
+<p>Using <em>string</em> is recommended in all cases (although the name <em>String</em>
+also refers to type <em>string</em>).</p>
+<div class="line-block" id="index-22">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="never-type">
+<span id="id18"></span><h3><span class="section-number">3.8.4. </span><em>never</em> Type<a class="headerlink" href="#never-type" title="Permalink to this heading">¶</a></h3>
+<p>The type <em>never</em> is a subtype (see <a class="reference internal" href="15_semantics.html#subtyping"><span class="std std-ref">Subtyping</span></a>) of any other type.</p>
+<p>Type <em>never</em> type has no instances. It is used to represent values that do
+not exist (for example a function with this return type never returns a value,
+but finishes its work throwing an error or exception).</p>
+<div class="line-block" id="index-23">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="void-type">
+<span id="id19"></span><h3><span class="section-number">3.8.5. </span><em>void</em> Type<a class="headerlink" href="#void-type" title="Permalink to this heading">¶</a></h3>
+<p>Type <em>void</em> has no instances (no values). It is typically used as the
+return type if a function or a method returns no value:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">     </span><span class="nx">bar</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A compile-time occurs if:</p>
+<ul class="simple">
+<li><p><em>void</em> is used as type annotation;</p></li>
+<li><p>An expression of the <em>void</em> type is used as a value.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="c1">// compile-time error - void used as type annotation</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="w">  </span><span class="c1">// void used as a value</span>
+</pre></div>
+</div>
+<p>Type <em>void</em> can be used as type argument that instantiates a generic type
+if a specific value of type argument is irrelevant. In this case, it is
+synonymous to type <em>undefined</em> (see <a class="reference internal" href="#undefined-type"><span class="std std-ref">undefined Type</span></a>):</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span>
+<span class="linenos">2</span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="c1">// ok, type parameter is irrelevant</span>
+<span class="linenos">3</span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="c1">// ok, the same</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="nx">foo</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">8</span><span class="nx">foo</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">(</span><span class="ow">void</span><span class="p">)</span><span class="w"> </span><span class="c1">// compile-time error: void is used as value</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-24">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="array-types">
+<span id="id20"></span><h3><span class="section-number">3.8.6. </span>Array Types<a class="headerlink" href="#array-types" title="Permalink to this heading">¶</a></h3>
+<p><em>Array type</em> is the built-in type characterized by the following:</p>
+<ul class="simple">
+<li><p>Any object of array type contains elements indexed by integer position
+starting from 0;</p></li>
+<li><p>Access to any array element is performed within the same time;</p></li>
+<li><p>If passed to non-ArkTS environment, an array is represented
+as a contiguous memory location;</p></li>
+<li><p>Types of all array elements are upper-bounded by the element type
+specified in the array declaration.</p></li>
+</ul>
+<p id="index-25">Two basic operations with array elements take elements out of, and put
+elements into an array by using the operator <code class="docutils literal notranslate"><span class="pre">[]</span></code> and index expression.</p>
+<p>The number of elements in an array can be obtained by accessing the field
+<em>length</em>. Setting a new value of this field allows shrinking the array by
+reducing the number of its elements.</p>
+<p>Attempting to increase the length of the array causes a compile-time error
+(if the compiler has the information sufficient to determine this), or to
+a run-time error.</p>
+<p>An example of syntax for the built-in array type is presented below:</p>
+<div class="highlight-abnf notranslate" id="index-26"><div class="highlight"><pre><span></span><span class="nc">arrayType</span>:
+<span class="w">   </span><span class="nc">type</span><span class="w"> </span>&#39;<span class="p">[</span>&#39;<span class="w"> </span>&#39;<span class="p">]</span>&#39;
+<span class="w">   </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The family of array types that are parts of the standard library (see
+<a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>), including all available operations, is described
+in the library documentation. Common to these types is that the operator
+<code class="docutils literal notranslate"><span class="pre">[]</span></code> can be applied to variables of all array types and to their derived
+types. It is noteworthy that type <em>T</em>[] and type <em>Array&lt;T&gt;</em> are as follows:</p>
+<ul class="simple">
+<li><p>Equivalent if <em>T</em> is a reference type; and</p></li>
+<li><p>Different if <em>T</em> is a value type.</p></li>
+</ul>
+<p id="index-27">The examples are presented below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">]</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="cm">/* allocate array with 5 elements of type number */</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">7</span><span class="w"> </span><span class="cm">/* put 7 as the 2nd element of the array, index of this element is 1 */</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mf">4</span><span class="p">]</span><span class="w"> </span><span class="cm">/* get the last element of array &#39;a&#39; */</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="c1">// get the number of array elements</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="c1">// OK, 2 is the index of the last element now</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="p">[</span><span class="mf">3</span><span class="p">]</span><span class="w"> </span><span class="c1">// Will lead to runtime error - attempt to access non-existing array element</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">Number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nb">Number</span><span class="o">&gt;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="cm">/* That is a valid code as type used in the &#39;b&#39; declaration is identical</span>
+<span class="linenos">12</span><span class="cm">       to the type used in the new expression */</span>
+</pre></div>
+</div>
+<p>A type alias can set a name for an array type (see <a class="reference internal" href="4_names.html#type-alias-declaration"><span class="std std-ref">Type Alias Declaration</span></a>):</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">[][]</span><span class="w"> </span><span class="cm">/* Two-dimensional array */</span>
+</pre></div>
+</div>
+<p>An array as an object is assignable to a variable of type <em>Object</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">o</span><span class="o">:</span><span class="w"> </span><span class="kt">Object</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-28">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="function-types">
+<span id="id21"></span><h3><span class="section-number">3.8.7. </span>Function Types<a class="headerlink" href="#function-types" title="Permalink to this heading">¶</a></h3>
+<p>A <em>function type</em> can be used to express the expected signature of a function.
+A function type consists of the following:</p>
+<ul class="simple">
+<li><p>List of parameters (which can be empty);</p></li>
+<li><p>Optional return type;</p></li>
+<li><p>Optional keyword <code class="docutils literal notranslate"><span class="pre">throws</span></code>.</p></li>
+</ul>
+<div class="highlight-abnf notranslate" id="index-29"><div class="highlight"><pre><span></span><span class="nc">functionType</span>:
+<span class="w">    </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">ftParameterList</span>?<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">ftReturnType</span><span class="w"> </span>&#39;<span class="nc">throws</span>&#39;?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">ftParameterList</span>:
+<span class="w">    </span><span class="nc">ftParameter</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">ftParameter</span><span class="p">)</span>\<span class="o">*</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">restParameter</span><span class="p">)</span>?
+<span class="w">    </span>|<span class="w"> </span><span class="nc">restParameter</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">ftParameter</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">restParameter</span>:
+<span class="w">    </span>&#39;...&#39;<span class="w"> </span><span class="nc">ftParameter</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">ftReturnType</span>:
+<span class="w">    </span>&#39;<span class="o">=</span>&gt;&#39;<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The <em>rest</em> parameter is described in <a class="reference internal" href="4_names.html#rest-parameter"><span class="std std-ref">Rest Parameter</span></a>.</p>
+<div class="highlight-typescript notranslate" id="index-30"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">binaryOp</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">evaluate</span><span class="p">(</span><span class="nx">f</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A type alias can set a name for a <em>function type</em> (see
+<a class="reference internal" href="4_names.html#type-alias-declaration"><span class="std std-ref">Type Alias Declaration</span></a>).</p>
+<div class="highlight-typescript notranslate" id="index-31"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">BinaryOp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">op</span><span class="o">:</span><span class="w"> </span><span class="kt">BinaryOp</span>
+</pre></div>
+</div>
+<p>If the function type contains the ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ mark (see
+<a class="reference internal" href="17_experimental.html#throwing-functions"><span class="std std-ref">Throwing Functions</span></a>), then it is the <em>throwing function type</em>.</p>
+<p>Function types assignability is described in <a class="reference internal" href="6_conversions.html#assignment-like-contexts"><span class="std std-ref">Assignment-like Contexts</span></a>,
+and conversions in <a class="reference internal" href="6_conversions.html#function-types-conversions"><span class="std std-ref">Function Types Conversions</span></a>.</p>
+<div class="line-block" id="index-32">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="null-type">
+<span id="id22"></span><h3><span class="section-number">3.8.8. </span><em>null</em> Type<a class="headerlink" href="#null-type" title="Permalink to this heading">¶</a></h3>
+<p>The only value of type <em>null</em> is represented by the keyword <code class="docutils literal notranslate"><span class="pre">null</span></code>
+(see <a class="reference internal" href="2_lexical.html#null-literal"><span class="std std-ref">Null Literal</span></a>).</p>
+<p>Using type <em>null</em> as type annotation is not recommended, except in
+nullish types (see <a class="reference internal" href="#nullish-types"><span class="std std-ref">Nullish Types</span></a>).</p>
+<div class="line-block" id="index-33">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="undefined-type">
+<span id="id23"></span><h3><span class="section-number">3.8.9. </span><em>undefined</em> Type<a class="headerlink" href="#undefined-type" title="Permalink to this heading">¶</a></h3>
+<p>The only value of type <em>undefined</em> is represented by the keyword
+<code class="docutils literal notranslate"><span class="pre">undefined</span></code> (see <a class="reference internal" href="2_lexical.html#undefined-literal"><span class="std std-ref">Undefined Literal</span></a>).</p>
+<p>Using type <em>undefined</em> as type annotation is not recommended,
+except in nullish types (see <a class="reference internal" href="#nullish-types"><span class="std std-ref">Nullish Types</span></a>).</p>
+<p>The <em>undefined</em> type can be used as the type argument that instantiates a
+generic type if specific value of the type argument is irrelevant.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="c1">// ok, type parameter is irrelevant</span>
+<span class="linenos">3</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="nx">foo</span><span class="o">&lt;</span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="c1">// ok</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-34">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="tuple-types">
+<span id="id24"></span><h3><span class="section-number">3.8.10. </span>Tuple Types<a class="headerlink" href="#tuple-types" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">tupleType</span>:
+<span class="w">    </span>&#39;<span class="p">[</span>&#39;<span class="w"> </span><span class="p">(</span><span class="nc">type</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">type</span><span class="p">)</span><span class="o">*</span><span class="p">)</span>?<span class="w"> </span>&#39;<span class="p">]</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <em>tuple</em> type is a reference type created as a fixed set of other types.
+The value of a tuple type is a group of values of types that comprise the
+tuple type. The types are specified in the same order as declared within
+the tuple type declaration. Each element of the tuple is thus implied to
+have its own type.
+The operator <code class="docutils literal notranslate"><span class="pre">[]</span></code> (square brackets) is used to access the elements of
+a tuple in a manner similar to that used to access elements of an array.</p>
+<p>An index expression belongs to <em>integer</em> type. The index of the 1st tuple
+element is <em>0</em>. Only constant expressions can be used as the index to get
+the access to tuple elements.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">let</span><span class="w"> </span><span class="nx">tuple</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="nb">Object</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="linenos">2</span><span class="w">           </span><span class="p">[</span><span class="w">     </span><span class="mf">6</span><span class="p">,</span><span class="w">      </span><span class="mf">7</span><span class="p">,</span><span class="w">  </span><span class="s2">&quot;abc&quot;</span><span class="p">,</span><span class="w">    </span><span class="kc">true</span><span class="p">,</span><span class="w">    </span><span class="mf">666</span><span class="p">]</span>
+<span class="linenos">3</span><span class="nx">tuple</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">666</span>
+<span class="linenos">4</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="nx">tuple</span><span class="p">[</span><span class="mf">0</span><span class="p">],</span><span class="w"> </span><span class="nx">tuple</span><span class="p">[</span><span class="mf">4</span><span class="p">])</span><span class="w"> </span><span class="c1">// `666 666` be printed</span>
+</pre></div>
+</div>
+<p><em>Object</em> (see <a class="reference internal" href="#object-class-type"><span class="std std-ref">Object Class Type</span></a>) is the supertype for any tuple type.</p>
+<p>An empty tuple is a corner case. It is only added to support compatibility
+with TypeScript:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">let</span><span class="w"> </span><span class="nx">empty</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="c1">// empty tuple with no elements in it</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="union-types">
+<span id="id25"></span><h3><span class="section-number">3.8.11. </span>Union Types<a class="headerlink" href="#union-types" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">unionType</span>:
+<span class="w">    </span><span class="nc">type</span>|<span class="nc">literal</span><span class="w"> </span><span class="p">(</span>&#39;|&#39;<span class="w"> </span><span class="nc">type</span>|<span class="nc">literal</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <em>union</em> type is a reference type created as a combination of other
+types or values. Valid values of all types and literals the union is created
+from are the values of a union type.</p>
+<p>A compile-time error occurs if the type in the right-hand side of a union
+type declaration leads to a circular reference.</p>
+<p>If a <em>union</em> uses a primitive type (see <em>Primitive types</em> in
+<a class="reference internal" href="#types-by-category"><span class="std std-ref">Types by Category</span></a>), then automatic boxing occurs to keep the reference
+nature of the type.</p>
+<p>The reduced form of <em>union</em> types allows defining a type which has only
+one value:</p>
+<div class="highlight-typescript notranslate" id="index-35"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kr">type</span><span class="w"> </span><span class="nx">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span>
+<span class="linenos">2</span><span class="kd">let</span><span class="w"> </span><span class="nx">t1</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="linenos">3</span><span class="kd">let</span><span class="w"> </span><span class="nx">t2</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="c1">// Compile-time error</span>
+</pre></div>
+</div>
+<p>A typical example of the usage of <em>union</em> type is shown below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="c1">// ...</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">   </span><span class="c1">// ...</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">   </span><span class="c1">// ...</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">11</span><span class="w"> </span><span class="c1">// Cat, Dog, and Frog are some types (class or interface ones)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">animal</span><span class="o">:</span><span class="w"> </span><span class="kt">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Cat</span><span class="p">()</span>
+<span class="linenos">14</span><span class="w"> </span><span class="nx">animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Frog</span><span class="p">()</span>
+<span class="linenos">15</span><span class="w"> </span><span class="nx">animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">42</span>
+<span class="linenos">16</span><span class="w"> </span><span class="c1">// One may assign the variable of the union type with any valid value</span>
+</pre></div>
+</div>
+<p>Different mechanisms can be used to get values of particular types from a
+<em>union</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">meow</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">bark</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">leap</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Frog</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">animal</span><span class="o">:</span><span class="w"> </span><span class="kt">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Cat</span><span class="p">()</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">animal</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nx">Frog</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">         </span><span class="c1">// animal is of type Frog here, conversion can be used:</span>
+<span class="linenos">10</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">frog</span><span class="o">:</span><span class="w"> </span><span class="kt">Frog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">animal</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Frog</span>
+<span class="linenos">11</span><span class="w">     </span><span class="nx">frog</span><span class="p">.</span><span class="nx">leap</span><span class="p">()</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w"> </span><span class="nx">animal</span><span class="p">.</span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">// Any animal can sleep</span>
+</pre></div>
+</div>
+<p>The following example is for primitive types:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Primitive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">boolean</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Primitive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">7</span>
+<span class="linenos">3</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nb">Number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// type of &#39;p&#39; is Number here</span>
+<span class="linenos">4</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// Explicit conversion from Primitive to number</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example is for values:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">BMW_ModelCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">325</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">530</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">735</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">car_code</span><span class="o">:</span><span class="w"> </span><span class="kt">BMW_ModelCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">325</span>
+<span class="linenos">3</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">car_code</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">325</span><span class="p">){</span>
+<span class="linenos">4</span><span class="w">    </span><span class="nx">car_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">530</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">car_code</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">530</span><span class="p">){</span>
+<span class="linenos">6</span><span class="w">    </span><span class="nx">car_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">735</span>
+<span class="linenos">7</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">8</span><span class="w">    </span><span class="c1">// pension :-)</span>
+<span class="linenos">9</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: A compile-time error occurs if an expression of union type is
+compared to a literal value that does not belong to the values of that union
+type:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">BMW_ModelCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">325</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">530</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">735</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">car_code</span><span class="o">:</span><span class="w"> </span><span class="kt">BMW_ModelCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">325</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">car_code</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">666</span><span class="p">){</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="cm">/*</span>
+<span class="linenos"> 5</span><span class="cm">    compile-time error as 666 does not belong to</span>
+<span class="linenos"> 6</span><span class="cm">    values of type BMW_ModelCode</span>
+<span class="linenos"> 7</span><span class="cm"> */</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">model_code_test</span><span class="w"> </span><span class="p">(</span><span class="nx">code</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">car_code</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">code</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">11</span><span class="w">    </span><span class="c1">// This test is to be resolved during program execution</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="union-types-normalization">
+<span id="id26"></span><h4><span class="section-number">3.8.11.1. </span>Union Types Normalization<a class="headerlink" href="#union-types-normalization" title="Permalink to this heading">¶</a></h4>
+<p>Union types normalization allows minimizing the number of types and literals
+within a union type, while keeping the type’s safety. Some types or literals
+can also be replaced for more general types.</p>
+<p>Formally, union type <em>T</em><sub>1</sub> | … | <em>T</em><sub>N</sub>, where N &gt; 1, can be
+reduced to type <em>U</em><sub>1</sub> | … | <em>U</em><sub>M</sub>, where M &lt;= N, or even to
+a non-union type or value <em>V</em>. In this latter case <em>V</em> can be a primitive value
+type or value that changes the reference nature of the union type.</p>
+<p>The normalization process presumes performing the following steps one after
+another:</p>
+<ol class="arabic simple" id="index-36">
+<li><p>All nested union types are linearized.</p></li>
+<li><p>Identical types within the union type are replaced for a single type.</p></li>
+<li><p>Identical literals within the union type are replaced for a single literal.</p></li>
+<li><p>If at least one type in the union is <em>Object</em>, then all other non-nullish
+types are removed.</p></li>
+<li><p>If there is type <em>never</em> among union types, then it is removed.</p></li>
+<li><p>If there is a non-empty group of numeric types in a union, then the largest
+(see <a class="reference internal" href="#numeric-types-hierarchy"><span class="std std-ref">Numeric Types Hierarchy</span></a>) numeric type is to stay in the union
+while the others are removed. All numeric literals (if any) that fit into
+the largest numeric type in a union are removed.</p></li>
+<li><p>If a primitive type after widening (see <a class="reference internal" href="6_conversions.html#widening-primitive-conversions"><span class="std std-ref">Widening Primitive Conversions</span></a>)
+and boxing (see <a class="reference internal" href="6_conversions.html#boxing-conversions"><span class="std std-ref">Boxing Conversions</span></a>) is equal to another union type,
+then the intial type is removed.</p></li>
+<li><p>If a literal of union type belongs to the values of a type that is part
+of the union, then the literal is removed.</p></li>
+<li><p>If a numeric literal fits into the unboxed type of one of union numeric class
+type, then the literal is removed.</p></li>
+<li><p>This step is performed recursively until no mutually compatible types remain
+(see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>), or the union type is reduced to a single type:</p>
+<ul class="simple">
+<li><p>If a union type includes two types <em>T</em><sub>i</sub> and <em>T</em><sub>j</sub> (i != j),
+and <em>T</em><sub>i</sub> is compatible with <em>T</em><sub>j</sub> (see
+<a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>), then only <em>T</em><sub>j</sub> remains in the union
+type, and <em>T</em><sub>i</sub> is removed.</p></li>
+<li><p>If <em>T</em><sub>j</sub> is compatible with <em>T</em><sub>i</sub> (see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>),
+then <em>T</em><sub>i</sub> remains in the union type, and <em>T</em><sub>j</sub> is removed.</p></li>
+</ul>
+</li>
+</ol>
+<p id="index-37">The result of the normalization process is a normalized union type. The process
+is presented in the examples below:</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nx">T1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">T2</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="nx">T3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">T4</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">T1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">T2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">T3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">T4</span><span class="w">  </span><span class="c1">// Linearization</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">1</span><span class="w">  </span><span class="p">=&gt;</span><span class="w">  </span><span class="mf">1</span><span class="w">                             </span><span class="c1">// Identical values elimination</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">number</span><span class="w">                    </span><span class="c1">// Identical types elimination</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Number</span><span class="w">                    </span><span class="c1">// The same after boxing</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kr">float</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Float</span><span class="w">                         </span><span class="c1">// tbd</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">3.14</span><span class="w">  </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">3.14</span><span class="w">                    </span><span class="c1">// Values fits into unboxed version of type Int</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="w"> </span><span class="kr">int</span><span class="o">|</span><span class="kr">short</span><span class="o">|</span><span class="kr">float</span><span class="o">|</span><span class="mf">2</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kr">float</span><span class="w">                   </span><span class="c1">// the largest numeric type stays</span>
+<span class="linenos">12</span><span class="w"> </span><span class="kr">int</span><span class="o">|</span><span class="kr">long</span><span class="o">|</span><span class="mf">2.71828</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kr">long</span><span class="o">|</span><span class="mf">2.71828</span><span class="w">             </span><span class="c1">// the largest numeric type stays and the literal</span>
+<span class="linenos">13</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">14</span><span class="w"> </span><span class="kr">int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kr">double</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kr">short</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kr">double</span>
+<span class="linenos">15</span><span class="w"> </span><span class="nx">Byte</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Long</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Long</span>
+<span class="linenos">16</span><span class="w"> </span><span class="nx">Byte</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Float</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Number</span>
+<span class="linenos">17</span><span class="w"> </span><span class="nx">Int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">3.14</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Float</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Float</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">3.14</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w">       </span><span class="c1">// Union value elimination</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Object</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Object</span><span class="w">                         </span><span class="c1">// Object wins</span>
+<span class="linenos">23</span><span class="w"> </span><span class="nx">AnyNonNullishType</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Object</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Object</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">26</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">27</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">28</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span><span class="w">                      </span><span class="c1">// Base wins</span>
+<span class="linenos">29</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived2</span><span class="w">   </span><span class="c1">// End of normalization</span>
+</pre></div>
+</div>
+<p>The ArkTS compiler applies such normalization while processing union types
+and handling the type inference for array literals (see
+<a class="reference internal" href="7_expressions.html#array-type-inference-from-types-of-elements"><span class="std std-ref">Array Type Inference from Types of Elements</span></a>).</p>
+<div class="line-block" id="index-38">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="keyof-types">
+<span id="id27"></span><h4><span class="section-number">3.8.11.2. </span>Keyof Types<a class="headerlink" href="#keyof-types" title="Permalink to this heading">¶</a></h4>
+<p>A special form of union types are <em>keyof</em> types built with help of the
+keyword <em>keyof</em>. The keyword <em>keyof</em> is applied to the class or interface type
+(see <a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a> and <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>). The resultant new type is a union
+of names of all members of the class or interface type.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">keyofType</span>:
+<span class="w">    </span>&#39;<span class="nc">keyof</span>&#39;<span class="w"> </span><span class="nc">typeReference</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A compile-time error occurs if <em>typeReference</em> is not a class or interface type.
+The semantics of the <em>keyof</em> type is presented in the following example:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">    </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">3</span><span class="w">    </span><span class="nx">method</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">KeysOfA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">keyof</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="c1">// &quot;field&quot; | &quot;method&quot;</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a_keys</span><span class="o">:</span><span class="w"> </span><span class="kt">KeysOfA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;field&quot;</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="linenos">7</span><span class="w"> </span><span class="nx">a_keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;any string different from field or method&quot;</span>
+<span class="linenos">8</span><span class="w">   </span><span class="c1">// Compile-time error: invalid value for the type KeysOfA</span>
+</pre></div>
+</div>
+<p>If the class or the interface is empty, then its <em>keyof</em> type is equivalent
+to type <em>never</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// Empty class</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">KeysOfA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">keyof</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="c1">// never</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="nullish-types">
+<span id="id28"></span><h3><span class="section-number">3.8.12. </span>Nullish Types<a class="headerlink" href="#nullish-types" title="Permalink to this heading">¶</a></h3>
+<p>ArkTS has nullish types that are in fact a special form of union types (see
+<a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>):</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">nullishType</span>:
+<span class="w">      </span><span class="nc">type</span><span class="w"> </span>&#39;|&#39;<span class="w"> </span>&#39;<span class="nc">null</span>&#39;<span class="w"> </span><span class="p">(</span>|<span class="w"> </span>&#39;<span class="nc">undefined</span>&#39;<span class="p">)</span>?
+<span class="w">    </span>|<span class="w"> </span><span class="nc">type</span><span class="w"> </span>&#39;|&#39;<span class="w"> </span>&#39;<span class="nc">undefined</span>&#39;<span class="w"> </span><span class="p">(</span>&#39;|&#39;<span class="w"> </span>&#39;<span class="nc">null</span>&#39;<span class="p">)</span>?
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>All predefined and user-defined type declarations create non-nullish types.
+Non-nullish types cannot have a <em>null</em> or <em>undefined</em> value at runtime.</p>
+<p><em>T</em> | <em>null</em> or <em>T</em> | <em>undefined</em> can be used as the type to specify a
+nullish version of type <em>T</em>.</p>
+<p>A variable declared to have type <em>T</em> | <em>null</em> can hold the values of type <em>T</em>
+and its derived types, or the value <em>null</em>. Such a type is called a <em>nullable
+type</em>.</p>
+<p>A variable declared to have type <em>T</em> | <em>undefined</em> can hold the values of
+type <em>T</em> and its derived types, or the value <em>undefined</em>.</p>
+<p>A variable declared to have type <em>T</em> | <em>null</em> | <em>undefined</em> can hold values
+of type <em>T</em> (and its derived types), and the values <em>undefined</em> or <em>null</em>.</p>
+<p>A nullish type is a reference type (see <a class="reference internal" href="#union-types"><span class="std std-ref">Union Types</span></a>).
+A reference that is <em>null</em> or <em>undefined</em> is called a <em>nullish</em> value.</p>
+<p>An operation that is safe with no regard to the presence or absence of
+nullish values (e.g., re-assigning one nullable value to another) can
+be used ‘as is’ for nullish types.</p>
+<p>The following nullish-safe options exist for operations on nullish type <em>T</em>
+that can potentially violate null safety (e.g., access to a property):</p>
+<ul class="simple" id="index-39">
+<li><p>Use of safe operations:</p>
+<ul>
+<li><p>Safe method call (see <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a> for details);</p></li>
+<li><p>Safe field access expression (see <a class="reference internal" href="7_expressions.html#field-access-expressions"><span class="std std-ref">Field Access Expressions</span></a>
+for details);</p></li>
+<li><p>Safe indexing expression (see <a class="reference internal" href="7_expressions.html#indexing-expression"><span class="std std-ref">Indexing Expression</span></a> for details);</p></li>
+<li><p>Safe function call (see <a class="reference internal" href="7_expressions.html#function-call-expression"><span class="std std-ref">Function Call Expression</span></a> for details);</p></li>
+</ul>
+</li>
+<li><p>Conversion from <em>T</em> | <em>null</em> or <em>T</em> | <em>undefined</em> to <em>T</em>:</p>
+<ul>
+<li><p>Cast expression (see <a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a> for details);</p></li>
+<li><p>Ensure-not-nullish expression (see <a class="reference internal" href="7_expressions.html#ensure-not-nullish-expressions"><span class="std std-ref">Ensure-Not-Nullish Expression</span></a>
+for details);</p></li>
+</ul>
+</li>
+<li><p>Supplying a default value to be used if a nullish value is present:</p>
+<ul>
+<li><p>Nullish-coalescing expression (see <a class="reference internal" href="7_expressions.html#nullish-coalescing-expression"><span class="std std-ref">Nullish-Coalescing Expression</span></a>
+for details).</p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block" id="index-40">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="dynamicobject-type">
+<span id="id29"></span><h3><span class="section-number">3.8.13. </span>DynamicObject Type<a class="headerlink" href="#dynamicobject-type" title="Permalink to this heading">¶</a></h3>
+<p>The interface <em>DynamicObject</em> is used to provide seamless interoperability
+with dynamic languages (e.g., JavaScript and TypeScript), and to support advanced
+language features such as <em>dynamic import</em> (see <a class="reference internal" href="7_expressions.html#dynamic-import-expression"><span class="std std-ref">Dynamic Import Expression</span></a>).
+This interface is defined in <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>.</p>
+<p>This interface (defined in <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>) is common for a set of
+wrappers (also defined in <a class="reference internal" href="18_stdlib.html#standard-library"><span class="std std-ref">Standard Library</span></a>) that provide access to
+underlying objects.</p>
+<p>An instance of <em>DynamicObject</em> instance cannot be created directly. Only an
+instance of a specific wrapper object can be instantiated. For example, a
+result of the <em>dynamic import</em> expression (see <a class="reference internal" href="7_expressions.html#dynamic-import-expression"><span class="std std-ref">Dynamic Import Expression</span></a>)
+is an instance of the dynamic object implementation class, which wraps an object
+that contains exported entities of an imported module.</p>
+<p><em>DynamicObject</em> is a predefined type. The following operations applied to an
+object of type <em>DynamicObject</em> are handled by the compiler in a special way:</p>
+<ul class="simple">
+<li><p>Field access;</p></li>
+<li><p>Method call;</p></li>
+<li><p>Indexing access;</p></li>
+<li><p>New;</p></li>
+<li><p>Cast.</p></li>
+</ul>
+<div class="line-block" id="index-41">
+<div class="line"><br /></div>
+</div>
+<section id="dynamicobject-field-access">
+<span id="id30"></span><h4><span class="section-number">3.8.13.1. </span>DynamicObject Field Access<a class="headerlink" href="#dynamicobject-field-access" title="Permalink to this heading">¶</a></h4>
+<p>The field access expression <em>D.F</em>, where <em>D</em> is of type <em>DynamicObject</em>,
+is handled as an access to a property of an underlying object.</p>
+<p>If the value of a field access is used, then it is wrapped in the instance of
+<em>DynamicObject</em>, since the actual type of the field is not known at compile
+time.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">DynamicObject</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">f1</span><span class="p">)</span><span class="w"> </span><span class="c1">// access of the property named &quot;f1&quot; of underlying object</span>
+<span class="linenos">3</span><span class="w">   </span><span class="nx">d</span><span class="p">.</span><span class="nx">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="c1">// set a value of the property named &quot;f1&quot;</span>
+<span class="linenos">4</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">f1</span><span class="w"> </span><span class="c1">// &#39;y&#39; is of type DynamicObject</span>
+<span class="linenos">5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The wrapper can raise an error if:</p>
+<ul class="simple">
+<li><p>No property with the specified name exists in the underlying object; or</p></li>
+<li><p>The field access is in the right-hand side of the assignment, and the
+type of the assigned value is not compatible (see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>)
+with the type of the property.</p></li>
+</ul>
+<div class="line-block" id="index-42">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="dynamicobject-method-call">
+<span id="id31"></span><h4><span class="section-number">3.8.13.2. </span>DynamicObject Method Call<a class="headerlink" href="#dynamicobject-method-call" title="Permalink to this heading">¶</a></h4>
+<p>The method call expression <em>D.F(arguments)</em>, where <em>D</em> is of type <em>DynamicObject</em>,
+is handled as a call of the instance method of an underlying object.</p>
+<p>If the result of a method call is used, then it is wrapped in the instance
+of <em>DynamicObject</em>, since the actual type of the returned value is not known
+at compile time.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">DynamicObject</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">d</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span><span class="w"> </span><span class="c1">// call of a method &quot;foo&quot; of underlying object</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">goo</span><span class="p">()</span><span class="w"> </span><span class="c1">// &#39;y&#39; is of type DynamicObject</span>
+<span class="linenos">4</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The wrapper must raise an error if:</p>
+<ul class="simple">
+<li><p>No method with the specified name exists in the underlying object; or</p></li>
+<li><p>The signature of the method is not compatible with the types of the
+call arguments.</p></li>
+</ul>
+<div class="line-block" id="index-43">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="dynamicobject-indexing-access">
+<span id="id32"></span><h4><span class="section-number">3.8.13.3. </span>DynamicObject Indexing Access<a class="headerlink" href="#dynamicobject-indexing-access" title="Permalink to this heading">¶</a></h4>
+<p>The indexing access expression <em>D[index]</em>, where <em>D</em> is of type <em>DynamicObject</em>,
+is handled as an indexing access to an underlying object.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">DynamicObject</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="linenos">3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The wrapper must raise an error if:</p>
+<ul class="simple">
+<li><p>The indexing access is not supported by the underlying object;</p></li>
+<li><p>The type of the <em>index</em> expression is not supported by the underlying object.</p></li>
+</ul>
+<div class="line-block" id="index-44">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="dynamicobject-new-expression">
+<span id="id33"></span><h4><span class="section-number">3.8.13.4. </span>DynamicObject New Expression<a class="headerlink" href="#dynamicobject-new-expression" title="Permalink to this heading">¶</a></h4>
+<p>The new expression <em>new D(arguments)</em> (see <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>), where
+<em>D</em> is of type <em>DynamicObject</em>, is handled as a new expression (constructor
+call) applied to the underlying object.</p>
+<p>The result of the expression is wrapped in an instance of <em>DynamicObject</em>,
+as the actual type of the returned value is not known at compile time.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">DynamicObject</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">d</span><span class="p">()</span>
+<span class="linenos">3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The wrapper must raise an error if:</p>
+<ul class="simple">
+<li><p>A new expression is not supported by the underlying object; or</p></li>
+<li><p>The signature of the constructor of the underlying object is not compatible
+with the types of call arguments.</p></li>
+</ul>
+<div class="line-block" id="index-45">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="dynamicobject-cast-expression">
+<span id="id34"></span><h4><span class="section-number">3.8.13.5. </span>DynamicObject Cast Expression<a class="headerlink" href="#dynamicobject-cast-expression" title="Permalink to this heading">¶</a></h4>
+<p>The cast expression <em>D as T</em> (see <a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>), where <em>D</em> is of
+type <em>DynamicObject</em>, is handled as attempt to cast the underlying object
+to a static type <em>T</em>.</p>
+<p>A compile-time error occurs if <em>T</em> is not a class or interface type.</p>
+<p>The result of a cast expression is an instance of type <em>T</em>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">interface</span><span class="w"> </span><span class="nx">I</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">bar</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span>
+<span class="linenos">3</span><span class="p">}</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">DynamicObject</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">6</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">I</span>
+<span class="linenos">7</span><span class="w">   </span><span class="nx">x</span><span class="p">.</span><span class="nx">bar</span><span class="p">()</span><span class="w"> </span><span class="c1">// a call of interface method     (not dynamic)</span>
+<span class="linenos">8</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The wrapper must raise an error if an underlying object cannot be converted
+to the target type specified by the cast operator.</p>
+<div class="line-block" id="index-46">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+</section>
+<section id="default-values-for-types">
+<span id="id35"></span><h2><span class="section-number">3.9. </span>Default Values for Types<a class="headerlink" href="#default-values-for-types" title="Permalink to this heading">¶</a></h2>
+<p><strong>Note</strong>: This is the ArkTS’s experimental feature.</p>
+<p>Some types use so-called <em>default values</em> for variables without explicit
+initialization (see <a class="reference internal" href="4_names.html#variable-declarations"><span class="std std-ref">Variable Declarations</span></a>), including the following:</p>
+<ul class="simple">
+<li><p>All primitive types (see the table below);</p></li>
+<li><p>All union types that have at least one nullish (see <a class="reference internal" href="#nullish-types"><span class="std std-ref">Nullish Types</span></a>)
+value, and use an appropriate nullish value as default (see the table below).</p></li>
+</ul>
+<p>All other types, including reference types and enumeration types, have no
+default values. Variables of such types must be initialized explicitly with
+a value before the first use of a type.</p>
+<p>Default values of primitive types are as follows:</p>
+<table class="docutils align-default" id="index-47">
+<thead>
+<tr class="row-odd"><th class="head"><p>Data Type</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>number</em></p></td>
+<td><p>0 as <em>number</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>byte</em></p></td>
+<td><p>0 as <em>byte</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>short</em></p></td>
+<td><p>0 as <em>short</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>int</em></p></td>
+<td><p>0 as <em>int</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>long</em></p></td>
+<td><p>0 as <em>long</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>float</em></p></td>
+<td><p>+0.0 as <em>float</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>double</em></p></td>
+<td><p>+0.0 as <em>double</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>char</em></p></td>
+<td><p>‘u0000’</p></td>
+</tr>
+<tr class="row-even"><td><p><em>boolean</em></p></td>
+<td><p><em>false</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>The default values of nullish union types are as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Data Type</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>type | null</p></td>
+<td><p><em>null</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>type | undefined</p></td>
+<td><p><em>undefined</em></p></td>
+</tr>
+<tr class="row-even"><td><p>null | undefined</p></td>
+<td><p><em>undefined</em></p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">  </span><span class="nx">f1</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="o">|</span><span class="kc">null</span>
+<span class="linenos">3</span><span class="w">  </span><span class="nx">f2</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="o">|</span><span class="kc">undefined</span>
+<span class="linenos">4</span><span class="w">  </span><span class="nx">f3?</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span>
+<span class="linenos">5</span><span class="p">}</span>
+<span class="linenos">6</span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">A</span><span class="p">()</span>
+<span class="linenos">7</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">f1</span><span class="p">,</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">f2</span><span class="p">,</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">f3</span><span class="p">)</span>
+<span class="linenos">8</span><span class="c1">// Output: null, undefined, undefined</span>
+</pre></div>
+</div>
+<hr class="docutils" id="index-48" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id36" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">3</a><span class="fn-bracket">]</span></span>
+<p>Wherever IEEE 754 is used in this Specification, the reference is to the
+latest revision of “754-2019 - IEEE Standard for Floating-Point Arithmetic”.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#predefined-types">3.1. Predefined Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-defined-types">3.2. User-Defined Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types-by-category">3.3. Types by Category</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-types">3.4. Using Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#named-types">3.5. Named Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#type-references">3.6. Type References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#value-types">3.7. Value Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#integer-types-and-operations">3.7.1. Integer Types and Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#floating-point-types-and-operations">3.7.2. Floating-Point Types and Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#numeric-types-hierarchy">3.7.3. Numeric Types Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boolean-types-and-operations">3.7.4. Boolean Types and Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-types">3.8. Reference Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#objects">3.8.1. Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#object-class-type">3.8.2. <em>Object</em> Class Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-type">3.8.3. <em>string</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#never-type">3.8.4. <em>never</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#void-type">3.8.5. <em>void</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#array-types">3.8.6. Array Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-types">3.8.7. Function Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#null-type">3.8.8. <em>null</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#undefined-type">3.8.9. <em>undefined</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tuple-types">3.8.10. Tuple Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#union-types">3.8.11. Union Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nullish-types">3.8.12. Nullish Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamicobject-type">3.8.13. DynamicObject Type</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#default-values-for-types">3.9. Default Values for Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="2_lexical.html" title="previous chapter"><span class="section-number">2. </span>Lexical Elements</a></li>
+      <li>Next: <a href="4_names.html" title="next chapter"><span class="section-number">4. </span>Names, Declarations and Scopes</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/3_types.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>10. Interfaces &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="11. Enumerations" href="11_enums.html" />
+    <link rel="prev" title="9. Classes" href="9_classes.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="interfaces">
+<span id="id1"></span><h1><span class="section-number">10. </span>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this heading">¶</a></h1>
+<p>An interface declaration declares an <em>interface type</em>, i.e., a reference
+type that:</p>
+<ul class="simple">
+<li><p>Includes constants, properties, and methods as its members;</p></li>
+<li><p>Has no instance variables;</p></li>
+<li><p>Usually declares one or more methods;</p></li>
+<li><p>Allows otherwise unrelated classes to provide implementations for the
+methods, and so implement the interface.</p></li>
+</ul>
+<p id="index-0">Interfaces cannot be instantiated directly.</p>
+<p>Interfaces can be <em>top-level</em> and local (see <a class="reference internal" href="9_classes.html#local-classes-and-interfaces"><span class="std std-ref">Local Classes and Interfaces</span></a>).</p>
+<p>An interface can be declared a <em>direct extension</em> of one or more other
+interfaces. In that case the interface inherits all members from the interfaces
+it extends (except any members it <em>overrides</em> or <em>hides</em>).</p>
+<p>A class can be declared to <em>directly implement</em> one or more interfaces. Any
+instance of the class implements all methods specified by the interface(s).
+A class implements all interfaces that its direct superclasses and direct
+superinterfaces implement. The interface inheritance allows objects to
+support common behaviors without sharing a superclass.</p>
+<p id="index-1">The value of a variable declared as an interface type can be a reference
+to any instance of the class that implements the specified interface.
+However, it is not enough for the class to implement all methods of the
+interface. The class or one of its superclasses must be actually
+declared to implement the interface. Otherwise such class is not
+considered to implement the interface.</p>
+<p>Interfaces without <em>interfaceExtendsClause</em> have class <em>Object</em> as their
+supertype (see <a class="reference internal" href="3_types.html#object-class-type"><span class="std std-ref">Object Class Type</span></a>). It enables assignments on the basis
+of reference types conversions (see <a class="reference internal" href="6_conversions.html#widening-reference-conversions"><span class="std std-ref">Widening Reference Conversions</span></a>).</p>
+<div class="line-block" id="index-2">
+<div class="line"><br /></div>
+</div>
+<section id="interface-declarations">
+<span id="id2"></span><h2><span class="section-number">10.1. </span>Interface Declarations<a class="headerlink" href="#interface-declarations" title="Permalink to this heading">¶</a></h2>
+<p>An <em>interface declaration</em> specifies a new named reference type:</p>
+<div class="highlight-abnf notranslate" id="index-3"><div class="highlight"><pre><span></span><span class="nc">interfaceDeclaration</span>:
+<span class="w">    </span>&#39;<span class="nc">interface</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">typeParameters</span>?
+<span class="w">    </span><span class="nc">interfaceExtendsClause</span>?<span class="w"> </span>&#39;{&#39;<span class="w"> </span><span class="nc">interfaceMember</span><span class="o">*</span><span class="w"> </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">interfaceExtendsClause</span>:
+<span class="w">    </span>&#39;<span class="nc">extends</span>&#39;<span class="w"> </span><span class="nc">interfaceTypeList</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">interfaceTypeList</span>:
+<span class="w">    </span><span class="nc">typeReference</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">typeReference</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The <em>identifier</em> in an interface declaration specifies the interface name.</p>
+<p>An interface declaration with <em>typeParameters</em> introduces a new generic
+interface in <a class="reference internal" href="5_generics.html#generic-declarations"><span class="std std-ref">Generic Declarations</span></a>.</p>
+<p>The scope of an interface declaration is defined in <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>.</p>
+<p>The interface declaration shadowing is specified in <a class="reference internal" href="4_names.html#shadowing-parameters"><span class="std std-ref">Shadowing Parameters</span></a>.</p>
+<div class="line-block" id="index-4">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="superinterfaces-and-subinterfaces">
+<span id="id3"></span><h2><span class="section-number">10.2. </span>Superinterfaces and Subinterfaces<a class="headerlink" href="#superinterfaces-and-subinterfaces" title="Permalink to this heading">¶</a></h2>
+<p>An interface declared with an <em>extends</em> clause extends all other named
+interfaces, and thus inherits all their members. Such other named interfaces
+are <em>direct superinterfaces</em> of a declared interface.</p>
+<p>A class that <em>implements</em> the declared interface also implements all the
+interfaces that the interface <em>extends</em>.</p>
+<p id="index-5">A compile-time error occurs if:</p>
+<ul class="simple">
+<li><p><em>typeReference</em> in the <em>extends</em> clause of an interface declaration
+names an interface type that is not accessible (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p></li>
+<li><p>Type arguments of <em>typeReference</em> denote a parameterized type that
+is not well-formed (see <a class="reference internal" href="5_generics.html#generic-instantiations"><span class="std std-ref">Generic Instantiations</span></a>).</p></li>
+<li><p>There is a cycle in <em>extends</em> graph.</p></li>
+<li><p>At least one of <em>typeReference</em>’s is an alias of one of primitive or
+enum types.</p></li>
+<li><p>Any type argument is a wildcard type.</p></li>
+</ul>
+<p>Each <em>typeReference</em> in the <em>extends</em> clause of an interface declaration must
+name an accessible interface type (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>). Otherwise, a
+compile-time error occurs.</p>
+<p id="index-6">If an interface declaration (possibly generic) <em>I</em> &lt;<em>F</em><sub>1</sub>,…,
+<em>F</em><sub>n</sub>&gt; (<span class="math notranslate nohighlight">\(n\geq{}0\)</span>) contains an <em>extends</em> clause, then the
+<em>direct superinterfaces</em> of the interface type <em>I</em> &lt;<em>F</em><sub>1</sub>,…,
+<em>F</em><sub>n</sub>&gt; are the types given in the <em>extends</em> clause of the declaration
+of <em>I</em>.</p>
+<p>The <em>direct superinterfaces</em> of the parameterized interface type <em>I</em>
+&lt;<em>T</em><sub>1</sub>,…, <em>T</em><sub>n</sub>&gt; are all types <em>J</em>
+&lt;<em>U</em><sub>1</sub><span class="math notranslate nohighlight">\(\theta{}\)</span>,…, <em>U</em><sub>k</sub><span class="math notranslate nohighlight">\(\theta{}\)</span>&gt;, if:</p>
+<ul class="simple">
+<li><p><em>T</em><sub>i</sub> (<span class="math notranslate nohighlight">\(1\leq{}i\leq{}n\)</span>) is the type of a generic interface
+declaration <em>I</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt; (<span class="math notranslate nohighlight">\(n &gt; 0\)</span>);</p></li>
+<li><p><em>J</em> &lt;<em>U</em><sub>1</sub>,…, <em>U</em><sub>k</sub>&gt; is a direct superinterface of
+<em>I</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt;; and</p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta{}\)</span> is the substitution
+[<em>F</em><sub>1</sub> := <em>T</em><sub>1</sub>,…, <em>F</em><sub>n</sub> := <em>T</em><sub>n</sub>].</p></li>
+</ul>
+<p id="index-7">The transitive closure of the direct superinterface relationship results in
+the <em>superinterface</em> relationship.</p>
+<p>Wherever <em>K</em> is a superinterface of the interface <em>I</em>, <em>I</em> is a <em>subinterface</em>
+of <em>K</em>.</p>
+<p>The interface <em>K</em> is a superinterface of the interface <em>I</em> if:</p>
+<ul class="simple">
+<li><p><em>I</em> is a direct subinterface of <em>K</em>; or</p></li>
+<li><p><em>K</em> is a superinterface of some interface <em>J</em> of which <em>I</em> is, in its turn,
+a subinterface.</p></li>
+</ul>
+<p id="index-8">There is no single interface to which all interfaces are extensions (unlike
+class <em>Object</em> to which every class is an extension).</p>
+<p>If the <em>extends</em> clause of <em>I</em> mentions <em>T</em> as a superinterface, or as a
+qualifier in the fully qualified form of a superinterface name, then the
+interface <em>I</em> <em>directly depends</em> on type <em>T</em>.</p>
+<p>Moreover, the interface <em>I</em> <em>depends</em> on a reference type <em>T</em> if:</p>
+<ul class="simple">
+<li><p><em>I</em> directly depends on <em>T</em>; or</p></li>
+<li><p><em>I</em> directly depends on the class <em>C</em> that depends on <em>T</em> (see
+<a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>); or</p></li>
+<li><p><em>I</em> directly depends on the interface <em>J</em> that, in its turn, depends
+on <em>T</em>.</p></li>
+</ul>
+<p>A compile-time error occurs if an interface depends on itself.</p>
+<p><em>ClassCircularityError</em> is thrown if circularly declared interfaces
+are detected as interfaces and loaded at runtime.</p>
+<div class="line-block" id="index-9">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="interface-body">
+<span id="id4"></span><h2><span class="section-number">10.3. </span>Interface Body<a class="headerlink" href="#interface-body" title="Permalink to this heading">¶</a></h2>
+<p>The body of an interface may declare members of the interface, i.e.,
+properties (see <a class="reference internal" href="#interface-declarations"><span class="std std-ref">Interface Declarations</span></a>) and methods (see
+<a class="reference internal" href="9_classes.html#method-declarations"><span class="std std-ref">Method Declarations</span></a>).</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">interfaceMember</span>
+<span class="w">    </span>:<span class="w"> </span><span class="nc">interfaceProperty</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">interfaceMethodDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The scope of declaration of a member <em>m</em> that the interface type <em>I</em>
+declares or inherits is specified in <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>.</p>
+<div class="line-block" id="index-10">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="interface-members">
+<span id="id5"></span><h2><span class="section-number">10.4. </span>Interface Members<a class="headerlink" href="#interface-members" title="Permalink to this heading">¶</a></h2>
+<p>Interface type members are as follows:</p>
+<ul class="simple">
+<li><p>Members declared in the interface body (see <a class="reference internal" href="#interface-body"><span class="std std-ref">Interface Body</span></a>);</p></li>
+<li><p>Members inherited from a direct superinterface (see
+<a class="reference internal" href="#superinterfaces-and-subinterfaces"><span class="std std-ref">Superinterfaces and Subinterfaces</span></a>).</p></li>
+</ul>
+<p>An interface without a direct superinterface implicitly declares the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Abstract-member method <em>m</em> (see <a class="reference internal" href="#interface-method-declarations"><span class="std std-ref">Interface Method Declarations</span></a>)
+with signature <em>s</em>;</p></li>
+<li><p>Return type <em>r</em> and ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause <em>t</em> that correspond to each <em>public</em>
+instance method <em>m</em> with signature <em>s</em>;</p></li>
+<li><p>Return type <em>r</em> and ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause <em>t</em> declared in <em>Object</em> (see
+<a class="reference internal" href="3_types.html#object-class-type"><span class="std std-ref">Object Class Type</span></a>);</p></li>
+</ul>
+</div></blockquote>
+<p>—if the interface does not explicitly declare an abstract method (see
+<a class="reference internal" href="#interface-method-declarations"><span class="std std-ref">Interface Method Declarations</span></a>) with the same signature and return
+type, and a compatible ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause.</p>
+<p>A compile-time error occurs if the interface explicitly declares:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Method <em>m</em> that <em>Object</em> declares as <em>final</em>.</p></li>
+<li><p>A method with a signature that is override-equivalent (see
+<a class="reference internal" href="4_names.html#signatures"><span class="std std-ref">Signatures</span></a>) to the <em>Object</em>’s <em>public</em> method, but is not
+<em>abstract</em>, and has a different return type or an incompatible
+‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause.</p></li>
+</ul>
+</div></blockquote>
+<p id="index-11">An interface normally inherits all members of the interfaces it extends.
+However, an interface does not inherit the following:</p>
+<ul class="simple">
+<li><p>Fields it hides;</p></li>
+<li><p>Methods it overrides (see <a class="reference internal" href="#inheritance-and-overriding"><span class="std std-ref">Inheritance and Overriding</span></a>).</p></li>
+</ul>
+<p>A name in a declaration scope must be unique, i.e., the names of fields and
+methods of an interface type must not be the same (see <a class="reference internal" href="#interface-declarations"><span class="std std-ref">Interface Declarations</span></a>).</p>
+<div class="line-block" id="index-12">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="interface-properties">
+<span id="id6"></span><h2><span class="section-number">10.5. </span>Interface Properties<a class="headerlink" href="#interface-properties" title="Permalink to this heading">¶</a></h2>
+<p>An interface property can be defined in the form of a field or an accessor
+(a getter or a setter):</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">interfaceProperty</span>:
+<span class="w">    </span><span class="nc">readonly</span>?<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;?&#39;?<span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">get</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">returnType</span>
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">set</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">parameter</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>If a property is defined in the form of a field, then it implicitly defines
+the following:</p>
+<ul class="simple">
+<li><p>A getter, if a field is marked as <em>readonly</em>;</p></li>
+<li><p>Otherwise, both a getter and a setter with the same name.</p></li>
+</ul>
+<p>If <em>‘?’</em> is used after the name of the property, then its actual type is
+<em>type</em> | <em>undefined</em>.</p>
+<p id="index-13">As a result, the effect of the following definitions is the same:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Style</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos">3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="c1">// is the same as</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Style</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">6</span><span class="w">     </span><span class="nx">get</span><span class="w"> </span><span class="nx">color</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos">7</span><span class="w">     </span><span class="nx">set</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span>
+<span class="linenos">8</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A class that implements an interface with properties can also use a field or
+an accessor notation (see <a class="reference internal" href="9_classes.html#implementing-interface-properties"><span class="std std-ref">Implementing Interface Properties</span></a>).</p>
+<div class="line-block" id="index-14">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="interface-method-declarations">
+<span id="id7"></span><h2><span class="section-number">10.6. </span>Interface Method Declarations<a class="headerlink" href="#interface-method-declarations" title="Permalink to this heading">¶</a></h2>
+<p>An ordinary interface method declaration that specifies the method’s name and
+signature is called <em>abstract</em>.</p>
+<p>As experimental features, an interface method can have a body (see
+<a class="reference internal" href="17_experimental.html#default-method-declarations"><span class="std std-ref">Default Method Declarations</span></a>) and be <em>static</em> (see <a class="reference internal" href="17_experimental.html#static-method-declarations"><span class="std std-ref">Static Method Declarations</span></a>).</p>
+<div class="highlight-abnf notranslate" id="index-15"><div class="highlight"><pre><span></span><span class="nc">interfaceMethodDeclaration</span>:
+<span class="w">    </span><span class="nc">interfaceMethodOverloadSignature</span><span class="o">*</span>
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">signature</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">interfaceDefaultMethodDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">interfaceStaticMethodDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The methods declared within interface bodies are implicitly <em>public</em>.</p>
+<p>A compile-time error occurs if the body of an interface declares:</p>
+<ul class="simple">
+<li><p>A method with a name already used for a field in this declaration.</p></li>
+<li><p>Two methods (overridden explicitly or implicitly) with override-equivalent
+signatures (see <a class="reference internal" href="4_names.html#signatures"><span class="std std-ref">Signatures</span></a>), if such signatures are not inherited
+(see <a class="reference internal" href="#inheritance-and-overriding"><span class="std std-ref">Inheritance and Overriding</span></a>).</p></li>
+</ul>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+<section id="interface-method-overload-signatures">
+<span id="interface-methods-overload-signatures"></span><h3><span class="section-number">10.6.1. </span>Interface Method Overload Signatures<a class="headerlink" href="#interface-method-overload-signatures" title="Permalink to this heading">¶</a></h3>
+<p>ArkTS allows specifying a method that can have several <em>overload signatures</em>
+but a single name.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">interfaceMethodOverloadSignature</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">signature</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Calling a method with <em>overload signatures</em> means that that the method called
+implements the overload signature that is textually the last.</p>
+<p>The <em>Overload signature</em> compatibility requirements are discussed in
+<a class="reference internal" href="15_semantics.html#overload-signature-compatibility"><span class="std std-ref">Overload Signature Compatibility</span></a>.</p>
+<p>In the example below, one overload signature is parameterless, and the other
+two have one parameter each:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">     </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">           </span><span class="c1">// 1st signature</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">  </span><span class="c1">// 2nd signature</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="c1">// 3rd - implementation signature</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">demo</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">C</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span><span class="w">           </span><span class="c1">// ok, call fits 1st and 3rd signatures</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">(</span><span class="s2">&quot;aa&quot;</span><span class="p">)</span><span class="w">       </span><span class="c1">// ok, call fits 2nd and 3rd signatures</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w">  </span><span class="c1">// ok, call fits the 3rd signature</span>
+<span class="linenos">10</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If a class implements an interface that has a method with an overload
+signature, then the class must also provide a method that has an overload
+signature.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Interface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">   </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Class</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">Interface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">   </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span>
+<span class="linenos">11</span><span class="w">   </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-17">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="inheritance-and-overriding">
+<span id="id8"></span><h3><span class="section-number">10.6.2. </span>Inheritance and Overriding<a class="headerlink" href="#inheritance-and-overriding" title="Permalink to this heading">¶</a></h3>
+<p>The interface <em>I</em> inherits any abstract and default method <em>m</em> from its
+direct superinterfaces if <strong>all</strong> of the following is true:</p>
+<ul class="simple">
+<li><p><em>m</em> is a member of <em>I</em>’s direct superinterface <em>J</em>;</p></li>
+<li><p><em>I</em> declares no method with a signature that is compatible with the
+signature of <em>m</em> (see <a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>);</p></li>
+<li><p>No method <span class="math notranslate nohighlight">\(m'\)</span> that is a member of <em>I</em>’s direct superinterface
+<span class="math notranslate nohighlight">\(J'\)</span> (where <em>m</em> is distinct from <span class="math notranslate nohighlight">\(m'\)</span>, and <em>J</em> from <span class="math notranslate nohighlight">\(J'\)</span>)
+overrides the declaration of the method <em>m</em> from <span class="math notranslate nohighlight">\(J'\)</span>.</p></li>
+</ul>
+<p id="index-18">An interface does not inherit <em>private</em> or <em>static</em> methods from its
+superinterfaces.</p>
+<p>A compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>The interface <em>I</em> declares a <em>private</em> or <em>static</em> method <em>m</em>;</p></li>
+<li><p>The signature of <em>m</em> is compatible with the <em>public</em> instance method
+<span class="math notranslate nohighlight">\(m'\)</span> in a superinterface of <em>I</em> (see <a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>); and</p></li>
+<li><p><span class="math notranslate nohighlight">\(m'\)</span> is otherwise accessible to code in <em>I</em>.</p></li>
+</ul>
+<div class="line-block" id="index-19">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="overriding-by-instance-methods">
+<span id="overriding-by-instance-methods-in-interfaces"></span><h3><span class="section-number">10.6.3. </span>Overriding by Instance Methods<a class="headerlink" href="#overriding-by-instance-methods" title="Permalink to this heading">¶</a></h3>
+<p>The instance method <em>m</em><sub>I</sub> (declared in, or inherited by the interface <em>I</em>)
+overrides another instance method <em>m</em><sub>J</sub> of <em>I</em> (declared in interface <em>J</em>)
+if <strong>all</strong> of the following is true:</p>
+<ul class="simple">
+<li><p><em>J</em> is a superinterface of <em>I</em>;</p></li>
+<li><p><em>I</em> does not inherit <em>m</em><sub>J</sub>;</p></li>
+<li><p>The signature of <em>m</em><sub>I</sub> is compatible with (see
+<a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>) the signature of <em>m</em><sub>J</sub>; and</p></li>
+<li><p><em>m</em><sub>J</sub> is <em>public</em>.</p></li>
+</ul>
+<div class="line-block" id="index-20">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="overriding-requirements">
+<span id="id9"></span><h3><span class="section-number">10.6.4. </span>Overriding Requirements<a class="headerlink" href="#overriding-requirements" title="Permalink to this heading">¶</a></h3>
+<p>The following kinds of relationships are described in <a class="reference internal" href="9_classes.html#requirements-in-overriding-and-hiding"><span class="std std-ref">Requirements in Overriding and Hiding</span></a>:</p>
+<ul class="simple">
+<li><p>The relationship between the return type of an interface and that of any
+overridden interface method.</p></li>
+<li><p>The relationship between the ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause of an interface method and
+that of any overridden interface method.</p></li>
+<li><p>The relationship between the signatures of an interface method and that
+of any overridden interface method.</p></li>
+<li><p>The relationship between the accessibility of an interface method and that
+of any overridden interface method.</p></li>
+</ul>
+<p>A compile-time error occurs if a default method is override-equivalent to a
+non-<em>private</em> method of the class <em>Object</em>. Any class that implements
+interface must inherit the method’s own implementation.</p>
+<div class="line-block" id="index-21">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="interfaces-inheriting-methods-with-override-equivalent-signatures">
+<span id="id10"></span><h3><span class="section-number">10.6.5. </span>Interfaces Inheriting Methods with Override-Equivalent Signatures<a class="headerlink" href="#interfaces-inheriting-methods-with-override-equivalent-signatures" title="Permalink to this heading">¶</a></h3>
+<p>An interface can inherit several methods with override-equivalent signatures
+(see <a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>).</p>
+<p>A compile-time error occurs if the interface <em>I</em> inherits a default method with
+a signature that is override-equivalent to an abstract or default method
+inherited by <em>I</em>.</p>
+<p>However, the interface <em>I</em> inherits all methods that are abstract.</p>
+<p>A compile-time error occurs if one of the inherited methods for every other
+inherited method is not return-type-substitutable. A ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ clause causes
+no error in such cases.</p>
+<p>The same method declaration can use multiple paths of inheritance from an
+interface. It causes no compile-time error on its own.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#interface-declarations">10.1. Interface Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#superinterfaces-and-subinterfaces">10.2. Superinterfaces and Subinterfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-body">10.3. Interface Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-members">10.4. Interface Members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-properties">10.5. Interface Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-method-declarations">10.6. Interface Method Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#interface-method-overload-signatures">10.6.1. Interface Method Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inheritance-and-overriding">10.6.2. Inheritance and Overriding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overriding-by-instance-methods">10.6.3. Overriding by Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overriding-requirements">10.6.4. Overriding Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interfaces-inheriting-methods-with-override-equivalent-signatures">10.6.5. Interfaces Inheriting Methods with Override-Equivalent Signatures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="9_classes.html" title="previous chapter"><span class="section-number">9. </span>Classes</a></li>
+      <li>Next: <a href="11_enums.html" title="next chapter"><span class="section-number">11. </span>Enumerations</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/10_interfaces.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

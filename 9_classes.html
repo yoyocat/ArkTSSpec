@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>9. Classes &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="10. Interfaces" href="10_interfaces.html" />
+    <link rel="prev" title="8. Statements" href="8_statements.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="classes">
+<span id="id1"></span><h1><span class="section-number">9. </span>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h1>
+<p>Class declarations introduce new reference types and describe the manner
+of their implementation.</p>
+<p>Classes can be <em>top-level</em> and local (see <a class="reference internal" href="#local-classes-and-interfaces"><span class="std std-ref">Local Classes and Interfaces</span></a>).</p>
+<p>A class body contains declarations and class initializers.</p>
+<p>Declarations can introduce class members (see <a class="reference internal" href="#class-members"><span class="std std-ref">Class Members</span></a>) or class
+constructors (see <a class="reference internal" href="#constructor-declaration"><span class="std std-ref">Constructor Declaration</span></a>).</p>
+<p>The body of the declaration of a member comprises the scope of a
+declaration (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p>
+<p>Class members include:</p>
+<ul class="simple">
+<li><p>Fields,</p></li>
+<li><p>Methods, and</p></li>
+<li><p>Accessors.</p></li>
+</ul>
+<p id="index-0">Class members can be <em>declared</em> or <em>inherited</em>.</p>
+<p>Every member is associated with the class declaration it is declared in.</p>
+<p>Field, method, accessor and constructor declarations can have the following
+access modifiers (see <a class="reference internal" href="#access-modifiers"><span class="std std-ref">Access Modifiers</span></a>):</p>
+<ul class="simple">
+<li><p><em>Public</em>,</p></li>
+<li><p><em>Protected</em>,</p></li>
+<li><p><em>Internal</em>, or</p></li>
+<li><p><em>Private</em>.</p></li>
+</ul>
+<p>A newly declared field can hide a field declared in a superclass or
+superinterface.</p>
+<p>A newly declared method can hide, implement, or override a method
+declared in a superclass or superinterface.</p>
+<p>Every class defines two scopes (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>): one for instance members,
+and the other for static members. This means that two members of a class can
+have the same name if one is static while the other is not.</p>
+<p>The body of the declaration of a method (see <a class="reference internal" href="#method-declarations"><span class="std std-ref">Method Declarations</span></a>)
+comprises the scope of a declaration (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p>
+<div class="line-block" id="index-1">
+<div class="line"><br /></div>
+</div>
+<section id="class-declarations">
+<span id="id2"></span><h2><span class="section-number">9.1. </span>Class Declarations<a class="headerlink" href="#class-declarations" title="Permalink to this heading">¶</a></h2>
+<p>Every class declaration defines a <strong>Class type</strong>, i.e., a new named
+reference type.</p>
+<p>The class name is specified by the <em>identifier</em> inside a class declaration.</p>
+<p>If <em>typeParameters</em> are defined in a class declaration, then that class
+is a <em>generic class</em> (see <a class="reference internal" href="5_generics.html#generic-declarations"><span class="std std-ref">Generic Declarations</span></a>).</p>
+<div class="highlight-abnf notranslate" id="index-2"><div class="highlight"><pre><span></span><span class="nc">classDeclaration</span>:
+<span class="w">    </span><span class="nc">classModifier</span>?<span class="w"> </span>&#39;<span class="nc">class</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">typeParameters</span>?
+<span class="w">      </span><span class="nc">classExtendsClause</span>?<span class="w"> </span><span class="nc">implementsClause</span>?<span class="w"> </span><span class="nc">classBody</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">classModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">abstract</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">final</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The scope of a class declaration is specified in <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>.</p>
+<p>An example of a class is presented below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">x</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">y</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="nx">distanceBetween</span><span class="p">(</span><span class="nx">other</span><span class="o">:</span><span class="w"> </span><span class="kt">Point</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span>
+<span class="linenos">10</span><span class="w">       </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">other</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">other</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="linenos">11</span><span class="w">       </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">other</span><span class="p">.</span><span class="nx">y</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">other</span><span class="p">.</span><span class="nx">y</span><span class="p">)</span>
+<span class="linenos">12</span><span class="w">     </span><span class="p">)</span>
+<span class="linenos">13</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">14</span><span class="w">   </span><span class="k">static</span><span class="w"> </span><span class="nx">origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Point</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="linenos">15</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="abstract-classes">
+<span id="id3"></span><h3><span class="section-number">9.1.1. </span>Abstract Classes<a class="headerlink" href="#abstract-classes" title="Permalink to this heading">¶</a></h3>
+<p>A class with the modifier <code class="docutils literal notranslate"><span class="pre">abstract</span></code> is known as <em>abstract</em> class.
+Abstract classes can be used to represent notions that are common
+to some set of more concrete notions.</p>
+<p>A <span class="target" id="index-3"></span>compile-time error occurs if an attempt is made to create
+an instance of an abstract class:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">X</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kr">constructor</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="p">}</span>
+<span class="linenos">5</span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">X</span><span class="w"> </span><span class="p">(</span><span class="mf">666</span><span class="p">)</span>
+<span class="linenos">6</span><span class="w">  </span><span class="c1">// Compile-time error: Cannot create an instance of an abstract class.</span>
+</pre></div>
+</div>
+<p>Subclasses of an abstract class can be non-abstract or in turn abstract.
+A non-abstract subclass of an abstract superclass can be instantiated. As a
+result, a constructor for the abstract class, and field initializers
+for non-static fields of that class are executed.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">3</span><span class="w">   </span><span class="kr">constructor</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="p">}</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">7</span><span class="w">   </span><span class="kr">constructor</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">super</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">8</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A method with the modifier <code class="docutils literal notranslate"><span class="pre">abstract</span></code> is considered an <em>abstract method</em>
+(see <a class="reference internal" href="#abstract-methods"><span class="std std-ref">Abstract Methods</span></a>).
+Abstract methods do not have bodies, i.e., they can be declared but not
+implemented.</p>
+<p>Only abstract classes can have abstract methods.
+A <span class="target" id="index-4"></span>compile-time error occurs if a non-abstract class has
+an abstract method:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kd">class</span><span class="w"> </span><span class="nx">Y</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span>
+<span class="linenos">3</span><span class="w">  </span><span class="cm">/* Compile-time error: Abstract methods can only</span>
+<span class="linenos">4</span><span class="cm">     be within an abstract class. */</span>
+<span class="linenos">5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-5"></span>compile-time error occurs if an abstract method declaration
+contains the modifiers <code class="docutils literal notranslate"><span class="pre">final</span></code> or <code class="docutils literal notranslate"><span class="pre">override</span></code>.</p>
+<div class="line-block" id="index-6">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="final-classes">
+<span id="id4"></span><h3><span class="section-number">9.1.2. </span>Final Classes<a class="headerlink" href="#final-classes" title="Permalink to this heading">¶</a></h3>
+<p>Final classes are described in the chapter Experimental Features (see
+<a class="reference internal" href="17_experimental.html#final-classes-experimental"><span class="std std-ref">Final Classes</span></a>).</p>
+<div class="line-block" id="index-7">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="class-extension-clause">
+<span id="id5"></span><h3><span class="section-number">9.1.3. </span>Class Extension Clause<a class="headerlink" href="#class-extension-clause" title="Permalink to this heading">¶</a></h3>
+<p>All classes except class <em>Object</em> can contain the <em>extends</em> clause that
+specifies the <em>base class</em>, or the <em>direct superclass</em> of the current class.
+A class that has no <em>extends</em> clause, and is not <em>Object</em>, is assumed to have
+the <em>extends</em> <em>Object</em> clause.</p>
+<p>The class that inherits from its superclass is called <em>subclass</em> of that
+superclass.</p>
+<div class="highlight-abnf notranslate" id="index-8"><div class="highlight"><pre><span></span><span class="nc">classExtendsClause</span>:
+<span class="w">    </span>&#39;<span class="nc">extends</span>&#39;<span class="w"> </span><span class="nc">typeReference</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-9"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>An <em>extends</em> clause appears in the definition of the class <em>Object</em>,
+which is the top of the type hierarchy, and has no superclass.</p></li>
+<li><p>The class type named by <em>typeReference</em> is not accessible (see
+<a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p></li>
+<li><p>The ‘extends’ graph has a cycle.</p></li>
+<li><p><em>typeReference</em> refers directly, or as alias of types <em>primitive</em>, <em>enum</em>,
+<em>union</em>, <em>interface</em>, or <em>function</em>.</p></li>
+<li><p>Any type argument of <em>typeReference</em> is a wildcard type argument.</p></li>
+</ul>
+<p><em>Class extension</em> implies that a class inherits all members of the direct
+superclass. Notice that private members are also inherited from the superclass
+but they are not accessible within the subclass.</p>
+<div class="highlight-typescript notranslate" id="index-10"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="c1">// All methods are mutually accessible in the class where</span>
+<span class="linenos"> 3</span><span class="w">       </span><span class="nx">they</span><span class="w"> </span><span class="nx">were</span><span class="w"> </span><span class="nx">declared</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="k">public</span><span class="w"> </span><span class="nx">publicMethod</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">protectedMethod</span><span class="p">()</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">privateMethod</span><span class="p">()</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w">   </span><span class="k">protected</span><span class="w"> </span><span class="nx">protectedMethod</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">publicMethod</span><span class="p">()</span>
+<span class="linenos">10</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">privateMethod</span><span class="p">()</span>
+<span class="linenos">11</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">12</span><span class="w">   </span><span class="k">private</span><span class="w"> </span><span class="nx">privateMethod</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">13</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">publicMethod</span><span class="p">();</span>
+<span class="linenos">14</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">protectedMethod</span><span class="p">()</span>
+<span class="linenos">15</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">16</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">17</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">18</span><span class="w">   </span><span class="nx">foo</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">19</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">publicMethod</span><span class="p">()</span><span class="w">    </span><span class="c1">// OK</span>
+<span class="linenos">20</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">protectedMethod</span><span class="p">()</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="linenos">21</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">privateMethod</span><span class="p">()</span><span class="w">   </span><span class="c1">// compile-time error:</span>
+<span class="linenos">22</span><span class="w">                            </span><span class="c1">// the private method is inaccessible</span>
+<span class="linenos">23</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">24</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The transitive closure of a <em>direct subclass</em> relationship is the <em>subclass</em>
+relationship. Class <em>A</em> can be a subclass of class <em>C</em> if:</p>
+<ul class="simple">
+<li><p><em>A</em> is the direct subclass of <em>C</em>; or</p></li>
+<li><p><em>A</em> is a subclass of some class <em>B</em>,  which is in turn a subclass of <em>C</em>
+(i.e., the definition applies recursively).</p></li>
+</ul>
+<p>Class <em>C</em> is a <em>superclass</em> of class <em>A</em> if <em>A</em> is its subclass.</p>
+<div class="line-block" id="index-11">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="class-implementation-clause">
+<span id="id6"></span><h3><span class="section-number">9.1.4. </span>Class Implementation Clause<a class="headerlink" href="#class-implementation-clause" title="Permalink to this heading">¶</a></h3>
+<p>A class can implement one or more interfaces. Interfaces that
+are to be implemented by a class are listed in the <em>implements</em> clause.
+Interfaces listed in this clause are <em>direct superinterfaces</em>
+of the class.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">implementsClause</span>:
+<span class="w">    </span>&#39;<span class="nc">implements</span>&#39;<span class="w"> </span><span class="nc">interfaceTypeList</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">interfaceTypeList</span>:
+<span class="w">    </span><span class="nc">typeReference</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">typeReference</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-12"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p><em>typeReference</em> fails to name an accessible interface type (see
+<a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p></li>
+<li><p>Any type argument of <em>typeReference</em> is a wildcard type argument.</p></li>
+<li><p>An interface is repeated as a direct superinterface in a single
+<em>implements</em> clause (even if that interface is named differently).</p></li>
+</ul>
+<p id="index-13">For the class declaration <em>C</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt; (<span class="math notranslate nohighlight">\(n\geq{}0\)</span>,
+<span class="math notranslate nohighlight">\(C\neq{}Object\)</span>):</p>
+<ul class="simple">
+<li><p><em>Direct superinterfaces</em> of the class type <em>C</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt;
+are the types specified in the <em>implements</em> clause of the declaration of <em>C</em>
+(if there is an <em>implements</em> clause).</p></li>
+</ul>
+<p>For the generic class declaration <em>C</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt; (<em>n</em> &gt; <em>0</em>):</p>
+<ul>
+<li><p><em>Direct superinterfaces</em> of the parameterized class type <em>C</em>
+&lt; <em>T</em><sub>1</sub>,…, <em>T</em><sub>n</sub>&gt; are all types <em>I</em>
+&lt;<em>U</em><sub>1</sub><span class="math notranslate nohighlight">\(\theta{}\)</span>,…, <em>U</em><sub>k</sub><span class="math notranslate nohighlight">\(\theta{}\)</span>&gt; if:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>T</em><sub>i</sub> (<span class="math notranslate nohighlight">\(1\leq{}i\leq{}n\)</span>) is a type;</p></li>
+<li><p><em>I</em> &lt;<em>U</em><sub>1</sub>,…, <em>U</em><sub>k</sub>&gt; is the direct superinterface of
+<em>C</em> &lt;<em>F</em><sub>1</sub>,…, <em>F</em><sub>n</sub>&gt;; and</p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta{}\)</span> is the substitution [<em>F</em><sub>1</sub>:= <em>T</em><sub>1</sub>,…,
+<em>F</em><sub>n</sub>:= <em>T</em><sub>n</sub>].</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p id="index-14">Interface type <em>I</em> is a superinterface of class type <em>C</em> if <em>I</em> is one of the
+following:</p>
+<ul class="simple">
+<li><p>Direct superinterface of <em>C</em>;</p></li>
+<li><p>Superinterface of <em>J</em> which is in turn a direct superinterface of <em>C</em>
+(see <a class="reference internal" href="10_interfaces.html#superinterfaces-and-subinterfaces"><span class="std std-ref">Superinterfaces and Subinterfaces</span></a> that defines superinterface
+of an interface); or</p></li>
+<li><p>Superinterface of the direct superclass of <em>C</em>.</p></li>
+</ul>
+<p>A class <em>implements</em> all its superinterfaces.</p>
+<p>A <span class="target" id="index-15"></span>compile-time error occurs if a class is at the same time a
+subtype of:</p>
+<ul class="simple">
+<li><p>Two interface types that represent different instantiations of the same
+generic interface (see <a class="reference internal" href="5_generics.html#generic-declarations"><span class="std std-ref">Generic Declarations</span></a>); or</p></li>
+<li><p>The instantiation of a generic interface, and a raw type that names the
+a generic interface.</p></li>
+</ul>
+<p id="index-16">If a class is not declared <em>abstract</em>, then:</p>
+<ul class="simple">
+<li><p>Any <em>abstract</em> method of each direct superinterface is implemented
+(see <a class="reference internal" href="#overriding-by-instance-methods"><span class="std std-ref">Overriding by Instance Methods</span></a>) by a declaration in that class.</p></li>
+<li><p>The declaration of the existing method is inherited from a direct superclass,
+or a direct superinterface.</p></li>
+</ul>
+<p>If a default method (see <a class="reference internal" href="17_experimental.html#default-method-declarations"><span class="std std-ref">Default Method Declarations</span></a>) of a
+superinterface is not inherited, then that default method can:</p>
+<ul class="simple">
+<li><p>Be overridden by a class method; and</p></li>
+<li><p>Behave as specified in its default body.</p></li>
+</ul>
+<p>A single method declaration in a class is allowed to implement methods of one
+or more superinterfaces.</p>
+<p>A <span class="target" id="index-17"></span>compile-time error occurs if a class field and a method from one
+of superinterfaces that a class implements have the same name, except when one
+is static and the other is not.</p>
+<div class="line-block" id="index-18">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="implementing-interface-properties">
+<span id="id7"></span><h3><span class="section-number">9.1.5. </span>Implementing Interface Properties<a class="headerlink" href="#implementing-interface-properties" title="Permalink to this heading">¶</a></h3>
+<p>A class must implement all properties from all interfaces (see
+<a class="reference internal" href="#implementing-interface-properties"><span class="std std-ref">Implementing Interface Properties</span></a>) which are defined as a getter, a
+setter, or both. Providing implementation for the property in the form of
+a field is not necessary.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Style</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="nx">get</span><span class="w"> </span><span class="nx">color</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="nx">set</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">StyleClassOne</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">Style</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">StyleClassTwo</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">Style</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="w">   </span><span class="k">private</span><span class="w"> </span><span class="nx">color_</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">   </span><span class="nx">get</span><span class="w"> </span><span class="nx">color</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">14</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">color_</span>
+<span class="linenos">15</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="w">   </span><span class="nx">set</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">18</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">color_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">s</span>
+<span class="linenos">19</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">20</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-19">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="class-body">
+<span id="id8"></span><h2><span class="section-number">9.2. </span>Class Body<a class="headerlink" href="#class-body" title="Permalink to this heading">¶</a></h2>
+<p>A <em>class body</em> can contain declarations of the following members:</p>
+<ul class="simple">
+<li><p>Fields,</p></li>
+<li><p>Methods,</p></li>
+<li><p>Accessors,</p></li>
+<li><p>Constructors, and</p></li>
+<li><p>Static initializers for the class.</p></li>
+</ul>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">classBody</span>:
+<span class="w">    </span>&#39;{&#39;
+<span class="w">       </span><span class="nc">classBodyDeclaration</span><span class="o">*</span><span class="w"> </span><span class="nc">classInitializer</span>?<span class="w"> </span><span class="nc">classBodyDeclaration</span><span class="o">*</span>
+<span class="w">    </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">classBodyDeclaration</span>:
+<span class="w">    </span><span class="nc">accessModifier</span>?
+<span class="w">    </span><span class="p">(</span><span class="w"> </span><span class="nc">constructorDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">classFieldDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">classMethodDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">classAccessorDeclaration</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Declarations can be inherited or immediately declared in a class. Any
+declaration within a class has a class scope. The class scope is fully
+defined in <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>.</p>
+<div class="line-block" id="index-20">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="class-members">
+<span id="id9"></span><h2><span class="section-number">9.3. </span>Class Members<a class="headerlink" href="#class-members" title="Permalink to this heading">¶</a></h2>
+<p>Class members are as follows:</p>
+<ul class="simple">
+<li><p>Members inherited from their direct superclass (see <a class="reference internal" href="#inheritance"><span class="std std-ref">Inheritance</span></a>),
+except class <em>Object</em> that cannot have a direct superclass.</p></li>
+<li><p>Members declared in a direct superinterface (see
+<a class="reference internal" href="10_interfaces.html#superinterfaces-and-subinterfaces"><span class="std std-ref">Superinterfaces and Subinterfaces</span></a>).</p></li>
+<li><p>Members declared in the class body (see <a class="reference internal" href="#class-body"><span class="std std-ref">Class Body</span></a>).</p></li>
+</ul>
+<p>Class members declared <em>private</em> are not accessible to all subclasses of
+the class.</p>
+<p id="index-21">Class members declared <em>protected</em> or <em>public</em> are inherited by subclasses
+that are declared in a package other than the package containing the class
+declaration.</p>
+<p>Constructors and class initializers are not members, and are not inherited.</p>
+<p>Members can be as follows:</p>
+<ul class="simple">
+<li><p>Class fields (see <a class="reference internal" href="#field-declarations"><span class="std std-ref">Field Declarations</span></a>),</p></li>
+<li><p>Methods (see <a class="reference internal" href="#method-declarations"><span class="std std-ref">Method Declarations</span></a>), and</p></li>
+<li><p>Accessors (see <a class="reference internal" href="#accessor-declarations"><span class="std std-ref">Accessor Declarations</span></a>).</p></li>
+</ul>
+<p>A <em>method</em> is defined by the following:</p>
+<ol class="arabic simple">
+<li><p><em>Type parameter</em>, i.e., the declaration of any type parameter of the
+method member.</p></li>
+<li><p><em>Argument type</em>, i.e., the list of types of arguments applicable to the
+method member.</p></li>
+<li><p><em>Return type</em>, i.e., the return type of the method member.</p></li>
+<li><p>A <em>throws</em>/<em>rethrows</em> clause, i.e., an indication of the ability of a
+member method to raise exceptions.</p></li>
+</ol>
+<p>Members can be as follows:</p>
+<ul class="simple">
+<li><p>Static members that are not part of class instances, and can be accessed
+by using a qualified name notation (see <a class="reference internal" href="4_names.html#names"><span class="std std-ref">Names</span></a>) anywhere the class
+name or the interface name is accessible; and</p></li>
+<li><p>Non-static, or instance members that belong to any instance of the class.</p></li>
+</ul>
+<p>All names in both static and non-static class declaration scopes (see
+<a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>) must be unique, i.e., fields and methods cannot have the
+same name.</p>
+<div class="line-block" id="index-22">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="access-modifiers">
+<span id="id10"></span><h2><span class="section-number">9.4. </span>Access Modifiers<a class="headerlink" href="#access-modifiers" title="Permalink to this heading">¶</a></h2>
+<p>Access modifiers define how a class member or a constructor can be accessed.
+Accessibility in ArkTS can be of the following kinds:</p>
+<ul class="simple">
+<li><p><em>private</em>,</p></li>
+<li><p><em>internal</em>,</p></li>
+<li><p><em>protected</em>, or</p></li>
+<li><p><em>public</em>.</p></li>
+</ul>
+<p>The desired accessibility of class members and constructors can be explicitly
+specified by the corresponding <em>access modifiers</em>:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">accessModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">private</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">internal</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">protected</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">public</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>If no explicit modifier is provided, then a class member or a constructor
+is implicitly considered public by default.</p>
+<div class="line-block" id="index-23">
+<div class="line"><br /></div>
+</div>
+<section id="private-access-modifier">
+<span id="id11"></span><h3><span class="section-number">9.4.1. </span>Private Access Modifier<a class="headerlink" href="#private-access-modifier" title="Permalink to this heading">¶</a></h3>
+<p>The modifier <code class="docutils literal notranslate"><span class="pre">private</span></code> indicates that a class member or a constructor is
+accessible within its declaring class, i.e., a private member or
+constructor <em>m</em> declared in a class <em>C</em> can be accessed only within the
+class body of <em>C</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="k">private</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="nx">getCount</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">count</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos"> 5</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">increment</span><span class="p">(</span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">C</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">   </span><span class="nx">c</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span><span class="w"> </span><span class="c1">// compile-time error – &#39;count&#39; is private</span>
+<span class="linenos">10</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-24">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="internal-access-modifier">
+<span id="id12"></span><h3><span class="section-number">9.4.2. </span>Internal Access Modifier<a class="headerlink" href="#internal-access-modifier" title="Permalink to this heading">¶</a></h3>
+<p>The modifier <code class="docutils literal notranslate"><span class="pre">internal</span></code> is described in the chapter Experimental Features
+(see <a class="reference internal" href="17_experimental.html#internal-access-modifier-experimental"><span class="std std-ref">Internal Access Modifier</span></a>).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="protected-access-modifier">
+<span id="id13"></span><h3><span class="section-number">9.4.3. </span>Protected Access Modifier<a class="headerlink" href="#protected-access-modifier" title="Permalink to this heading">¶</a></h3>
+<p>The modifier <code class="docutils literal notranslate"><span class="pre">protected</span></code> indicates that a class member or a constructor is
+accessible only within its declaring class and the classes derived from that
+declaring class. A protected member <em>M</em> declared in a class <em>C</em> can be
+accessed only within the class body of <em>C</em> or of a class derived from <em>C</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="k">protected</span><span class="w"> </span><span class="nx">count</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="nx">getCount</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">count</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">D</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">   </span><span class="nx">increment</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span><span class="w"> </span><span class="c1">// ok, D is derived from C</span>
+<span class="linenos">11</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">increment</span><span class="p">(</span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">C</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">   </span><span class="nx">c</span><span class="p">.</span><span class="nx">count</span><span class="o">++</span><span class="w"> </span><span class="c1">// compile-time error – &#39;count&#39; is not accessible</span>
+<span class="linenos">16</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-25">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="public-access-modifier">
+<span id="id14"></span><h3><span class="section-number">9.4.4. </span>Public Access Modifier<a class="headerlink" href="#public-access-modifier" title="Permalink to this heading">¶</a></h3>
+<p>The modifier <code class="docutils literal notranslate"><span class="pre">public</span></code> indicates that a class member or a constructor can be
+accessed everywhere, provided that the member or the constructor belongs to
+a type that is also accessible.</p>
+<div class="line-block" id="index-26">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="field-declarations">
+<span id="id15"></span><h2><span class="section-number">9.5. </span>Field Declarations<a class="headerlink" href="#field-declarations" title="Permalink to this heading">¶</a></h2>
+<p><em>Field declarations</em> represent data members in class instances.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">classFieldDeclaration</span>:
+<span class="w">    </span><span class="nc">fieldModifier</span><span class="o">*</span><span class="w"> </span><span class="nc">variableDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">fieldModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">static</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">readonly</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-27"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>The same field modifier is used more than once in a field declaration.</p></li>
+<li><p>The name of a field declared in the body of a class declaration is already
+used for another field or method in the same declaration.</p></li>
+</ul>
+<p>A field declared by a class with a certain name <em>hides</em> any accessible
+declaration of fields if they have the same name in superclasses and
+superinterfaces of the class.</p>
+<p id="index-28">If a hidden field is static, then it can be accessed with the qualification
+of a superclass or of a superinterface, or with a field access expression with
+the keyword <code class="docutils literal notranslate"><span class="pre">super</span></code> (see <a class="reference internal" href="7_expressions.html#field-access-expressions"><span class="std std-ref">Field Access Expressions</span></a>).</p>
+<p>A class can access all non-private fields of a superclass and superinterfaces
+from its direct superclass and direct superinterfaces if such non-private
+fields are both:</p>
+<ul class="simple">
+<li><p>Accessible (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>) to code in the class; and</p></li>
+<li><p>Not hidden by a declaration in the class.</p></li>
+</ul>
+<p>A class can inherit more than one field or property with the same name from
+its superinterfaces, or from both its superclass and superinterfaces. However,
+an attempt to refer to such a field or property by its simple name within the
+body of the class causes a <span class="target" id="index-29"></span>compile-time error.</p>
+<p>The same field or property declaration can be inherited from an interface in
+more than one way. In that case, the field or property is considered
+to be inherited only once (and thus, referring to it by its simple name causes
+no ambiguity).</p>
+<div class="line-block" id="index-30">
+<div class="line"><br /></div>
+</div>
+<section id="static-fields">
+<span id="id16"></span><h3><span class="section-number">9.5.1. </span>Static Fields<a class="headerlink" href="#static-fields" title="Permalink to this heading">¶</a></h3>
+<p>There are two categories of class or interface fields:</p>
+<ul class="simple">
+<li><p>Class, or static fields</p></li>
+</ul>
+<p>Static fields are declared with the <code class="docutils literal notranslate"><span class="pre">static</span></code> modifier. They are not parts
+of class instances. There is one copy of a static field, irrespective of how
+many instances of that class (even if zero) are eventually created.</p>
+<p>Static fields are accessed using a qualified name notation (where the class
+or interface name is used as a qualifier, see <a class="reference internal" href="4_names.html#names"><span class="std std-ref">Names</span></a>) in any place
+where the class or interface name is accessible.</p>
+<ul class="simple">
+<li><p>Instance, or non-static fields.</p></li>
+</ul>
+<p>Instance fields belong to each instance of the class. An instance field
+is created for, and associated with a newly-created instance of a class
+or its superclass. Instance fields are accessible via the name
+of the instance.</p>
+<div class="line-block" id="index-31">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="readonly-constant-fields">
+<span id="id17"></span><h3><span class="section-number">9.5.2. </span>Readonly (Constant) Fields<a class="headerlink" href="#readonly-constant-fields" title="Permalink to this heading">¶</a></h3>
+<p>A field that has the modifier <code class="docutils literal notranslate"><span class="pre">readonly</span></code> is a <em>readonly field</em>. Changing
+the value of a readonly field after initialization is not allowed.</p>
+<p>Both static and non-static fields can be declared <em>readonly fields</em>.</p>
+<p>A static readonly field must be initialized as follows:</p>
+<ul class="simple">
+<li><p>By using a field <em>initializer</em>, or</p></li>
+<li><p>As a result of a class initializer (see <a class="reference internal" href="#class-initializer"><span class="std std-ref">Class Initializer</span></a>).</p></li>
+</ul>
+<p>Otherwise, a <span class="target" id="index-32"></span>compile-time error occurs.</p>
+<p>A non-static readonly field must be initialized as a result of
+execution of any class constructor. Otherwise, a <span class="target" id="index-33"></span>compile-time error
+occurs.</p>
+<div class="line-block" id="index-34">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="field-initialization">
+<span id="id18"></span><h3><span class="section-number">9.5.3. </span>Field Initialization<a class="headerlink" href="#field-initialization" title="Permalink to this heading">¶</a></h3>
+<p>An initializer in a non-static field declaration has the semantics of
+an assignment (see <a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>) to the declared variable.</p>
+<p>The following rules apply to an initializer in a static field declaration:</p>
+<ul class="simple">
+<li><p>A <span class="target" id="index-35"></span>compile-time error occurs if the initializer uses the keywords
+<code class="docutils literal notranslate"><span class="pre">this</span></code> or <code class="docutils literal notranslate"><span class="pre">super</span></code> while calling a method (see
+<a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a>) or accessing a field (see
+<a class="reference internal" href="7_expressions.html#field-access-expressions"><span class="std std-ref">Field Access Expressions</span></a>).</p></li>
+<li><p>The initializer is evaluated, and the assignment is performed only once
+when the class is initialized at runtime.</p></li>
+</ul>
+<p><strong>Note</strong>: Constant fields are initialized before all other static fields.</p>
+<p>Constant fields initialization never uses default values (see
+<a class="reference internal" href="3_types.html#default-values-for-types"><span class="std std-ref">Default Values for Types</span></a>).</p>
+<p>In a non-static field declaration, an initializer is evaluated at runtime.
+Its assignment is performed each time an instance of the class is created.
+The initializer can use the following keywords:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">this</span></code> to access the current object methods or fields, or to refer to the
+current object;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">super</span></code> to access the methods declared in a superclass;</p></li>
+</ul>
+<p id="index-36">Additional restrictions (as specified in <a class="reference internal" href="17_experimental.html#exceptions-and-errors-inside-field-initializers"><span class="std std-ref">Exceptions and Errors Inside Field Initializers</span></a>)
+apply to variable initializers that refer to fields which cannot be
+initialized yet.</p>
+<p>References to a field (even if the field is in the scope) can be restricted.
+The rules applying to the restrictions on forward references to fields (if the
+reference textually precedes the field declaration) and self-references (if
+the field is used within its own initializer) are provided below.</p>
+<p>A <span class="target" id="index-37"></span>compile-time error occurs in a reference to a static field <em>f</em>
+declared in class or interface <em>C</em> if:</p>
+<ul class="simple">
+<li><p>Such a reference is used in <em>C</em>’s static initializer (see
+<a class="reference internal" href="#class-initializer"><span class="std std-ref">Class Initializer</span></a>) or static field initializer (see
+<a class="reference internal" href="#field-initialization"><span class="std std-ref">Field Initialization</span></a>);</p></li>
+<li><p>Such a reference is used before the declaration of <em>f</em>, or within <em>f</em>’s own
+declaration initializer;</p></li>
+<li><p>No such reference is present on the left-hand side of an assignment
+expression (see <a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>);</p></li>
+<li><p><em>C</em> is the innermost class or interface that encloses such a reference.</p></li>
+</ul>
+<p>A <span class="target" id="index-38"></span>compile-time error occurs in a reference to a non-static field <em>f</em>
+declared in class <em>C</em> if such reference is:</p>
+<ul class="simple">
+<li><p>Used in the non-static field initializer of <em>C</em>;</p></li>
+<li><p>Used before the declaration of <em>f</em>, or within <em>f</em>’s own declaration
+initializer;</p></li>
+<li><p>Not present on the left-hand side of an assignment expression (see
+<a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>);</p></li>
+<li><p>Enclosed in <em>C</em> that is the innermost class or interface.</p></li>
+</ul>
+<div class="line-block" id="index-39">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="method-declarations">
+<span id="id19"></span><h2><span class="section-number">9.6. </span>Method Declarations<a class="headerlink" href="#method-declarations" title="Permalink to this heading">¶</a></h2>
+<p><em>Methods</em> declare executable code that can be called:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">classMethodDeclaration</span>:
+<span class="w">    </span><span class="nc">methodOverloadSignature</span><span class="o">*</span>
+<span class="w">    </span><span class="nc">methodModifier</span><span class="o">*</span><span class="w"> </span><span class="nc">typeParameters</span>?<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">signature</span><span class="w"> </span><span class="nc">block</span>?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">methodModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">abstract</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">static</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">final</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">override</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">native</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p><em>Overloading signature</em> of a method allows calling a method in different ways.</p>
+<p>The <em>identifier</em> of <em>classMethodDeclaration</em> is the method name that can be
+used to refer to a method (see <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a>).</p>
+<p>A <span class="target" id="index-40"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>A method modifier appears more than once in a method declaration.</p></li>
+<li><p>The body of a class declaration declares a method but the name of that
+method is already used for a field in the same declaration.</p></li>
+<li><p>The body of a class declaration declares two same-name methods with
+override-equivalent signatures (see <a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>)
+as members of that body of a class declaration.</p></li>
+</ul>
+<div class="line-block" id="index-41">
+<div class="line"><br /></div>
+</div>
+<section id="class-static-methods">
+<span id="id20"></span><h3><span class="section-number">9.6.1. </span>Class (Static) Methods<a class="headerlink" href="#class-static-methods" title="Permalink to this heading">¶</a></h3>
+<p>A method declared with the modifier <code class="docutils literal notranslate"><span class="pre">static</span></code> is a <em>class method</em>.
+Another name for class methods is <em>static methods</em>.</p>
+<p>A <span class="target" id="index-42"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>A method declaration contains another modifier (<code class="docutils literal notranslate"><span class="pre">abstract</span></code>, <code class="docutils literal notranslate"><span class="pre">final</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">override</span></code>) along with the modifier <code class="docutils literal notranslate"><span class="pre">static</span></code>.</p></li>
+<li><p>The header or body of a class method includes the name of a type parameter
+of the surrounding declaration.</p></li>
+</ul>
+<p>Class methods are always called without reference to a particular object. As
+a result, a <span class="target" id="index-43"></span>compile-time error occurs if keywords <code class="docutils literal notranslate"><span class="pre">this</span></code> or <code class="docutils literal notranslate"><span class="pre">super</span></code>
+are used inside a static method.</p>
+<div class="line-block" id="index-44">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="instance-methods">
+<span id="id21"></span><h3><span class="section-number">9.6.2. </span>Instance Methods<a class="headerlink" href="#instance-methods" title="Permalink to this heading">¶</a></h3>
+<p>A method that is not declared static is called <em>non-static method</em>, or
+an <em>instance method</em>.</p>
+<p>An instance method is always called with respect to an object that becomes
+the current object the keyword <code class="docutils literal notranslate"><span class="pre">this</span></code> refers to during the execution
+of the method body.</p>
+<div class="line-block" id="index-45">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="abstract-methods">
+<span id="id22"></span><h3><span class="section-number">9.6.3. </span>Abstract Methods<a class="headerlink" href="#abstract-methods" title="Permalink to this heading">¶</a></h3>
+<p>An <em>abstract</em> method declaration introduces the method as a member along
+with its signature but without an implementation. An abstract method is
+declared with the modifier <code class="docutils literal notranslate"><span class="pre">abstract</span></code> in its declaration.</p>
+<p>Non-abstract methods can be referred to as <em>concrete methods</em>.</p>
+<p>A <span class="target" id="index-46"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>An abstract method is declared private.</p></li>
+<li><p>A method declaration contains another modifier (<code class="docutils literal notranslate"><span class="pre">static</span></code>, <code class="docutils literal notranslate"><span class="pre">final</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">native</span></code>) along with the modifier <code class="docutils literal notranslate"><span class="pre">abstract</span></code>.</p></li>
+<li><p>The abstract method <em>m</em> declaration does not appear directly within an
+abstract class <em>A</em>.</p></li>
+<li><p>Any non-abstract subclass of <em>A</em>
+(see <a class="reference internal" href="#abstract-classes"><span class="std std-ref">Abstract Classes</span></a>) does not provide an implementation
+for <em>m</em>.</p></li>
+</ul>
+<p>An abstract method can be overridden by another abstract method declaration
+provided by an abstract subclass.</p>
+<p>A <span class="target" id="index-47"></span>compile-time error occurs if an abstract method overrides a
+non-abstract instance method.</p>
+<div class="line-block" id="index-48">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="final-methods">
+<span id="id23"></span><h3><span class="section-number">9.6.4. </span>Final Methods<a class="headerlink" href="#final-methods" title="Permalink to this heading">¶</a></h3>
+<p>Final methods are described in the chapter Experimental Features (see
+<a class="reference internal" href="17_experimental.html#native-methods-experimental"><span class="std std-ref">Native Methods</span></a>).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="overriding-methods">
+<span id="override-methods"></span><h3><span class="section-number">9.6.5. </span>Overriding Methods<a class="headerlink" href="#overriding-methods" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">override</span></code> modifier indicates that an instance method in a superclass is
+overridden by the corresponding instance method from a subclass (see
+<a class="reference internal" href="#overriding-by-instance-methods"><span class="std std-ref">Overriding by Instance Methods</span></a>).</p>
+<p>The usage of the modifier <code class="docutils literal notranslate"><span class="pre">override</span></code> is optional but strongly recommended as
+it makes the overriding explicit.</p>
+<p>A <span class="target" id="index-49"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>A method marked with the modifier <code class="docutils literal notranslate"><span class="pre">override</span></code> does not override a method
+from a superclass.</p></li>
+<li><p>A method declaration that contains the modifier <code class="docutils literal notranslate"><span class="pre">override</span></code> also contains
+the modifiers <code class="docutils literal notranslate"><span class="pre">abstract</span></code> or <code class="docutils literal notranslate"><span class="pre">static</span></code>.</p></li>
+</ul>
+<p>If the signature of the overridden method contains parameters with default
+values (see <a class="reference internal" href="4_names.html#optional-parameters"><span class="std std-ref">Optional Parameters</span></a>), then the overriding method always
+uses the default parameter values of the overridden method.</p>
+<p>A <span class="target" id="index-50"></span>compile-time error occurs if a parameter in the overriding method
+has a default value.</p>
+<p>See <a class="reference internal" href="#overriding-by-instance-methods"><span class="std std-ref">Overriding by Instance Methods</span></a> for the specific rules of overriding.</p>
+<div class="line-block" id="index-51">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="native-methods">
+<span id="id24"></span><h3><span class="section-number">9.6.6. </span>Native Methods<a class="headerlink" href="#native-methods" title="Permalink to this heading">¶</a></h3>
+<p>Native methods are described in the chapter Experimental Features (see
+<a class="reference internal" href="17_experimental.html#native-methods-experimental"><span class="std std-ref">Native Methods</span></a>).</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="method-overload-signatures">
+<span id="methods-overload-signatures"></span><h3><span class="section-number">9.6.7. </span>Method Overload Signatures<a class="headerlink" href="#method-overload-signatures" title="Permalink to this heading">¶</a></h3>
+<p>ArkTS allows specifying a method that has several <em>overload signatures</em>,
+i.e., several method headers that have the same name followed by one
+implementation body.</p>
+<div class="highlight-abnf notranslate" id="index-52"><div class="highlight"><pre><span></span><span class="nc">methodOverloadSignature</span>:
+<span class="w">    </span><span class="nc">methodModifier</span><span class="o">*</span><span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">signature</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-53"></span>compile-time error occurs if the method implementation is not
+present, or does not immediately follow the declaration.</p>
+<p>A call of a method with overload signatures is always a call of the
+implementation method.</p>
+<p>The example below has one overload signature parameterless; the other
+two have one parameter each:</p>
+<div class="highlight-typescript notranslate" id="index-54"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">     </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">           </span><span class="c1">// 1st signature</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">  </span><span class="c1">// 2nd signature</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="c1">// implementation signature</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">         </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span>
+<span class="linenos">10</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span><span class="w">          </span><span class="c1">// ok, call fits 1st and 3rd signatures</span>
+<span class="linenos">11</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">(</span><span class="s2">&quot;aa&quot;</span><span class="p">)</span><span class="w">      </span><span class="c1">// ok, call fits 2nd and 3rd signatures</span>
+<span class="linenos">12</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">foo</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="c1">// ok, call fits the 3rd signature</span>
+</pre></div>
+</div>
+<p>The call <code class="docutils literal notranslate"><span class="pre">c.foo()</span></code> is executed as a call of the implementation method with
+the <code class="docutils literal notranslate"><span class="pre">undefined</span></code> argument. The call <code class="docutils literal notranslate"><span class="pre">c.foo(x)</span></code> is executed as a call of the
+implementation method with an argument.</p>
+<p><em>Overload signature</em> compatibility requirements are described in
+<a class="reference internal" href="15_semantics.html#overload-signature-compatibility"><span class="std std-ref">Overload Signature Compatibility</span></a>.</p>
+<p>In addition, a <span class="target" id="index-55"></span>compile-time error occurs if not <strong>all</strong> of the
+following requirements are met:</p>
+<ul class="simple">
+<li><p>Overload signatures and the implementation method have the same access
+modifier.</p></li>
+<li><p>All overload signatures and the implementation method are static or
+non-static.</p></li>
+<li><p>All overload signatures and the implementation method are final or
+non-final.</p></li>
+<li><p>Overload signatures are not native (however, native implementation
+method is allowed).</p></li>
+<li><p>Overload signatures are not abstract.</p></li>
+</ul>
+<div class="line-block" id="index-56">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="method-body">
+<span id="id25"></span><h3><span class="section-number">9.6.8. </span>Method Body<a class="headerlink" href="#method-body" title="Permalink to this heading">¶</a></h3>
+<p>A <em>method body</em> is a block of code that implements a method. A semicolon, or
+an empty body (i.e., no body at all) indicate the absence of the implementation.</p>
+<p>An abstract or native method must have an empty body.</p>
+<p>In particular, a <span class="target" id="index-57"></span>compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>The body of an abstract or native method declaration is a block.</p></li>
+<li><p>A method declaration is neither abstract nor native, but its body
+is empty, or is a semicolon.</p></li>
+</ul>
+<p>See <a class="reference internal" href="8_statements.html#return-statements"><span class="std std-ref">return Statements</span></a> for the rules that apply to return statements
+in a method body.</p>
+<p>A <span class="target" id="index-58"></span>compile-time error occurs if a method is declared to have a return
+type, but its body can complete normally (see <a class="reference internal" href="8_statements.html#normal-and-abrupt-statement-execution"><span class="std std-ref">Normal and Abrupt Statement Execution</span></a>).</p>
+<div class="line-block" id="index-59">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="inheritance">
+<span id="id26"></span><h3><span class="section-number">9.6.9. </span>Inheritance<a class="headerlink" href="#inheritance" title="Permalink to this heading">¶</a></h3>
+<p>Class <em>C</em> inherits from its direct superclass all concrete methods <em>m</em> (both
+<em>static</em> and <em>instance</em>) that meet <strong>all</strong> of the following requirements:</p>
+<ul class="simple">
+<li><p><em>m</em> is a member of the direct superclass of <em>C</em>;</p></li>
+<li><p><em>m</em> is public, protected, or internal in the same package as <em>C</em>;</p></li>
+<li><p>No signature of a method declared in <em>C</em> is compatible with the signature
+of <em>m</em> (see <a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>).</p></li>
+</ul>
+<p>Class <em>C</em> inherits from its direct superclass and direct superinterfaces all
+abstract and default methods <em>m</em> (see <a class="reference internal" href="17_experimental.html#default-method-declarations"><span class="std std-ref">Default Method Declarations</span></a>)
+that meet the following requirements:</p>
+<ul class="simple">
+<li><p><em>m</em> is a member of <em>D</em>, which is a direct superclass or direct superinterface
+of <em>C</em>;</p></li>
+<li><p><em>m</em> is public, protected, or internal in the same package as <em>C</em>;</p></li>
+<li><p>No method declared in <em>C</em> has a signature that is compatible with the
+signature of <em>m</em> (see <a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>);</p></li>
+<li><p>No signature of a concrete method inherited by <em>C</em> from its direct
+superclass is compatible with the signature of <em>m</em> (see
+<a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>);</p></li>
+<li><p>No method <span class="math notranslate nohighlight">\(m'\)</span> that is a member of <em>D</em>’, which is a direct superclass or
+direct superinterface of <em>C</em> (while <span class="math notranslate nohighlight">\(m'\)</span> is distinct from <em>m</em>,
+and <span class="math notranslate nohighlight">\(D'\)</span> from <em>D</em>), overrides the declaration of the method <em>m</em> from
+<span class="math notranslate nohighlight">\(D'\)</span> (see <a class="reference internal" href="#overriding-by-instance-methods"><span class="std std-ref">Overriding by Instance Methods</span></a> for class method
+overriding, and <a class="reference internal" href="10_interfaces.html#overriding-by-instance-methods-in-interfaces"><span class="std std-ref">Overriding by Instance Methods</span></a> for
+interface method overriding).</p></li>
+</ul>
+<p>No class can inherit private or static methods from its superinterfaces.</p>
+<div class="line-block" id="index-60">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="overriding-by-instance-methods">
+<span id="id27"></span><h3><span class="section-number">9.6.10. </span>Overriding by Instance Methods<a class="headerlink" href="#overriding-by-instance-methods" title="Permalink to this heading">¶</a></h3>
+<p>The instance method  <em>m</em><sub>C</sub> (inherited by, or declared in class <em>C</em>)
+overrides another method <em>m</em><sub>A</sub> (declared in class <em>A</em>) if <strong>all</strong> the
+following requirements are met:</p>
+<ul class="simple">
+<li><p><em>C</em> is a subclass of <em>A</em>;</p></li>
+<li><p><em>C</em> does not inherit <em>m</em><sub>A</sub>;</p></li>
+<li><p>The signature of <em>m</em><sub>C</sub> is compatible with the signature of <em>m</em><sub>A</sub>
+(see <a class="reference internal" href="15_semantics.html#compatible-signature"><span class="std std-ref">Compatible Signature</span></a>);</p></li>
+</ul>
+<p>—and if one of the following is also true:</p>
+<ul>
+<li><p><em>m</em><sub>A</sub> is public;</p></li>
+<li><p><em>m</em><sub>A</sub> is protected; or</p></li>
+<li><p><em>m</em><sub>A</sub> is internal in the same package as <em>C</em> while:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Either <em>C</em> declares <em>m</em><sub>C</sub>; or</p></li>
+<li><p><em>m</em><sub>A</sub> is a member of the direct superclass of <em>C</em>;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><em>m</em><sub>A</sub> is declared  with package access, and <em>m</em><sub>C</sub> overrides:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>m</em><sub>A</sub> from a superclass of <em>C</em>; or</p></li>
+<li><p>method <span class="math notranslate nohighlight">\(m'\)</span> from <em>C</em> (while <span class="math notranslate nohighlight">\(m'\)</span> is distinct from both
+<em>m</em><sub>C</sub> and <em>m</em><sub>A</sub>, i.e., <span class="math notranslate nohighlight">\(m'\)</span> overrides <em>m</em><sub>A</sub>
+from a superclass of <em>C</em>).</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p id="index-61">Non-abstract <em>m</em><sub>C</sub> implements <em>m</em><sub>A</sub> from <em>C</em> if it overrides an
+abstract method <em>m</em><sub>A</sub>.</p>
+<p>An instance method <em>m</em><sub>C</sub> (inherited by, or declared in class <em>C</em>)
+overrides another method <em>m</em><sub>I</sub> (declared in interface <em>I</em>) from <em>C</em> if
+<strong>all</strong> of the following requirements are met:</p>
+<ul class="simple">
+<li><p><em>I</em> is a superinterface of <em>C</em>;</p></li>
+<li><p><em>m</em><sub>I</sub> is not static;</p></li>
+<li><p><em>C</em> does not inherit <em>m</em><sub>I</sub>;</p></li>
+<li><p>The signature of <em>m</em><sub>C</sub> is a subsignature of the signature of
+<em>m</em><sub>I</sub> (see <a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>); and</p></li>
+<li><p><em>m</em><sub>I</sub> is <em>public</em>.</p></li>
+</ul>
+<p>A method call expression (see <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a>) containing the
+keyword <code class="docutils literal notranslate"><span class="pre">super</span></code> can be used to call an overridden method.</p>
+<p>Among the methods that override each other, return types can vary if they are
+reference types.</p>
+<p>The specialization of return type to a subtype (i.e., <em>covariant returns</em>)
+is based on the concept of <em>return-type-substitutability</em>. For example, the
+method declaration <em>d</em><sub>1</sub> with return type <em>R</em><sub>1</sub> is
+return-type-substitutable for another method <em>d</em><sub>2</sub> with return type
+<em>R</em><sub>2</sub> if:</p>
+<ul class="simple">
+<li><p><em>R</em><sub>1</sub> is a primitive type (<em>R</em><sub>2</sub> is identical to <em>R</em><sub>1</sub>); or</p></li>
+<li><p><em>R</em><sub>1</sub> is a reference type (<em>R</em><sub>1</sub> adapted to type parameters of
+<em>d</em><sub>2</sub> is a subtype of <em>R</em><sub>2</sub>).</p></li>
+</ul>
+<div class="line-block" id="index-62">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="hiding-by-class-methods">
+<span id="id28"></span><h3><span class="section-number">9.6.11. </span>Hiding by Class Methods<a class="headerlink" href="#hiding-by-class-methods" title="Permalink to this heading">¶</a></h3>
+<p>A static method <em>m</em> declared in, or inherited by a class <em>C</em> <em>hides</em> any
+method <span class="math notranslate nohighlight">\(m'\)</span> (where the signature of <em>m</em> is a subsignature of the
+signature of <span class="math notranslate nohighlight">\(m'\)</span> as described in <a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>)
+in its superclasses and superinterfaces.</p>
+<p>A hidden method is not directly accessible (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>) to code in <em>C</em>.
+However, a hidden method can be accessed by using a qualified name, or a method
+call expression (see <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a>) that contains the keyword
+<code class="docutils literal notranslate"><span class="pre">super</span></code> or a cast to a superclass type.</p>
+<p>A <span class="target" id="index-63"></span>compile-time error occurs if a static method hides an instance
+method.</p>
+<div class="line-block" id="index-64">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="requirements-in-overriding-and-hiding">
+<span id="id29"></span><h3><span class="section-number">9.6.12. </span>Requirements in Overriding and Hiding<a class="headerlink" href="#requirements-in-overriding-and-hiding" title="Permalink to this heading">¶</a></h3>
+<p>The method declaration <em>d</em><sub>1</sub> with return type <em>R</em><sub>1</sub> can override or
+hide the declaration of another method <em>d</em><sub>2</sub> with return type <em>R</em><sub>2</sub>
+if <em>d</em><sub>1</sub> is return-type-substitutable for <em>d</em><sub>2</sub> (see
+<a class="reference internal" href="#requirements-in-overriding-and-hiding"><span class="std std-ref">Requirements in Overriding and Hiding</span></a> and
+<a class="reference internal" href="#overriding-by-instance-methods"><span class="std std-ref">Overriding by Instance Methods</span></a>). Otherwise, a compile-time error occurs.</p>
+<p>A method that overrides or hides another method (including the methods that
+implement abstract methods defined in interfaces) cannot change ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ or
+‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’ clauses of the overridden or hidden method.</p>
+<p>A compile-time error occurs if a type declaration <em>T</em> has a member method
+<em>m</em><sub>1</sub>, but there is also a method <em>m</em><sub>2</sub> declared in <em>T</em> or a
+supertype of <em>T</em>, for which <strong>all</strong> of the following requirements are met:</p>
+<ul class="simple">
+<li><p><em>m</em><sub>1</sub> and <em>m</em><sub>2</sub> use the same name; and</p></li>
+<li><p><em>m</em><sub>2</sub> is accessible from <em>T</em> (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>); and</p></li>
+<li><p>The signature of <em>m</em><sub>1</sub> is not a subsignature of <em>m</em><sub>2</sub> (see
+<a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>).</p></li>
+</ul>
+<p id="index-65">The access modifier of an overriding or hiding method must provide no less
+access than was provided in the overridden or hidden method.</p>
+<p>A compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>The overridden or hidden method is public, and the overriding or hiding
+method is <em>not</em> public.</p></li>
+<li><p>The overridden or hidden method is protected, and the overriding or hiding
+method is <em>not</em> protected or public.</p></li>
+<li><p>The overridden or hidden method has internal access, and the overriding
+or hiding method is private.</p></li>
+</ul>
+<div class="line-block" id="index-66">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="inheriting-methods-with-override-equivalent-signatures">
+<span id="id30"></span><h3><span class="section-number">9.6.13. </span>Inheriting Methods with Override-Equivalent Signatures<a class="headerlink" href="#inheriting-methods-with-override-equivalent-signatures" title="Permalink to this heading">¶</a></h3>
+<p>A class can inherit multiple methods with override-equivalent signatures (see
+<a class="reference internal" href="15_semantics.html#override-equivalent-signatures"><span class="std std-ref">Override-Equivalent Signatures</span></a>).</p>
+<p>A compile-time error occurs if a class <em>C</em> inherits the following:</p>
+<ul class="simple">
+<li><p>Concrete method whose signature is override-equivalent to another
+method that <em>C</em> inherited; or</p></li>
+<li><p>Default method whose signature is override-equivalent to another method
+that <em>C</em> inherited, if there is no abstract method, declared in a
+superclass of <em>C</em> and inherited by <em>C</em>, that is override-equivalent
+to both methods.</p></li>
+</ul>
+<p>An abstract class can inherit all the methods, assuming that a set of
+override-equivalent methods consists of at least one abstract method, and
+zero or more default methods.</p>
+<p>A compile-time error occurs if one of the inherited methods is not
+return-type-substitutable for every other inherited method (except ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’
+and ‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’ clauses that cause no error in this case).</p>
+<p>The same method declaration can be inherited from an interface in a number
+of ways, causing no compile-time error on its own.</p>
+<div class="line-block" id="index-67">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="accessor-declarations">
+<span id="id31"></span><h2><span class="section-number">9.7. </span>Accessor Declarations<a class="headerlink" href="#accessor-declarations" title="Permalink to this heading">¶</a></h2>
+<p>Accessors are often used instead of fields to add additional control for
+operations of getting or setting a field value. An accessor can be either
+a getter or a setter.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">classAccessorDeclaration</span>:
+<span class="w">    </span><span class="nc">accessorModifier</span>
+<span class="w">    </span><span class="p">(</span><span class="w"> </span>&#39;<span class="nc">get</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">returnType</span><span class="w"> </span><span class="nc">block</span>?
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">set</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">parameter</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">block</span>?
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">accessorModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">abstract</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">static</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">final</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">override</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Accessor modifiers are a subset of method modifiers. The allowed accessor
+modifiers have exactly the same meaning as the corresponding method modifiers.
+See <a class="reference internal" href="#abstract-methods"><span class="std std-ref">Abstract Methods</span></a> for the modifier <code class="docutils literal notranslate"><span class="pre">abstract</span></code>,
+<a class="reference internal" href="#class-static-methods"><span class="std std-ref">Class (Static) Methods</span></a> for the modifier <code class="docutils literal notranslate"><span class="pre">static</span></code>, <a class="reference internal" href="#final-methods"><span class="std std-ref">Final Methods</span></a>
+for the modifier <code class="docutils literal notranslate"><span class="pre">final</span></code>, and <a class="reference internal" href="#override-methods"><span class="std std-ref">Overriding Methods</span></a> for the modifier
+<code class="docutils literal notranslate"><span class="pre">override</span></code>.</p>
+<div class="highlight-typescript notranslate" id="index-68"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="k">private</span><span class="w"> </span><span class="nx">_age</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">3</span><span class="w">   </span><span class="nx">get</span><span class="w"> </span><span class="nx">age</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_age</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w">   </span><span class="nx">set</span><span class="w"> </span><span class="nx">age</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s2">&quot;wrong age&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">_age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span>
+<span class="linenos">7</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">8</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Each <em>get-accessor</em> (<em>getter</em>) must have neither parameters nor an explicit
+return type. Each <em>set-accessor</em> (<em>setter</em>) must have a single parameter and
+no return value. The use of getters and setters looks the same as the use of
+fields:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="k">private</span><span class="w"> </span><span class="nx">_age</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="nx">get</span><span class="w"> </span><span class="nx">age</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_age</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="nx">set</span><span class="w"> </span><span class="nx">age</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s2">&quot;wrong age&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">_age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="p">()</span>
+<span class="linenos">11</span><span class="w"> </span><span class="nx">p</span><span class="p">.</span><span class="nx">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">25</span><span class="w">        </span><span class="c1">// setter is called</span>
+<span class="linenos">12</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">age</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">30</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// getter is called</span>
+<span class="linenos">13</span><span class="w">   </span><span class="c1">// do something</span>
+<span class="linenos">14</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A class can define a getter, a setter, or both with the same name.
+If both a getter and a setter with a particular name are defined,
+then both must have the same accessor modifiers. Otherwise, a compile-time
+error occurs.</p>
+<p>Accessors can be implemented by using a private field to store its value
+(as in the example above).</p>
+<div class="highlight-typescript notranslate" id="index-69"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">3</span><span class="w">   </span><span class="nx">surname</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">4</span><span class="w">   </span><span class="nx">get</span><span class="w"> </span><span class="nx">fullName</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">surname</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">name</span>
+<span class="linenos">6</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">7</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="class-initializer">
+<span id="id32"></span><h2><span class="section-number">9.8. </span>Class Initializer<a class="headerlink" href="#class-initializer" title="Permalink to this heading">¶</a></h2>
+<p>When a class is initialized, the <em>class initializer</em> declared in the class is
+executed along with all <em>class initializers</em> of all superclasses. The order of
+execution is from the top superclass to the current class. Class initializers
+(along with field initializers for static fields as described in
+<a class="reference internal" href="#field-initialization"><span class="std std-ref">Field Initialization</span></a>) ensure that all static fields receive their
+initial values before the first use.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="nx">classInitializer</span>
+<span class="linenos">2</span><span class="w">     </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;static&#39;</span><span class="w"> </span><span class="nx">block</span>
+<span class="linenos">3</span><span class="w">     </span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A compile-time error occurs if a class initializer contains:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">&lt;expression&gt;</span></code> statement (see <a class="reference internal" href="8_statements.html#return-statements"><span class="std std-ref">return Statements</span></a>).</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">throw</span></code> statement (see <a class="reference internal" href="8_statements.html#throw-statements"><span class="std std-ref">throw Statements</span></a>) with no surrounding
+<code class="docutils literal notranslate"><span class="pre">try</span></code> statement (see <a class="reference internal" href="8_statements.html#try-statements"><span class="std std-ref">try Statements</span></a>) to handle the error or exception.</p></li>
+<li><p>Keywords <code class="docutils literal notranslate"><span class="pre">this</span></code> (see <a class="reference internal" href="7_expressions.html#this-expression"><span class="std std-ref">this Expression</span></a>) or <code class="docutils literal notranslate"><span class="pre">super</span></code> (see
+<a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a> and <a class="reference internal" href="7_expressions.html#field-access-expressions"><span class="std std-ref">Field Access Expressions</span></a>), or any
+type of a variable declared outside the class initializer.</p></li>
+</ul>
+<p>Restrictions of class initializers’ ability to refer to static fields (even
+those within the scope) are specified in <a class="reference internal" href="17_experimental.html#exceptions-and-errors-inside-field-initializers"><span class="std std-ref">Exceptions and Errors Inside Field Initializers</span></a>.
+Class initializers cannot throw exceptions as they are effectively
+non-throwing functions (see <a class="reference internal" href="17_experimental.html#non-throwing-functions"><span class="std std-ref">Non-Throwing Functions</span></a>).</p>
+<div class="line-block" id="index-70">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constructor-declaration">
+<span id="id33"></span><h2><span class="section-number">9.9. </span>Constructor Declaration<a class="headerlink" href="#constructor-declaration" title="Permalink to this heading">¶</a></h2>
+<p><em>Constructors</em> are used to initialize objects that are instances of class.</p>
+<p>A <em>constructor declaration</em> starts with the keyword <code class="docutils literal notranslate"><span class="pre">constructor</span></code>, and has no
+name. In any other syntactical aspect, a constructor declaration is similar to
+a method declaration with no return type.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">constructorDeclaration</span>:
+<span class="w">    </span><span class="nc">constructorOverloadSignature</span><span class="o">*</span>
+<span class="w">    </span>&#39;<span class="nc">constructor</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">parameterList</span>?<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">throwMark</span>?<span class="w"> </span><span class="nc">constructorBody</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">throwMark</span>:
+<span class="w">    </span>&#39;<span class="nc">throws</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">rethrows</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Constructors are called by the following:</p>
+<ul class="simple">
+<li><p>Class instance creation expressions (see <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>);</p></li>
+<li><p>Conversions and concatenations caused by the string concatenation operator
+‘<span class="math notranslate nohighlight">\(+\)</span>’ (see <a class="reference internal" href="7_expressions.html#string-concatenation"><span class="std std-ref">String Concatenation</span></a>); and</p></li>
+<li><p>Explicit constructor calls from other constructors (see <a class="reference internal" href="#constructor-body"><span class="std std-ref">Constructor Body</span></a>).</p></li>
+</ul>
+<p>Access to constructors is governed by access modifiers (see
+<a class="reference internal" href="#access-modifiers"><span class="std std-ref">Access Modifiers</span></a> and <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>). Declaring a constructor
+inaccessible can prevent class instantiation.</p>
+<p>A compile-time error occurs if two constructors in a class are declared, and
+have identical signatures.</p>
+<p>See <a class="reference internal" href="17_experimental.html#throwing-functions"><span class="std std-ref">Throwing Functions</span></a> for ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ mark, and
+<a class="reference internal" href="17_experimental.html#rethrowing-functions"><span class="std std-ref">Rethrowing Functions</span></a> for ‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’ mark.</p>
+<div class="line-block" id="index-71">
+<div class="line"><br /></div>
+</div>
+<section id="formal-parameters">
+<span id="id34"></span><h3><span class="section-number">9.9.1. </span>Formal Parameters<a class="headerlink" href="#formal-parameters" title="Permalink to this heading">¶</a></h3>
+<p>The syntax and semantics of a constructor’s formal parameters are identical
+to those of a method.</p>
+</section>
+<section id="constructor-overload-signatures">
+<span id="constructors-overload-signatures"></span><h3><span class="section-number">9.9.2. </span>Constructor Overload Signatures<a class="headerlink" href="#constructor-overload-signatures" title="Permalink to this heading">¶</a></h3>
+<p>ArkTS allows specifying a constructor that can be called in different ways by
+providing <em>overload signatures</em>, i.e., several constructor headers which are
+followed by one constructor implementation body.</p>
+<div class="highlight-abnf notranslate" id="index-72"><div class="highlight"><pre><span></span><span class="nc">constructorOverloadSignature</span>:
+<span class="w">    </span><span class="nc">accessModifier</span>?<span class="w"> </span>&#39;<span class="nc">constructor</span>&#39;<span class="w"> </span><span class="nc">signature</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-73"></span>compile-time error occurs if the constructor implementation is not
+present, or does not immediately follow the declaration.</p>
+<p>A call of a constructor with overload signature is always a call of the
+constructor implementation body.</p>
+<p>The example below has one overload signature parameterless, and others have one
+parameter each:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">     </span><span class="kr">constructor</span><span class="p">()</span><span class="w">           </span><span class="c1">// 1st signature</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w">  </span><span class="c1">// 2nd signature</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="c1">// 3rd - implementation signature</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">         </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span><span class="w">          </span><span class="c1">// ok, fits the 1st and 3rd signatures</span>
+<span class="linenos">10</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">(</span><span class="s2">&quot;aa&quot;</span><span class="p">)</span><span class="w">      </span><span class="c1">// ok, fits the 2nd and 3rd signatures</span>
+<span class="linenos">11</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="c1">// ok, fits 3rd signature</span>
+</pre></div>
+</div>
+<p>The new expression (see <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>) <code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">C()</span></code> leads to a call of
+the constructor implementation with the argument  <code class="docutils literal notranslate"><span class="pre">undefined</span></code>. The <code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">C(x)</span></code>
+creates an object calling constructor implementation with ‘x’ as an argument.</p>
+<p><em>Overload signature</em> compatibility requirements are described in
+<a class="reference internal" href="15_semantics.html#overload-signature-compatibility"><span class="std std-ref">Overload Signature Compatibility</span></a>.</p>
+<p>A <span class="target" id="index-74"></span>compile-time error occurs if at least two different overload
+signatures or implementation signatures have different <em>access modifiers</em>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Incorrect</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="c1">// Constructors have different access modifiers</span>
+<span class="linenos">3</span><span class="w">     </span><span class="k">private</span><span class="w"> </span><span class="kr">constructor</span><span class="p">()</span><span class="w">             </span><span class="c1">// private 1st signature</span>
+<span class="linenos">4</span><span class="w">     </span><span class="k">protected</span><span class="w"> </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w">  </span><span class="c1">// protected 2nd signature</span>
+<span class="linenos">5</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w">           </span><span class="c1">// public 3rd - implementation signature</span>
+<span class="linenos">6</span><span class="w">     </span><span class="p">{}</span>
+<span class="linenos">7</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constructor-body">
+<span id="id35"></span><h3><span class="section-number">9.9.3. </span>Constructor Body<a class="headerlink" href="#constructor-body" title="Permalink to this heading">¶</a></h3>
+<p>The first statement in a constructor body can be an explicit call of another
+same-class constructor, or of the direct superclass (see
+<a class="reference internal" href="#explicit-constructor-call"><span class="std std-ref">Explicit Constructor Call</span></a>):</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">constructorBody</span>:
+<span class="w">    </span>&#39;{&#39;<span class="w"> </span><span class="nc">constructorCall</span>?<span class="w"> </span><span class="nc">statement</span><span class="o">*</span><span class="w"> </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">constructorCall</span>:
+<span class="w">    </span>&#39;<span class="nc">this</span>&#39;<span class="w"> </span><span class="nc">arguments</span>
+<span class="w">    </span>|<span class="w"> </span>&#39;<span class="nc">super</span>&#39;<span class="w"> </span><span class="nc">arguments</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">x</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">y</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">ColoredPoint</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="w">   </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">WHITE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">12</span><span class="w">   </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">BLACK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">13</span><span class="w">   </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos">14</span><span class="w">   </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">color</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">     </span><span class="k">super</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">)</span><span class="w"> </span><span class="c1">// calls base class constructor</span>
+<span class="linenos">16</span><span class="w">     </span><span class="k">this</span><span class="p">.</span><span class="nx">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">color</span>
+<span class="linenos">17</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">18</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p id="index-75">A compile-time error occurs if a constructor calls itself, directly or
+indirectly, through a series of one or more explicit constructor calls
+using <code class="docutils literal notranslate"><span class="pre">this</span></code>.</p>
+<p>The constructor body must implicitly begin with a superclass constructor
+call ‘<code class="docutils literal notranslate"><span class="pre">super()</span></code>’ (call of the constructor’s direct superclass that takes
+no argument), if the constructor body does not begin with an explicit
+constructor call. The constructor so declared is a part of the primordial
+class <em>Object</em>.</p>
+<p>A constructor body looks like a method body (see <a class="reference internal" href="#method-body"><span class="std std-ref">Method Body</span></a>), except
+that explicit constructor calls are possible, and explicit return of a value
+(see <a class="reference internal" href="8_statements.html#return-statements"><span class="std std-ref">return Statements</span></a>) is prohibited. However, a return statement
+without an expression can be used in a constructor body.</p>
+<p>A constructor body must not use fields of a created object before the fields
+are initialized; <em>this</em> cannot be passed as an argument until each object
+field receives an initial value. The check can be performed by the compiler
+that reports a compile-time error if a violation is detected. In difficult
+corner cases checks must be performed at runtime. The check raises an exception
+if an attempt to work with a non-initialized object field is detected.</p>
+<div class="line-block" id="index-76">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="explicit-constructor-call">
+<span id="id36"></span><h3><span class="section-number">9.9.4. </span>Explicit Constructor Call<a class="headerlink" href="#explicit-constructor-call" title="Permalink to this heading">¶</a></h3>
+<p>There are two kinds of <em>explicit constructor call</em> statements:</p>
+<ul class="simple">
+<li><p><em>Alternate constructor calls</em> that begin with the keyword <code class="docutils literal notranslate"><span class="pre">this</span></code>, and
+can be prefixed with explicit type arguments (used to call an alternate
+same-class constructor).</p></li>
+<li><p><em>Superclass constructor calls</em> (used to call a constructor from
+the direct superclass) called <em>unqualified superclass constructor calls</em>
+that begin with the keyword <code class="docutils literal notranslate"><span class="pre">super</span></code>, and can be prefixed with explicit
+type arguments.</p></li>
+</ul>
+<p>A compile-time error occurs if the constructor body of an explicit
+constructor call statement:</p>
+<ul class="simple">
+<li><p>Refers to any non-static field or instance method; or</p></li>
+<li><p>Uses the keywords <code class="docutils literal notranslate"><span class="pre">this</span></code> or <code class="docutils literal notranslate"><span class="pre">super</span></code> in any expression.</p></li>
+</ul>
+<p id="index-77">An ordinary method call evaluates an alternate constructor call statement
+left-to-right. The evaluation starts from arguments, proceeds to constructor,
+and then the constructor is called.</p>
+<p>The process of evaluation of a superclass constructor call statement is
+performed as follows:</p>
+<ol class="arabic" id="index-78">
+<li><p>If instance <em>i</em> is created, then the following procedure is used to
+determine <em>i</em>’s immediately enclosing instance with respect to <em>S</em>
+(if available):</p>
+<ul>
+<li><p>If the declaration of <em>S</em> occurs in a static context, then <em>i</em> has no
+immediately enclosing instance with respect to <em>S</em>.</p></li>
+<li><p>If the superclass constructor call is unqualified, then <em>S</em> must be a
+local class.</p>
+<p>If <em>S</em> is a local class, then the immediately enclosing type declaration
+of <em>S</em> is <em>O</em>.</p>
+<p>If <em>n</em> is an integer (<span class="math notranslate nohighlight">\(n\geq{}1\)</span>), and <em>O</em> is the <em>n</em>’th
+lexically enclosing type declaration of <em>C</em>, then <em>i</em>’s immediately
+enclosing instance with respect to <em>S</em> is the <em>n</em>’th lexically enclosing
+instance of <code class="docutils literal notranslate"><span class="pre">this</span></code>.</p>
+</li>
+</ul>
+</li>
+</ol>
+<ol class="arabic" id="index-79" start="2">
+<li><p>After <em>i</em>’s immediately enclosing instance with respect to <em>S</em> (if available)
+is determined, the evaluation of the superclass constructor call statement
+continues left-to-right. The arguments to the constructor are evaluated, and
+then the constructor is called.</p></li>
+<li><p>If the superclass constructor call statement completes normally after all,
+then all non-static field initializers of <em>C</em> are executed. <em>I</em> is executed
+before <em>J</em> if a non-static field initializer <em>I</em> textually precedes another
+non-static field initializer <em>J</em>.</p>
+<p>Non-static field initializers are executed if the superclass constructor
+call:</p>
+<ul class="simple">
+<li><p>Has an explicit constructor call statement; or</p></li>
+<li><p>Is implicit.</p></li>
+</ul>
+<p>An alternate constructor call does not perform the implicit execution.</p>
+</li>
+</ol>
+<div class="line-block" id="index-80">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="default-constructor">
+<span id="id37"></span><h3><span class="section-number">9.9.5. </span>Default Constructor<a class="headerlink" href="#default-constructor" title="Permalink to this heading">¶</a></h3>
+<p>If a class contains no constructor declaration, then a default constructor
+is implicitly declared. The default constructor has the following form:</p>
+<ul class="simple">
+<li><p>The access modifier of the default constructor and of the class is the same
+(if the class has no access modifier, then the default constructor has the
+internal access (see <a class="reference internal" href="4_names.html#scopes"><span class="std std-ref">Scopes</span></a>).</p></li>
+<li><p>The default constructor has no ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ or ‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’ clauses.</p></li>
+<li><p>The body of the default constructor contains a call to the the superclass
+constructor with no arguments except the primordial class <code class="docutils literal notranslate"><span class="pre">Object</span></code>. The
+body of the default constructor for the primordial class <code class="docutils literal notranslate"><span class="pre">Object</span></code> is empty.</p></li>
+</ul>
+<p>A compile-time error occurs if a default constructor is implicit, but
+the superclass:</p>
+<ul class="simple">
+<li><p>Has no accessible constructor without parameters; and</p></li>
+<li><p>Has a constructor without parameters but with ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ or ‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’
+clauses.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Class declarations without constructors</span>
+<span class="linenos"> 2</span><span class="kd">class</span><span class="w"> </span><span class="nb">Object</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 3</span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 4</span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="c1">// Class declarations with default constructors declared implicitly</span>
+<span class="linenos"> 8</span><span class="kd">class</span><span class="w"> </span><span class="nb">Object</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// Empty body - as there is no supercalss</span>
+<span class="linenos">10</span><span class="p">}</span>
+<span class="linenos">11</span><span class="c1">// Default constructors added</span>
+<span class="linenos">12</span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">super</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">super</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="c1">// Example of an error case #1</span>
+<span class="linenos">16</span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">17</span><span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">18</span><span class="p">}</span>
+<span class="linenos">19</span><span class="kd">class</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// No constructor in B</span>
+<span class="linenos">20</span><span class="c1">// During compialtion of B</span>
+<span class="linenos">21</span><span class="kd">class</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">super</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Default constructor added</span>
+<span class="linenos">22</span><span class="c1">// And it leads to conpile-time error as default constructor calls super()</span>
+<span class="linenos">23</span><span class="c1">// which is private and inaccessible</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="c1">// Example of an error case #2</span>
+<span class="linenos">26</span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">27</span><span class="w">    </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">28</span><span class="p">}</span>
+<span class="linenos">29</span><span class="kd">class</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// No constructor in B</span>
+<span class="linenos">30</span><span class="c1">// During compialtion of B</span>
+<span class="linenos">31</span><span class="kd">class</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">constructor</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">super</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Default constructor added</span>
+<span class="linenos">32</span><span class="c1">// And it leads to conpile-time error as default constructor is not marked as throws</span>
+<span class="linenos">33</span><span class="c1">// but it call super() which throws</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-81">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="local-classes-and-interfaces">
+<span id="id38"></span><h2><span class="section-number">9.10. </span>Local Classes and Interfaces<a class="headerlink" href="#local-classes-and-interfaces" title="Permalink to this heading">¶</a></h2>
+<p>Local classes and interfaces (see <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>) are declared within the
+body of a function, method, or any block delimited by balanced braces in a
+group of zero or more statements.</p>
+<p>Names of local classes and interfaces are visible only within the scope they
+are declared in. When declared in a scope, names of local classes and
+interfaces have access to entities visible within this scope, and capture the
+entities they use from this scope. Function/method parameters and local
+variables can be used and thus captured.</p>
+<p>A compile-time error occurs if:</p>
+<ul class="simple">
+<li><p>A local class or interface declaration has access modifier <code class="docutils literal notranslate"><span class="pre">public</span></code>,
+<code class="docutils literal notranslate"><span class="pre">protected</span></code>, or <code class="docutils literal notranslate"><span class="pre">private</span></code>.</p></li>
+<li><p>A local class or interface declaration members have access modifier
+<code class="docutils literal notranslate"><span class="pre">public</span></code>, <code class="docutils literal notranslate"><span class="pre">protected</span></code>, <code class="docutils literal notranslate"><span class="pre">private</span></code>, or <code class="docutils literal notranslate"><span class="pre">export</span></code>.</p></li>
+</ul>
+<p>The example below shows local classes and interfaces in a top-level function:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">parameter</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">local</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;function local&quot;</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="kd">interface</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Local interface in a top-level function</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="c1">// It has a method</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w">   </span><span class="c1">// and a property</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 7</span><span class="w">   </span><span class="kd">class</span><span class="w"> </span><span class="nx">LocalClass</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Class implements interface</span>
+<span class="linenos"> 8</span><span class="w">     </span><span class="c1">// Local class in a top-level function</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Instance field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; par = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">parameter</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; loc = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">local</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">10</span><span class="w">     </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`instance field value`&quot;</span>
+<span class="linenos">11</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Static field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">field</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">12</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`class/static field value`&quot;</span>
+<span class="linenos">13</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">14</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">lc</span><span class="o">:</span><span class="w"> </span><span class="kt">LocalInterface</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">LocalClass</span>
+<span class="linenos">15</span><span class="w">     </span><span class="c1">// Both local types can be freely used in the top-level function scope</span>
+<span class="linenos">16</span><span class="w">   </span><span class="nx">lc</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">17</span><span class="w">   </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">18</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The example below shows local classes and interfaces in a class method. The
+algorithm is similar to that in a top-level function. However, the
+surrounding class members are not accessible from local classes:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A_class</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1234</span><span class="w"> </span><span class="c1">// Not visible for the local class</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="nx">method</span><span class="w"> </span><span class="p">(</span><span class="nx">parameter</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">local</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;instance local&quot;</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="kd">interface</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">        </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span>
+<span class="linenos"> 7</span><span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 8</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="kd">class</span><span class="w"> </span><span class="nx">LocalClass</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">        </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Instance field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; par = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">parameter</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; loc = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">local</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">11</span><span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`instance field value`&quot;</span>
+<span class="linenos">12</span><span class="w">        </span><span class="k">static</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Static field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">field</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span><span class="w">        </span><span class="k">static</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`class/static field value`&quot;</span>
+<span class="linenos">14</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">lc</span><span class="o">:</span><span class="w"> </span><span class="kt">LocalInterface</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">LocalClass</span>
+<span class="linenos">16</span><span class="w">     </span><span class="nx">lc</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">17</span><span class="w">     </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">18</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">19</span><span class="w">   </span><span class="k">static</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="p">(</span><span class="nx">parameter</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">20</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">local</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;class/static local&quot;</span>
+<span class="linenos">21</span><span class="w">     </span><span class="kd">interface</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">22</span><span class="w">        </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span>
+<span class="linenos">23</span><span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos">24</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">25</span><span class="w">     </span><span class="kd">class</span><span class="w"> </span><span class="nx">LocalClass</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">LocalInterface</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">26</span><span class="w">        </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Instance field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">field</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; par = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">parameter</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; loc = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">local</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">27</span><span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`instance field value`&quot;</span>
+<span class="linenos">28</span><span class="w">        </span><span class="k">static</span><span class="w"> </span><span class="nx">method</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Static field = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">field</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">29</span><span class="w">        </span><span class="k">static</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;`class/static field value`&quot;</span>
+<span class="linenos">30</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">31</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">lc</span><span class="o">:</span><span class="w"> </span><span class="kt">LocalInterface</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">LocalClass</span>
+<span class="linenos">32</span><span class="w">     </span><span class="nx">lc</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">33</span><span class="w">     </span><span class="nx">LocalClass</span><span class="p">.</span><span class="nx">method</span><span class="p">()</span>
+<span class="linenos">34</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">35</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#class-declarations">9.1. Class Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#abstract-classes">9.1.1. Abstract Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#final-classes">9.1.2. Final Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-extension-clause">9.1.3. Class Extension Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-implementation-clause">9.1.4. Class Implementation Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-interface-properties">9.1.5. Implementing Interface Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#class-body">9.2. Class Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-members">9.3. Class Members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#access-modifiers">9.4. Access Modifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#private-access-modifier">9.4.1. Private Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#internal-access-modifier">9.4.2. Internal Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#protected-access-modifier">9.4.3. Protected Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#public-access-modifier">9.4.4. Public Access Modifier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#field-declarations">9.5. Field Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#static-fields">9.5.1. Static Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#readonly-constant-fields">9.5.2. Readonly (Constant) Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#field-initialization">9.5.3. Field Initialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#method-declarations">9.6. Method Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#class-static-methods">9.6.1. Class (Static) Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instance-methods">9.6.2. Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#abstract-methods">9.6.3. Abstract Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#final-methods">9.6.4. Final Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overriding-methods">9.6.5. Overriding Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#native-methods">9.6.6. Native Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#method-overload-signatures">9.6.7. Method Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#method-body">9.6.8. Method Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inheritance">9.6.9. Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overriding-by-instance-methods">9.6.10. Overriding by Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hiding-by-class-methods">9.6.11. Hiding by Class Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#requirements-in-overriding-and-hiding">9.6.12. Requirements in Overriding and Hiding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inheriting-methods-with-override-equivalent-signatures">9.6.13. Inheriting Methods with Override-Equivalent Signatures</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#accessor-declarations">9.7. Accessor Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-initializer">9.8. Class Initializer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#constructor-declaration">9.9. Constructor Declaration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#formal-parameters">9.9.1. Formal Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constructor-overload-signatures">9.9.2. Constructor Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constructor-body">9.9.3. Constructor Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#explicit-constructor-call">9.9.4. Explicit Constructor Call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-constructor">9.9.5. Default Constructor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#local-classes-and-interfaces">9.10. Local Classes and Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="8_statements.html" title="previous chapter"><span class="section-number">8. </span>Statements</a></li>
+      <li>Next: <a href="10_interfaces.html" title="next chapter"><span class="section-number">10. </span>Interfaces</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/9_classes.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

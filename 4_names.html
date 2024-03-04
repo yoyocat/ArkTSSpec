@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4. Names, Declarations and Scopes &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5. Generics" href="5_generics.html" />
+    <link rel="prev" title="3. Types" href="3_types.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="names-declarations-and-scopes">
+<span id="id1"></span><h1><span class="section-number">4. </span>Names, Declarations and Scopes<a class="headerlink" href="#names-declarations-and-scopes" title="Permalink to this heading">¶</a></h1>
+<p>This chapter introduces the following three mutually-related notions:</p>
+<ul class="simple">
+<li><p>Names,</p></li>
+<li><p>Declarations, and</p></li>
+<li><p>Scopes.</p></li>
+</ul>
+<p>Each entity in an ArkTS program—a variable, a constant, a class,
+a type, a function, a method, etc.—is introduced via a <em>declaration</em>.
+An entity declaration assigns a <em>name</em> to the entity declared. The name
+is used to refer to the entity further in the program text.</p>
+<p>Each declaration is valid (i.e., available and known) only within its <em>scope</em>.
+Scope is the region of the program text where the entity is declared and can
+be referred to by its simple (unqualified) name (see <a class="reference internal" href="#scopes"><span class="std std-ref">Scopes</span></a> for more
+details).</p>
+<section id="names">
+<span id="index-0"></span><span id="id2"></span><h2><span class="section-number">4.1. </span>Names<a class="headerlink" href="#names" title="Permalink to this heading">¶</a></h2>
+<p>A name refers to any declared entity.</p>
+<p><em>Simple names</em> consist of a single identifier. <em>Qualified names</em> consist
+of a sequence of identifiers with the ‘.’ tokens as separators:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">qualifiedName</span>:
+<span class="w">  </span><span class="nc">Identifier</span><span class="w"> </span><span class="p">(</span>&#39;.&#39;<span class="w"> </span><span class="nc">Identifier</span><span class="w"> </span><span class="p">)</span><span class="o">*</span>
+<span class="w">  </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>In a qualified name <em>N.x</em> (where <em>N</em> is a simple name, and <code class="docutils literal notranslate"><span class="pre">x</span></code> is an
+identifier that can follow a sequence of identifiers separated with ‘.’
+tokens), <em>N</em> can name the following:</p>
+<ul class="simple">
+<li><p>The name of a compilation unit (see <a class="reference internal" href="13_modules.html#modules-and-compilation-units"><span class="std std-ref">Compilation Units, Packages, and Modules</span></a>)
+introduced as a result of <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">*</span> <span class="pre">as</span> <span class="pre">N</span></code> (see <a class="reference internal" href="13_modules.html#bind-all-with-qualified-access"><span class="std std-ref">Bind All with Qualified Access</span></a>)
+with <code class="docutils literal notranslate"><span class="pre">x</span></code> to name the exported entity;</p></li>
+<li><p>A class or interface type (see <a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>, <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>) with <code class="docutils literal notranslate"><span class="pre">x</span></code>
+to name its static member;</p></li>
+<li><p>A variable of a class or interface type with <code class="docutils literal notranslate"><span class="pre">x</span></code> to name its member.</p></li>
+</ul>
+<div class="line-block" id="index-1">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="declarations">
+<span id="id3"></span><h2><span class="section-number">4.2. </span>Declarations<a class="headerlink" href="#declarations" title="Permalink to this heading">¶</a></h2>
+<p>A declaration introduces a named entity in an appropriate <strong>declaration scope</strong>
+(see <a class="reference internal" href="#scopes"><span class="std std-ref">Scopes</span></a>).</p>
+<div class="line-block" id="index-2">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="distinguishable-declarations">
+<span id="id4"></span><h2><span class="section-number">4.3. </span>Distinguishable Declarations<a class="headerlink" href="#distinguishable-declarations" title="Permalink to this heading">¶</a></h2>
+<p>Each declaration in the declaration scope must be <em>distinguishable</em>.
+A <span class="target" id="index-3"></span>compile-time error occurs otherwise.</p>
+<p>Declarations are <em>distinguishable</em> if:</p>
+<ul class="simple">
+<li><p>They have different names.</p></li>
+<li><p>They are distinguishable by signatures (see
+<a class="reference internal" href="17_experimental.html#declaration-distinguishable-by-signatures"><span class="std std-ref">Declaration Distinguishable by Signatures</span></a>).</p></li>
+</ul>
+<p id="index-4">The examples below are declarations distinguishable by names:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">Pi</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">IP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">method</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 7</span><span class="w">     </span><span class="nx">method</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 8</span><span class="w">     </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">PI</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">PI</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">pi</span>
+<span class="linenos">10</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If a declaration is indistinguishable by name, then a compile-time error occurs:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="c1">// The constant and the function have the same name.</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">PI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14</span><span class="w">                   </span><span class="c1">// compile-time error</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">PI</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">3.14</span><span class="w"> </span><span class="p">}</span><span class="w">     </span><span class="c1">// compile-time error</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="c1">// The type and the variable have the same name.</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">P</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">P</span><span class="w">           </span><span class="c1">// compile-time error</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">Person</span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span><span class="w">                </span><span class="c1">// compile-time error</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="c1">// The field and the method have the same name.</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="w">     </span><span class="nx">counter</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w">               </span><span class="c1">// compile-time error</span>
+<span class="linenos">12</span><span class="w">     </span><span class="nx">counter</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span><span class="w">           </span><span class="c1">// compile-time error</span>
+<span class="linenos">13</span><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">counter</span>
+<span class="linenos">14</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-5">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="scopes">
+<span id="id5"></span><h2><span class="section-number">4.4. </span>Scopes<a class="headerlink" href="#scopes" title="Permalink to this heading">¶</a></h2>
+<p>The <em>scope</em> of a name is the region of program code within which the entity
+declared by that name can be referred to without having the name qualified.
+It means that a name is accessible in some context if it can be used in this
+context by its <em>simple</em> name.</p>
+<p>The nature of scope usage depends on the kind of the name. A type name
+is used to declare variables or constants. A function name is used to call
+that function.</p>
+<p id="index-6">The scope of a name depends on the context the name is declared in:</p>
+<ul class="simple" id="package-access">
+<li><p>A name declared on the package level (<em>package level scope</em>) is accessible
+throughout the entire package. The name can be accessed in other packages
+if exported.</p></li>
+</ul>
+<span id="index-7"></span><ul class="simple" id="module-access">
+<li><p><em>Module level scope</em> is applicable for separate modules only. A name
+declared on the module level is accessible throughout the entire module.
+The name can be accessed in other packages if exported.</p></li>
+</ul>
+<span id="index-8"></span><ul id="class-access">
+<li><p>A name declared inside a class (<em>class level scope</em>) is accessible in the
+class and sometimes, depending on the access modifier, outside the class, or
+by means of a derived class.</p>
+<p>Access to names inside the class is qualified with one of the following:</p>
+<ul class="simple">
+<li><p><em>this</em>;</p></li>
+<li><p>Class instance expression for the names of instance entities; or</p></li>
+<li><p>Name of the class for static entities.</p></li>
+</ul>
+<p>Outside access is qualified with one of the following:</p>
+<ul class="simple">
+<li><p>Expression the value stores;</p></li>
+<li><p>Reference to the class instance for the names of instance entities; or</p></li>
+<li><p>Name of the class for static entities.</p></li>
+</ul>
+</li>
+</ul>
+<span id="index-9"></span><ul class="simple" id="interface-access">
+<li><p>A name declared inside an interface (<em>interface level scope</em>) is accessible
+inside and outside that interface (default public).</p></li>
+</ul>
+<span id="index-10"></span><ul class="simple" id="enum-access">
+<li><p><em>Enum level scope</em> is identical to the package or module level scope, as
+every enumeration defines a type inside a package or module. The scope of
+all enumeration constants and of the enumeration itself is the same.</p></li>
+</ul>
+<span id="index-11"></span><ul class="simple" id="class-or-interface-type-parameter-access">
+<li><p><em>The scope of a type parameter</em> name in a class or interface declaration
+is that entire declaration, excluding static member declarations.</p></li>
+</ul>
+<span id="index-12"></span><ul class="simple" id="function-type-parameter-access">
+<li><p>The scope of a type parameter name in a function declaration is that
+entire declaration (<em>function parameter scope</em>).</p></li>
+</ul>
+<span id="index-13"></span><ul class="simple" id="function-access">
+<li><p>The scope of a name declared immediately inside the body of a function
+(method) declaration is the body of that function declaration from the
+point of declaration and up to the end of the body (<em>method</em> or <em>function
+scope</em>).</p></li>
+</ul>
+<span id="index-14"></span><ul class="simple" id="block-access">
+<li><p>The scope of a name declared inside a statement block is the body of
+the statement block from the point of declaration and up to the end
+of the block (<em>block scope</em>).</p></li>
+</ul>
+<div class="highlight-typescript notranslate" id="index-15"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="c1">// compile-time error – y is not accessible</span>
+<span class="linenos">3</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Scopes of two names can overlap (e.g., when statements are nested). If scopes
+of two names overlap, then:</p>
+<ul class="simple">
+<li><p>The innermost declaration takes precedence; and</p></li>
+<li><p>Access to the outer name is not possible.</p></li>
+</ul>
+<p>Class, interface, and enum members can only be accessed by applying the dot
+operator ‘.’ to an instance. Accessing them otherwise is not possible.</p>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="type-declarations">
+<span id="id6"></span><h2><span class="section-number">4.5. </span>Type Declarations<a class="headerlink" href="#type-declarations" title="Permalink to this heading">¶</a></h2>
+<p>An interface declaration (see <a class="reference internal" href="10_interfaces.html#interfaces"><span class="std std-ref">Interfaces</span></a>), a class declaration (see
+<a class="reference internal" href="9_classes.html#classes"><span class="std std-ref">Classes</span></a>), or an enum declaration (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>) are type
+declarations.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">typeDeclaration</span>:
+<span class="w">    </span><span class="nc">classDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">interfaceDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">enumDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+</section>
+<section id="type-alias-declaration">
+<span id="index-17"></span><span id="id7"></span><h2><span class="section-number">4.6. </span>Type Alias Declaration<a class="headerlink" href="#type-alias-declaration" title="Permalink to this heading">¶</a></h2>
+<p>Type aliases enable using meaningful and concise notations by providing the
+following:</p>
+<ul class="simple">
+<li><p>Names for anonymous types (array, function, and union types); or</p></li>
+<li><p>Alternative names for existing types.</p></li>
+</ul>
+<p>Scopes of type aliases are package or module level scopes. Names
+of all type aliases must be unique across all types in the current
+context.</p>
+<div class="highlight-abnf notranslate" id="index-18"><div class="highlight"><pre><span></span><span class="nc">typeAlias</span>:
+<span class="w">    </span>&#39;<span class="nc">type</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">typeParameters</span>?<span class="w"> </span>&#39;<span class="o">=</span>&#39;<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Meaningful names can be provided for anonymous types as follows:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">[][]</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">no</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Predicate</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Boolean</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">NullableNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span>
+</pre></div>
+</div>
+<p>If the existing type name is too long, then a shorter new name can be
+introduced by using type alias (particularly for a generic type).</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Dictionary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Map</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">MapOfString</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Map</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>A type alias acts as a new name only. It neither changes the meaning of the
+original type nor introduces a new type.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Vector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">max</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">Vector</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">x</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nx">m</span><span class="p">)</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">m</span>
+<span class="linenos"> 6</span><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="nx">m</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">Vector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">]</span>
+<span class="linenos">11</span><span class="w">     </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">max</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Type aliases can be recursively referenced inside the right-hand side of a
+type alias declaration (see <a class="reference internal" href="#recursive-type-aliases"><span class="std std-ref">Recursive Type Aliases</span></a>).</p>
+<div class="line-block" id="index-19">
+<div class="line"><br /></div>
+</div>
+<section id="recursive-type-aliases">
+<span id="id8"></span><h3><span class="section-number">4.6.1. </span>Recursive Type Aliases<a class="headerlink" href="#recursive-type-aliases" title="Permalink to this heading">¶</a></h3>
+<p>In a type alias defined as <em>type A = something</em>, <em>A</em> can be used recursively
+if it is one of the following:</p>
+<ul class="simple">
+<li><p>Array element type: <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">A</span> <span class="pre">=</span> <span class="pre">A[]</span></code>; or</p></li>
+<li><p>Type argument of a generic type: type A = C&lt;A&gt;.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">A</span><span class="p">[]</span><span class="w"> </span><span class="c1">// ok, used as element type</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/*body*/</span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">C</span><span class="o">&lt;</span><span class="nx">B</span><span class="o">&gt;</span><span class="w"> </span><span class="c1">// ok, used as a type argument</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">D</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">D</span><span class="o">&gt;</span><span class="w"> </span><span class="c1">// ok</span>
+</pre></div>
+</div>
+<p>Any other use causes a compile-time error, because the compiler
+does not have enough information about the defined alias:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">E</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">E</span><span class="w"> </span><span class="c1">// compile-time error</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">F</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">E</span><span class="w"> </span><span class="c1">// compile-time error</span>
+</pre></div>
+</div>
+<p>The same rules apply to a generic type alias defined as
+<em>type A&lt;T&gt; = something</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="c1">// ok, A&lt;T&gt; is used as a type argument</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="c1">// compile-time error</span>
+</pre></div>
+</div>
+<p>A compile-time error occurs if a generic type alias is used without
+a type argument:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">A</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">A</span><span class="o">&gt;</span><span class="w"> </span><span class="c1">// compile-time error</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: There is no restriction on using a type parameter <em>T</em> in
+the right side of a type alias declaration. The following code
+is valid:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">NodeValue</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">T</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">NodeValue</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="variable-and-constant-declarations">
+<span id="id9"></span><h2><span class="section-number">4.7. </span>Variable and Constant Declarations<a class="headerlink" href="#variable-and-constant-declarations" title="Permalink to this heading">¶</a></h2>
+<section id="variable-declarations">
+<span id="id10"></span><h3><span class="section-number">4.7.1. </span>Variable Declarations<a class="headerlink" href="#variable-declarations" title="Permalink to this heading">¶</a></h3>
+<p>A <em>variable declaration</em> introduces a new named variable that can be assigned
+an initial value:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">variableDeclarations</span>:
+<span class="w">    </span>&#39;<span class="nc">let</span>&#39;<span class="w"> </span><span class="nc">varDeclarationList</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">variableDeclarationList</span>:
+<span class="w">    </span><span class="nc">variableDeclaration</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">variableDeclaration</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">variableDeclaration</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span><span class="p">(</span>&#39;?&#39;<span class="p">)</span>?<span class="w"> </span>&#39;:&#39;<span class="w"> </span><span class="p">(</span>&#39;<span class="nc">readonly</span>&#39;<span class="p">)</span>?<span class="w"> </span><span class="nc">type</span><span class="w"> </span><span class="nc">initializer</span>?
+<span class="w">    </span>|<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">initializer</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">initializer</span>:
+<span class="w">    </span>&#39;<span class="o">=</span>&#39;<span class="w"> </span><span class="nc">expression</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>When a variable is introduced by a variable declaration, type <em>T</em> of the
+variable is determined as follows:</p>
+<ul class="simple">
+<li><p><em>T</em> is the type specified in a type annotation (if any) of the declaration.</p>
+<ul>
+<li><p>If <em>‘?’</em> is used after the name of the variable, then the actual type <em>T</em>
+of the variable is <em>type</em> | <em>undefined</em>.</p></li>
+<li><p>If the declaration also has an initializer, then the initializer expression
+type must be compatible with <em>T</em> (see <a class="reference internal" href="#type-compatibility-with-initializer"><span class="std std-ref">Type Compatibility with Initializer</span></a>).</p></li>
+</ul>
+</li>
+<li><p>If no type annotation is available, then <em>T</em> is inferred from the
+initializer expression (see <a class="reference internal" href="#type-inference-from-initializer"><span class="std std-ref">Type Inference from Initializer</span></a>).</p></li>
+</ul>
+<div class="highlight-typescript notranslate" id="index-20"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="c1">// ok, number type is inferred</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="w"> </span><span class="c1">// ok, type of lambda and type of &#39;f&#39; can be inferred</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">p</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="c1">// compile-time error -- either type or initializer</span>
+</pre></div>
+</div>
+<p>Every variable in a program must have an initial value before it can be used.
+The initial value can be identified as follows:</p>
+<ul class="simple">
+<li><p>The initial value is explicitly specified by an <em>initializer</em>.</p></li>
+<li><p>Each method or function parameter is initialized to the corresponding
+argument value provided by the caller of the method or function.</p></li>
+<li><p>Each constructor parameter is initialized to the corresponding
+argument value as provided by:</p>
+<ul>
+<li><p>Class instance creation expression (see <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>); or</p></li>
+<li><p>Explicit constructor call (see <a class="reference internal" href="9_classes.html#explicit-constructor-call"><span class="std std-ref">Explicit Constructor Call</span></a>).</p></li>
+</ul>
+</li>
+<li><p>An exception parameter is initialized to the thrown object (see
+<a class="reference internal" href="8_statements.html#throw-statements"><span class="std std-ref">throw Statements</span></a>) that represents exception or error.</p></li>
+<li><p>Each class, instance, local variable, or array element is initialized with
+a <em>default value</em> (see <a class="reference internal" href="3_types.html#default-values-for-types"><span class="std std-ref">Default Values for Types</span></a>) when it is created.</p></li>
+</ul>
+<p>Otherwise, the variable is not initialized, and a <span class="target" id="index-21"></span>compile-time error
+occurs.</p>
+<p>If an initializer expression is provided, then additional restrictions apply
+to the content of the expression as described in <a class="reference internal" href="17_experimental.html#exceptions-and-initialization-expression"><span class="std std-ref">Exceptions and Initialization Expression</span></a>.</p>
+<p>If the type of a variable declaration has the prefix <em>readonly</em>, then the
+type must be of <em>array</em> kind, and the restrictions on its operations are
+applied to the variable as described in <a class="reference internal" href="#readonly-parameters"><span class="std std-ref">Readonly Parameters</span></a>.</p>
+<p>A <span class="target" id="index-22"></span>compile-time error occurs if a non-array type has the prefix
+<em>readonly</em>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">readonly</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">p</span>
+<span class="linenos">3</span><span class="w">    </span><span class="nx">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">666</span><span class="w"> </span><span class="c1">// Compile-time error as array itself is readonly</span>
+<span class="linenos">4</span><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="w"> </span><span class="p">(</span><span class="nx">x</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span><span class="w"> </span><span class="c1">// read operation is OK</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-23">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constant-declarations">
+<span id="id11"></span><h3><span class="section-number">4.7.2. </span>Constant Declarations<a class="headerlink" href="#constant-declarations" title="Permalink to this heading">¶</a></h3>
+<p>A <em>constant declaration</em> introduces a named variable with a mandatory
+explicit value.</p>
+<p>The value of a constant cannot be changed by an assignment expression
+(see <a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>). If the constant is an object or array, then
+its properties or items can be modified.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">constantDeclarations</span>:
+<span class="w">    </span>&#39;<span class="nc">const</span>&#39;<span class="w"> </span><span class="nc">constantDeclarationList</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">constantDeclarationList</span>:
+<span class="w">    </span><span class="nc">constantDeclaration</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">constantDeclaration</span><span class="p">)</span><span class="o">*</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">constantDeclaration</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span><span class="p">(</span>&#39;:&#39;<span class="w"> </span><span class="nc">type</span><span class="p">)</span>?<span class="w"> </span><span class="nc">initializer</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The type <em>T</em> of a constant declaration is determined as follows:</p>
+<ul class="simple">
+<li><p>If <em>T</em> is the type specified in a type annotation (if any) of the
+declaration, then the initializer expression must be compatible with
+<em>T</em> (see <a class="reference internal" href="#type-compatibility-with-initializer"><span class="std std-ref">Type Compatibility with Initializer</span></a>).</p></li>
+<li><p>If no type annotation is available, then <em>T</em> is inferred from the
+initializer expression (see <a class="reference internal" href="#type-inference-from-initializer"><span class="std std-ref">Type Inference from Initializer</span></a>).</p></li>
+<li><p>If ‘<em>?</em>’ is used after the name of the constant, then the type of the
+constant is <em>T</em> | <em>undefined</em>, regardless of whether <em>T</em> is identified
+explicitly or via type inference.</p></li>
+</ul>
+<div class="highlight-typescript notranslate" id="index-24"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="c1">// ok, int type is inferred</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="c1">// compile-time error -- initializer is mandatory</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// compile-time error -- initializer is mandatory</span>
+</pre></div>
+</div>
+<p>Additional restrictions on the content of the initializer expression are
+described in <a class="reference internal" href="17_experimental.html#exceptions-and-initialization-expression"><span class="std std-ref">Exceptions and Initialization Expression</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="type-compatibility-with-initializer">
+<span id="id12"></span><h3><span class="section-number">4.7.3. </span>Type Compatibility with Initializer<a class="headerlink" href="#type-compatibility-with-initializer" title="Permalink to this heading">¶</a></h3>
+<p>If a variable or constant declaration contains type annotation <em>T</em> and
+initializer expression <em>E</em>, then the type of <em>E</em> must be compatible with <em>T</em>,
+see <a class="reference internal" href="6_conversions.html#assignment-like-contexts"><span class="std std-ref">Assignment-like Contexts</span></a>.</p>
+<div class="line-block" id="index-25">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="type-inference-from-initializer">
+<span id="id13"></span><h3><span class="section-number">4.7.4. </span>Type Inference from Initializer<a class="headerlink" href="#type-inference-from-initializer" title="Permalink to this heading">¶</a></h3>
+<p>If a declaration does not contain an explicit type annotation, then its type
+is inferred from the initializer as follows:</p>
+<ul class="simple">
+<li><p>If the initializer expression is the <em>null</em> literal, then the type is
+<em>Object</em> | <em>null</em>.</p></li>
+<li><p>If the initializer expression is of union type comprised of numeric literals
+only, then the type is the smallest numeric type all numeric literals fit
+into.</p></li>
+<li><p>If the initializer expression is of union type comprised of literals of a
+single type <em>T</em>, then the type is <em>T</em>.</p></li>
+<li><p>If the type can be inferred from the initializer expression, then the type
+is that of the initializer expression.</p></li>
+</ul>
+<p>If the type of the initializer cannot be inferred from the expression itself,
+then a compile-time error occurs (see <a class="reference internal" href="7_expressions.html#object-literal"><span class="std std-ref">Object Literal</span></a>):</p>
+<div class="highlight-typescript notranslate" id="index-26"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c1">// type of &#39;a&#39; is Object | null</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">cond</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/*something*/</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="c1">// type of &#39;b&#39; is int</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">3.14</span><span class="w"> </span><span class="c1">// type of &#39;b&#39; is double</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;one&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;two&quot;</span><span class="w"> </span><span class="c1">// type of &#39;c&#39; is string</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;one&quot;</span><span class="w"> </span><span class="c1">// type of &#39;e&#39; is 1 | &quot;one&quot;</span>
+<span class="linenos">8</span>
+<span class="linenos">9</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;aa&quot;</span><span class="p">}</span><span class="w"> </span><span class="c1">// compile-time error</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="function-declarations">
+<span id="id14"></span><h2><span class="section-number">4.8. </span>Function Declarations<a class="headerlink" href="#function-declarations" title="Permalink to this heading">¶</a></h2>
+<p><em>Function declarations</em> specify names, signatures, and bodies when
+introducing <em>named functions</em>. A function body is a block (see <a class="reference internal" href="8_statements.html#block"><span class="std std-ref">Block</span></a>).</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">functionDeclaration</span>:
+<span class="w">    </span><span class="nc">functionOverloadSignature</span><span class="o">*</span>
+<span class="w">    </span><span class="nc">modifiers</span>?<span class="w"> </span>&#39;<span class="nc">function</span>&#39;<span class="w"> </span><span class="nc">identifier</span>
+<span class="w">    </span><span class="nc">typeParameters</span>?<span class="w"> </span><span class="nc">signature</span><span class="w"> </span><span class="nc">block</span>?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">modifiers</span>:
+<span class="w">    </span>&#39;<span class="nc">native</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">async</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>Function <em>overload signature</em> allows calling a function in different ways (see
+<a class="reference internal" href="#function-overload-signatures"><span class="std std-ref">Function Overload Signatures</span></a>).</p>
+<p>If a function is declared as <em>generic</em> (see <a class="reference internal" href="5_generics.html#generics"><span class="std std-ref">Generics</span></a>), then its type
+parameters must be specified.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">native</span></code> modifier indicates that the function is
+a <em>native function</em> (see <a class="reference internal" href="17_experimental.html#native-functions"><span class="std std-ref">Native Functions</span></a> in Experimental Features).
+A compile-time error occurs if a <em>native function</em> has a body.</p>
+<p>Functions must be declared on the top level (see <a class="reference internal" href="13_modules.html#top-level-statements"><span class="std std-ref">Top-Level Statements</span></a>).</p>
+<div class="line-block" id="index-27">
+<div class="line"><br /></div>
+</div>
+<section id="signatures">
+<span id="id15"></span><h3><span class="section-number">4.8.1. </span>Signatures<a class="headerlink" href="#signatures" title="Permalink to this heading">¶</a></h3>
+<p>A signature defines parameters and the return type (see <a class="reference internal" href="#return-type"><span class="std std-ref">Return Type</span></a>)
+of a function, method, or constructor.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">signature</span>:
+<span class="w">    </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">parameterList</span>?<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="nc">returnType</span>?<span class="w"> </span><span class="nc">throwMark</span>?
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">returnType</span>:
+<span class="w">    </span>&#39;:&#39;<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">throwMark</span>:
+<span class="w">    </span>&#39;<span class="nc">throws</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">rethrows</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="17_experimental.html#throwing-functions"><span class="std std-ref">Throwing Functions</span></a> for the details of ‘<code class="docutils literal notranslate"><span class="pre">throws</span></code>’ marks, and
+<a class="reference internal" href="17_experimental.html#rethrowing-functions"><span class="std std-ref">Rethrowing Functions</span></a> for the details of ‘<code class="docutils literal notranslate"><span class="pre">rethrows</span></code>’ marks.</p>
+<p>Overloading (see <a class="reference internal" href="17_experimental.html#function-and-method-overloading"><span class="std std-ref">Function and Method Overloading</span></a>) is supported for
+functions and methods. The signatures of functions and methods are important
+for their unique identification.</p>
+<div class="line-block" id="index-28">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="parameter-list">
+<span id="id16"></span><h3><span class="section-number">4.8.2. </span>Parameter List<a class="headerlink" href="#parameter-list" title="Permalink to this heading">¶</a></h3>
+<p>A signature contains a <em>parameter list</em> that specifies an identifier of
+each parameter name, and the type of each parameter. The type of each
+parameter must be explicitly defined.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">parameterList</span>:
+<span class="w">    </span><span class="nc">parameter</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">parameter</span><span class="p">)</span><span class="o">*</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">optionalParameters</span>|<span class="nc">restParameter</span><span class="p">)</span>?
+<span class="w">    </span>|<span class="w"> </span><span class="nc">restParameter</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">optionalParameters</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">parameter</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">readonly</span>&#39;?<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">restParameter</span>:
+<span class="w">    </span>&#39;...&#39;<span class="w"> </span><span class="nc">parameter</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>If a parameter type is prefixed with <em>readonly</em>, then there are additional
+restrictions on the parameter as described in <a class="reference internal" href="#readonly-parameters"><span class="std std-ref">Readonly Parameters</span></a>.</p>
+<p>The last parameter of a function can be a <em>rest parameter</em>
+(see <a class="reference internal" href="#rest-parameter"><span class="std std-ref">Rest Parameter</span></a>), or a sequence of <em>optional parameters</em>
+(see <a class="reference internal" href="#optional-parameters"><span class="std std-ref">Optional Parameters</span></a>). This construction allows omitting
+the corresponding argument when calling a function. If a parameter is not
+<em>optional</em>, then each function call must contain an argument corresponding
+to that parameter. Non-optional parameters are called the <em>required parameters</em>.</p>
+<p>The function below has <em>required parameters</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">power</span><span class="p">(</span><span class="nx">base</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">exponent</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">base</span><span class="p">,</span><span class="w"> </span><span class="nx">exponent</span><span class="p">)</span>
+<span class="linenos">3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span><span class="w"> </span><span class="c1">// both arguments are required in the call</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-29"></span>compile-time error occurs if an <em>optional parameter</em> precedes a
+<em>required parameter</em> in the parameter list.</p>
+<div class="line-block" id="index-30">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="readonly-parameters">
+<span id="id17"></span><h3><span class="section-number">4.8.3. </span>Readonly Parameters<a class="headerlink" href="#readonly-parameters" title="Permalink to this heading">¶</a></h3>
+<p>If the parameter type is prefixed with <em>readonly</em>, then the type must be of
+array type <em>T</em>[]. Otherwise, a compile-time error occurs.</p>
+<p>The <em>readonly</em> parameter indicates that the array content cannot be modified
+by a function or by a method body. A compile-time error if the array content
+is modified by an operation:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">array</span><span class="o">:</span><span class="w"> </span><span class="kt">readonly</span><span class="w"> </span><span class="kt">number</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">array</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="c1">// OK, one can get array element</span>
+<span class="linenos">3</span><span class="w">     </span><span class="nx">array</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="c1">// Compile-time error, array is readonly</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>It applies to variables as discussed in <a class="reference internal" href="#variable-declarations"><span class="std std-ref">Variable Declarations</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="optional-parameters">
+<span id="id18"></span><h3><span class="section-number">4.8.4. </span>Optional Parameters<a class="headerlink" href="#optional-parameters" title="Permalink to this heading">¶</a></h3>
+<p>There are two forms of <em>optional parameters</em>:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">optionalParameters</span>:
+<span class="w">    </span><span class="nc">optionalParameter</span><span class="w"> </span><span class="p">(</span>&#39;,&#39;<span class="w"> </span><span class="nc">optionalParameter</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">optionalParameter</span>:
+<span class="w">    </span><span class="nc">identifier</span><span class="w"> </span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">readonly</span>&#39;?<span class="w"> </span><span class="nc">type</span><span class="w"> </span>&#39;<span class="o">=</span>&#39;<span class="w"> </span><span class="nc">expression</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span>&#39;?&#39;<span class="w"> </span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">readonly</span>&#39;?<span class="w"> </span><span class="nc">type</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The first form contains an expression that specifies a <em>default value</em>. That
+is called a <em>parameter with default value</em>. The value of the parameter is set
+to the <em>default value</em> if the argument corresponding to that parameter is
+omitted in a function call.</p>
+<div class="highlight-typescript notranslate" id="index-31"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">pair</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">7</span><span class="p">)</span>
+<span class="linenos">2</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">     </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">)</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="nx">pair</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints: 1 2</span>
+<span class="linenos">6</span><span class="w"> </span><span class="nx">pair</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints: 1 7</span>
+</pre></div>
+</div>
+<p>The second form is a short notation for a parameter of union type
+<em>T</em> | <em>undefined</em> with the default value <em>undefined</em>. It means that
+<em>identifier ‘?’ ‘:’ type</em> is equivalent to
+<em>identifier ‘:’ type | undefined = undefined</em>.
+If a type is of the value type kind, then implicit boxing must be applied
+(as in <a class="reference internal" href="3_types.html#union-types"><span class="std std-ref">Union Types</span></a>) as follows:
+<em>identifier ‘?’ ‘:’ valueType</em> is equivalent to
+<em>identifier ‘:’ referenceTypeForValueType | undefined = undefined</em>.</p>
+<p id="index-32">For example, the following two functions can be used in the same way:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">hello1</span><span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">hello2</span><span class="p">(</span><span class="nx">name?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="nx">hello1</span><span class="p">()</span><span class="w"> </span><span class="c1">// &#39;name&#39; has &#39;undefined&#39; value</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="nx">hello1</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// &#39;name&#39; has a string value</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="nx">hello2</span><span class="p">()</span><span class="w"> </span><span class="c1">// &#39;name&#39; has &#39;undefined&#39; value</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="nx">hello2</span><span class="p">(</span><span class="s2">&quot;John&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// &#39;name&#39; has a string value</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo1</span><span class="w"> </span><span class="p">(</span><span class="nx">p?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo2</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="w"> </span><span class="nx">foo1</span><span class="p">()</span><span class="w"> </span><span class="c1">// &#39;p&#39; has &#39;undefined&#39; value</span>
+<span class="linenos">13</span><span class="w"> </span><span class="nx">foo1</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span><span class="w"> </span><span class="c1">// &#39;p&#39; has an integer value</span>
+<span class="linenos">14</span><span class="w"> </span><span class="nx">foo2</span><span class="p">()</span><span class="w"> </span><span class="c1">// &#39;p&#39; has &#39;undefined&#39; value</span>
+<span class="linenos">15</span><span class="w"> </span><span class="nx">foo2</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span><span class="w"> </span><span class="c1">// &#39;p&#39; has an integer value</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="rest-parameter">
+<span id="id19"></span><h3><span class="section-number">4.8.5. </span>Rest Parameter<a class="headerlink" href="#rest-parameter" title="Permalink to this heading">¶</a></h3>
+<p><em>Rest parameters</em> allow functions or methods to take unbounded numbers of
+arguments. <em>Rest parameters</em> have the symbol ‘<code class="docutils literal notranslate"><span class="pre">...</span></code>’ mark before the
+parameter name:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="nx">...numbers</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">3</span><span class="w">   </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">numbers</span><span class="p">)</span>
+<span class="linenos">4</span><span class="w">     </span><span class="nx">res</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">n</span>
+<span class="linenos">5</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nx">res</span>
+<span class="linenos">6</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-33"></span>compile-time error occurs if a rest parameter:</p>
+<ul class="simple">
+<li><p>Is not the last parameter in a parameter list;</p></li>
+<li><p>Has a type that is not an array type.</p></li>
+</ul>
+<p>A function that has a rest parameter of type <em>T</em>[] can accept any
+number of arguments of type <em>T</em>:</p>
+<div class="highlight-typescript notranslate" id="index-34"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="nx">...numbers</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">numbers</span><span class="p">)</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="nx">res</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">n</span>
+<span class="linenos"> 5</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nx">res</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="nx">sum</span><span class="p">()</span><span class="w"> </span><span class="c1">// returns 0</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="c1">// returns 1</span>
+<span class="linenos">10</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span><span class="w"> </span><span class="c1">// returns 6</span>
+</pre></div>
+</div>
+<p>If an argument of type <em>T</em>[] is prefixed with the <em>spread</em> operator
+‘<code class="docutils literal notranslate"><span class="pre">...</span></code>’, then only one argument can be accepted:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">sum</span><span class="p">(</span><span class="nx">...numbers</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">3</span><span class="w">   </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">numbers</span><span class="p">)</span>
+<span class="linenos">4</span><span class="w">     </span><span class="nx">res</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">n</span>
+<span class="linenos">5</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="nx">res</span>
+<span class="linenos">6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]</span>
+<span class="linenos">9</span><span class="w"> </span><span class="nx">sum</span><span class="p">(...</span><span class="nx">x</span><span class="p">)</span><span class="w"> </span><span class="c1">// returns 6</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-35">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="shadowing-parameters">
+<span id="id20"></span><h3><span class="section-number">4.8.6. </span>Shadowing Parameters<a class="headerlink" href="#shadowing-parameters" title="Permalink to this heading">¶</a></h3>
+<p>If the name of a parameter is identical to the name of a top-level
+variable accessible within the body of a function or a method with that
+parameter, then the name of the parameter shadows the name of the
+top-level variable within the body of that function or method:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">T1</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">T2</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">T3</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">variable</span><span class="o">:</span><span class="w"> </span><span class="kt">T1</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">variable</span><span class="o">:</span><span class="w"> </span><span class="kt">T2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">     </span><span class="c1">// &#39;variable&#39; has type T2 and refers to the function parameter</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">SomeClass</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">   </span><span class="nx">method</span><span class="w"> </span><span class="p">(</span><span class="nx">variable</span><span class="o">:</span><span class="w"> </span><span class="kt">T3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">11</span><span class="w">     </span><span class="c1">// &#39;variable&#39; has type T3 and refers to the method parameter</span>
+<span class="linenos">12</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos">13</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-36">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="return-type">
+<span id="id21"></span><h3><span class="section-number">4.8.7. </span>Return Type<a class="headerlink" href="#return-type" title="Permalink to this heading">¶</a></h3>
+<p>An omitted function or method return type can be inferred from the function,
+or the method body. A <span class="target" id="index-37"></span>compile-time error occurs if a return type is
+omitted in a native function (see <a class="reference internal" href="17_experimental.html#native-functions"><span class="std std-ref">Native Functions</span></a>).</p>
+<p>The current version of ArkTS allows inferring return types at least under
+the following conditions:</p>
+<ul class="simple">
+<li><p>If there is no return statement, or if all return statements have no
+expressions, then the return type is <em>void</em> (see <a class="reference internal" href="3_types.html#void-type"><span class="std std-ref">void Type</span></a>).</p></li>
+<li><p>If there are <em>k</em> return statements (where <em>k</em> is 1 or more) with
+the same type expression <em>R</em>, then the <em>R</em> is the return type.</p></li>
+<li><p>If there are <em>k</em> return statements (where <em>k</em> is 2 or more) with
+expressions of types (<em>T</em><sub>1</sub>, <code class="docutils literal notranslate"><span class="pre">...</span></code>, <em>T</em><sub>k</sub>), and <em>R</em>
+is the <em>union type</em> (see <a class="reference internal" href="3_types.html#union-types"><span class="std std-ref">Union Types</span></a>) of these types
+(<em>T</em><sub>1</sub> | … | <em>T</em><sub>k</sub>),
+and its normalized version (see <a class="reference internal" href="3_types.html#union-types-normalization"><span class="std std-ref">Union Types Normalization</span></a>) is the the
+return type.</p></li>
+<li><p>If the function is <em>async</em>, the return type is inferred by using the rules
+above, and the type <em>T</em> is not <em>Promise</em> type, then the return type
+is <em>Promise&lt;T&gt;</em>.</p></li>
+</ul>
+<p>Future compiler implementations are to infer the return type in more cases.
+The type inference is presented in the example below:</p>
+<div class="highlight-typescript notranslate" id="index-38"><div class="highlight"><pre><span></span><span class="c1">// Explicit return type</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">// Implicit return type inferred as string</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">goo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;goo&quot;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="kd">class</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="kd">class</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">bar</span><span class="w"> </span><span class="p">(</span><span class="nx">condition</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">condition</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived1</span><span class="p">()</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived2</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// Return type of bar will be Derived1|Derived2 union type</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">boo</span><span class="w"> </span><span class="p">(</span><span class="nx">condition</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">condition</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">1</span>
+<span class="p">}</span>
+<span class="c1">// That is a compile time error as there is an execution path with no return</span>
+</pre></div>
+</div>
+<p>If a particular type inference case is not recognized by the compiler, then
+a corresponding <span class="target" id="index-39"></span>compile-time error occurs.</p>
+<p>If the function return type is not <em>void</em> and
+there is an execution path in the function or method body which has no
+return statement (see <a class="reference internal" href="8_statements.html#return-statements"><span class="std std-ref">return Statements</span></a>),
+then a <span class="target" id="index-40"></span>compile-time error occurs.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="function-overload-signatures">
+<span id="id22"></span><h3><span class="section-number">4.8.8. </span>Function Overload Signatures<a class="headerlink" href="#function-overload-signatures" title="Permalink to this heading">¶</a></h3>
+<p>The ArkTS language allows specifying a function that can have several
+<em>overload signatures</em> with the same name followed by one implementation
+function body:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">functionOverloadSignature</span>:
+<span class="w">  </span>&#39;<span class="nc">async</span>&#39;?<span class="w"> </span>&#39;<span class="nc">function</span>&#39;<span class="w"> </span><span class="nc">identifier</span><span class="w"> </span><span class="nc">typeParameters</span>?<span class="w"> </span><span class="nc">signature</span>
+<span class="w">  </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-41"></span>compile-time error occurs if the function implementation is missing,
+or does not immediately follow the declaration.</p>
+<p>A call of a function with overload signatures is always a call of the
+implementation function.</p>
+<p>The example below has overload signatures defined (one is parameterless, and
+the other two have one parameter each):</p>
+<div class="highlight-typescript notranslate" id="index-42"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">           </span><span class="c1">// 1st signature</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w">  </span><span class="c1">// 2nd signature</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">x?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="c1">// 3rd - implementation signature</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="w">          </span><span class="c1">// ok, call fits 1st and 3rd signatures</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="s2">&quot;aa&quot;</span><span class="p">)</span><span class="w">      </span><span class="c1">// ok, call fits 2nd and 3rd signatures</span>
+<span class="linenos">10</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="c1">// ok, call fits the 3rd signature</span>
+</pre></div>
+</div>
+<p>The call of <code class="docutils literal notranslate"><span class="pre">foo()</span></code> is executed as a call of the implementation function
+with the <code class="docutils literal notranslate"><span class="pre">undefined</span></code> argument. The call of <code class="docutils literal notranslate"><span class="pre">foo(x)</span></code> is executed as a call
+of the implementation function with the <code class="docutils literal notranslate"><span class="pre">x</span></code> argument.</p>
+<p>The compatibility requirements of <em>overload signatures</em> are described in
+<a class="reference internal" href="15_semantics.html#overload-signature-compatibility"><span class="std std-ref">Overload Signature Compatibility</span></a>.</p>
+<p>A <span class="target" id="index-43"></span>compile-time error occurs unless all overload signatures are
+either exported or non-exported.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Names, Declarations and Scopes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#names">4.1. Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#declarations">4.2. Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distinguishable-declarations">4.3. Distinguishable Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scopes">4.4. Scopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#type-declarations">4.5. Type Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#type-alias-declaration">4.6. Type Alias Declaration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#recursive-type-aliases">4.6.1. Recursive Type Aliases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#variable-and-constant-declarations">4.7. Variable and Constant Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#variable-declarations">4.7.1. Variable Declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constant-declarations">4.7.2. Constant Declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-compatibility-with-initializer">4.7.3. Type Compatibility with Initializer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-inference-from-initializer">4.7.4. Type Inference from Initializer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#function-declarations">4.8. Function Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#signatures">4.8.1. Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-list">4.8.2. Parameter List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#readonly-parameters">4.8.3. Readonly Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-parameters">4.8.4. Optional Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rest-parameter">4.8.5. Rest Parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shadowing-parameters">4.8.6. Shadowing Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#return-type">4.8.7. Return Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-overload-signatures">4.8.8. Function Overload Signatures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="3_types.html" title="previous chapter"><span class="section-number">3. </span>Types</a></li>
+      <li>Next: <a href="5_generics.html" title="next chapter"><span class="section-number">5. </span>Generics</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/4_names.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

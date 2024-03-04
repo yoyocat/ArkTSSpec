@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ArkTS Specification &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Introduction" href="1_intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lang-specification">
+<h1>ArkTS Specification<a class="headerlink" href="#lang-specification" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="1_intro.html#common-description">1.1. Common Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_intro.html#lexical-and-syntactic-notation">1.2. Lexical and Syntactic Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_intro.html#terms-and-definitions">1.3. Terms and Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#use-of-unicode-characters">2.1. Use of Unicode Characters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#lexical-input-elements">2.2. Lexical Input Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#white-spaces">2.3. White Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#line-separators">2.4. Line Separators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#tokens">2.5. Tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#identifiers">2.6. Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#keywords">2.7. Keywords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#operators-and-punctuators">2.8. Operators and Punctuators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#literals">2.9. Literals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#integer-literals">2.9.1. Integer Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#floating-point-literals">2.9.2. Floating-Point Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#bigint-literals">2.9.3. BigInt Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#boolean-literals">2.9.4. Boolean Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#string-literals">2.9.5. String Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#template-literals">2.9.6. Template Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#null-literal">2.9.7. Null Literal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2_lexical.html#undefined-literal">2.9.8. Undefined Literal</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#comments">2.10. Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_lexical.html#semicolons">2.11. Semicolons</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#predefined-types">3.1. Predefined Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#user-defined-types">3.2. User-Defined Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#types-by-category">3.3. Types by Category</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#using-types">3.4. Using Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#named-types">3.5. Named Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#type-references">3.6. Type References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#value-types">3.7. Value Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#integer-types-and-operations">3.7.1. Integer Types and Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#floating-point-types-and-operations">3.7.2. Floating-Point Types and Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#numeric-types-hierarchy">3.7.3. Numeric Types Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#boolean-types-and-operations">3.7.4. Boolean Types and Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#reference-types">3.8. Reference Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#objects">3.8.1. Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#object-class-type">3.8.2. <em>Object</em> Class Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#string-type">3.8.3. <em>string</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#never-type">3.8.4. <em>never</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#void-type">3.8.5. <em>void</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#array-types">3.8.6. Array Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#function-types">3.8.7. Function Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#null-type">3.8.8. <em>null</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#undefined-type">3.8.9. <em>undefined</em> Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#tuple-types">3.8.10. Tuple Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#union-types">3.8.11. Union Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#nullish-types">3.8.12. Nullish Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3_types.html#dynamicobject-type">3.8.13. DynamicObject Type</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="3_types.html#default-values-for-types">3.9. Default Values for Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#names">4.1. Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#declarations">4.2. Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#distinguishable-declarations">4.3. Distinguishable Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#scopes">4.4. Scopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#type-declarations">4.5. Type Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#type-alias-declaration">4.6. Type Alias Declaration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#recursive-type-aliases">4.6.1. Recursive Type Aliases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#variable-and-constant-declarations">4.7. Variable and Constant Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#variable-declarations">4.7.1. Variable Declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#constant-declarations">4.7.2. Constant Declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#type-compatibility-with-initializer">4.7.3. Type Compatibility with Initializer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#type-inference-from-initializer">4.7.4. Type Inference from Initializer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="4_names.html#function-declarations">4.8. Function Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#signatures">4.8.1. Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#parameter-list">4.8.2. Parameter List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#readonly-parameters">4.8.3. Readonly Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#optional-parameters">4.8.4. Optional Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#rest-parameter">4.8.5. Rest Parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#shadowing-parameters">4.8.6. Shadowing Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#return-type">4.8.7. Return Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4_names.html#function-overload-signatures">4.8.8. Function Overload Signatures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#generic-declarations">5.1. Generic Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#generic-parameters">5.2. Generic Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#type-parameter-constraint">5.3. Type Parameter Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#generic-instantiations">5.4. Generic Instantiations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#type-parameter-default">5.5. Type Parameter Default</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#type-arguments">5.6. Type Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_generics.html#utility-types">5.7. Utility Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="5_generics.html#partial-utility-type">5.7.1. Partial Utility Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5_generics.html#required-utility-type">5.7.2. Required Utility Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5_generics.html#readonly-utility-type">5.7.3. Readonly Utility Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5_generics.html#record-utility-type">5.7.4. Record Utility Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="6_conversions.html#assignment-like-contexts">6.1. Assignment-like Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_conversions.html#string-operator-contexts">6.2. String Operator Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_conversions.html#numeric-operator-contexts">6.3. Numeric Operator Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6_conversions.html#casting-contexts-and-conversions">6.4. Casting Contexts and Conversions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#numeric-casting-conversions">6.4.1. Numeric Casting Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#narrowing-reference-casting-conversions">6.4.2. Narrowing Reference Casting Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#casting-conversions-from-union">6.4.3. Casting Conversions from Union</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="6_conversions.html#implicit-conversions">6.5. Implicit Conversions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#primitive-types-conversions">6.5.1. Primitive Types Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#widening-primitive-conversions">6.5.2. Widening Primitive Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#constant-narrowing-integer-conversions">6.5.3. Constant Narrowing Integer Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#boxing-conversions">6.5.4. Boxing Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#unboxing-conversions">6.5.5. Unboxing Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#widening-union-conversions">6.5.6. Widening Union Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#widening-reference-conversions">6.5.7. Widening Reference Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#character-to-string-conversions">6.5.8. Character to String Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#constant-string-to-character-conversions">6.5.9. Constant String to Character Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#function-types-conversions">6.5.10. Function Types Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#enumeration-to-int-conversions">6.5.11. Enumeration to Int Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6_conversions.html#enumeration-to-string-conversions">6.5.12. Enumeration to String Conversions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#evaluation-of-expressions">7.1. Evaluation of Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#normal-and-abrupt-completion-of-expression-evaluation">7.1.1. Normal and Abrupt Completion of Expression Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#order-of-expression-evaluation">7.1.2. Order of Expression Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#operator-precedence">7.1.3. Operator Precedence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#evaluation-of-arguments">7.1.4. Evaluation of Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#evaluation-of-other-expressions">7.1.5. Evaluation of Other Expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#literal">7.2. Literal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#qualified-name">7.3. Qualified Name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#array-literal">7.4. Array Literal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#array-type-inference-from-context">7.4.1. Array Type Inference from Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#array-type-inference-from-types-of-elements">7.4.2. Array Type Inference from Types of Elements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#object-literal">7.5. Object Literal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#object-literal-of-class-type">7.5.1. Object Literal of Class Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#object-literal-of-interface-type">7.5.2. Object Literal of Interface Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#object-literal-of-record-type">7.5.3. Object Literal of Record Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#object-literal-evaluation">7.5.4. Object Literal Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#spread-expression">7.6. Spread Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#parenthesized-expression">7.7. Parenthesized Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#this-expression">7.8. <code class="docutils literal notranslate"><span class="pre">this</span></code> Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#field-access-expressions">7.9. Field Access Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#accessing-current-object-fields">7.9.1. Accessing Current Object Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#accessing-superclass-fields">7.9.2. Accessing Superclass Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#method-call-expression">7.10. Method Call Expression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#step-1-selection-of-type-to-use">7.10.1. Step 1: Selection of Type to Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#step-2-selection-of-method">7.10.2. Step 2: Selection of Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#step-3-semantic-correctness-check">7.10.3. Step 3: Semantic Correctness Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#function-or-method-selection">7.10.4. Function or method selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#function-call-expression">7.11. Function Call Expression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#step-1-selection-of-function">7.11.1. Step 1: Selection of Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#step-2-semantic-correctness-check">7.11.2. Step 2: Semantic Correctness Check</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#indexing-expression">7.12. Indexing Expression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#array-indexing-expression">7.12.1. Array Indexing Expression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#record-indexing-expression">7.12.2. Record Indexing Expression</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#chaining-operator">7.13. Chaining Operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#new-expressions">7.14. New Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#cast-expressions">7.15. Cast Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#instanceof-expression">7.16. InstanceOf Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#typeof-expression">7.17. TypeOf Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#ensure-not-nullish-expression">7.18. Ensure-Not-Nullish Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#nullish-coalescing-expression">7.19. Nullish-Coalescing Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#unary-expressions">7.20. Unary Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#postfix-increment">7.20.1. Postfix Increment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#postfix-decrement">7.20.2. Postfix Decrement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#prefix-increment">7.20.3. Prefix Increment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#prefix-decrement">7.20.4. Prefix Decrement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#unary-plus">7.20.5. Unary Plus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#unary-minus">7.20.6. Unary Minus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#bitwise-complement">7.20.7. Bitwise Complement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#logical-complement">7.20.8. Logical Complement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#multiplicative-expressions">7.21. Multiplicative Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#multiplication">7.21.1. Multiplication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#division">7.21.2. Division</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#remainder">7.21.3. Remainder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#additive-expressions">7.22. Additive Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#string-concatenation">7.22.1. String Concatenation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#additive-operators-and-for-numeric-types">7.22.2. Additive Operators ‘+’ and ‘-’ for Numeric Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#shift-expressions">7.23. Shift Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#relational-expressions">7.24. Relational Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#numerical-comparison-operators-and">7.24.1. Numerical Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#string-comparison-operators-and">7.24.2. String Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#boolean-comparison-operators-and">7.24.3. Boolean Comparison Operators &lt;, &lt;=, &gt;, and &gt;=</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#equality-expressions">7.25. Equality Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#value-equality-for-numeric-types">7.25.1. Value Equality for Numeric Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#value-equality-for-strings">7.25.2. Value Equality for Strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#value-equality-for-booleans">7.25.3. Value Equality for Booleans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#value-equality-for-characters">7.25.4. Value Equality for Characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#equality-with-null-or-undefined">7.25.5. Equality with <em>null</em> or <em>undefined</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#reference-equality">7.25.6. Reference Equality</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#bitwise-and-logical-expressions">7.26. Bitwise and Logical Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#integer-bitwise-operators-and">7.26.1. Integer Bitwise Operators &amp;, ^, and |</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#boolean-logical-operators-and">7.26.2. Boolean Logical Operators &amp;, ^, and |</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#conditional-and-expression">7.27. Conditional-And Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#conditional-or-expression">7.28. Conditional-Or Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#assignment">7.29. Assignment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#simple-assignment-operator">7.29.1. Simple Assignment Operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#compound-assignment-operators">7.29.2. Compound Assignment Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#conditional-expressions">7.30. Conditional Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#string-interpolation-expressions">7.31. String Interpolation Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#lambda-expressions">7.32. Lambda Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#lambda-signature">7.32.1. Lambda Signature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#lambda-body">7.32.2. Lambda Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#lambda-expression-type">7.32.3. Lambda Expression Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7_expressions.html#runtime-evaluation-of-lambda-expressions">7.32.4. Runtime Evaluation of Lambda Expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#dynamic-import-expression">7.33. Dynamic Import Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7_expressions.html#constant-expressions">7.34. Constant Expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#normal-and-abrupt-statement-execution">8.1. Normal and Abrupt Statement Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#expression-statements">8.2. Expression Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#block">8.3. Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#local-declarations">8.4. Local Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#if-statements">8.5. <code class="docutils literal notranslate"><span class="pre">if</span></code>  Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#loop-statements">8.6. <code class="docutils literal notranslate"><span class="pre">loop</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#while-statements-and-do-statements">8.7. <code class="docutils literal notranslate"><span class="pre">while</span></code> Statements and <code class="docutils literal notranslate"><span class="pre">do</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#for-statements">8.8. <code class="docutils literal notranslate"><span class="pre">for</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#for-of-statements">8.9. <code class="docutils literal notranslate"><span class="pre">for-of</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#break-statements">8.10. <code class="docutils literal notranslate"><span class="pre">break</span></code>  Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#continue-statements">8.11. <code class="docutils literal notranslate"><span class="pre">continue</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#return-statements">8.12. <code class="docutils literal notranslate"><span class="pre">return</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#switch-statements">8.13. <code class="docutils literal notranslate"><span class="pre">switch</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#throw-statements">8.14. <code class="docutils literal notranslate"><span class="pre">throw</span></code> Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#try-statements">8.15. <code class="docutils literal notranslate"><span class="pre">try</span></code> Statements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="8_statements.html#catch-clause">8.15.1. <code class="docutils literal notranslate"><span class="pre">catch</span></code> Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="8_statements.html#finally-clause">8.15.2. <code class="docutils literal notranslate"><span class="pre">finally</span></code> Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="8_statements.html#try-statement-execution">8.15.3. <code class="docutils literal notranslate"><span class="pre">try</span></code> Statement Execution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="8_statements.html#assert-statements">8.16. <code class="docutils literal notranslate"><span class="pre">Assert</span></code> Statements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#class-declarations">9.1. Class Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#abstract-classes">9.1.1. Abstract Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#final-classes">9.1.2. Final Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#class-extension-clause">9.1.3. Class Extension Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#class-implementation-clause">9.1.4. Class Implementation Clause</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#implementing-interface-properties">9.1.5. Implementing Interface Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#class-body">9.2. Class Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#class-members">9.3. Class Members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#access-modifiers">9.4. Access Modifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#private-access-modifier">9.4.1. Private Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#internal-access-modifier">9.4.2. Internal Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#protected-access-modifier">9.4.3. Protected Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#public-access-modifier">9.4.4. Public Access Modifier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#field-declarations">9.5. Field Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#static-fields">9.5.1. Static Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#readonly-constant-fields">9.5.2. Readonly (Constant) Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#field-initialization">9.5.3. Field Initialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#method-declarations">9.6. Method Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#class-static-methods">9.6.1. Class (Static) Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#instance-methods">9.6.2. Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#abstract-methods">9.6.3. Abstract Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#final-methods">9.6.4. Final Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#overriding-methods">9.6.5. Overriding Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#native-methods">9.6.6. Native Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#method-overload-signatures">9.6.7. Method Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#method-body">9.6.8. Method Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#inheritance">9.6.9. Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#overriding-by-instance-methods">9.6.10. Overriding by Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#hiding-by-class-methods">9.6.11. Hiding by Class Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#requirements-in-overriding-and-hiding">9.6.12. Requirements in Overriding and Hiding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#inheriting-methods-with-override-equivalent-signatures">9.6.13. Inheriting Methods with Override-Equivalent Signatures</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#accessor-declarations">9.7. Accessor Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#class-initializer">9.8. Class Initializer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#constructor-declaration">9.9. Constructor Declaration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#formal-parameters">9.9.1. Formal Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#constructor-overload-signatures">9.9.2. Constructor Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#constructor-body">9.9.3. Constructor Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#explicit-constructor-call">9.9.4. Explicit Constructor Call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="9_classes.html#default-constructor">9.9.5. Default Constructor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="9_classes.html#local-classes-and-interfaces">9.10. Local Classes and Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#interface-declarations">10.1. Interface Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#superinterfaces-and-subinterfaces">10.2. Superinterfaces and Subinterfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#interface-body">10.3. Interface Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#interface-members">10.4. Interface Members</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#interface-properties">10.5. Interface Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_interfaces.html#interface-method-declarations">10.6. Interface Method Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="10_interfaces.html#interface-method-overload-signatures">10.6.1. Interface Method Overload Signatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10_interfaces.html#inheritance-and-overriding">10.6.2. Inheritance and Overriding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10_interfaces.html#overriding-by-instance-methods">10.6.3. Overriding by Instance Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10_interfaces.html#overriding-requirements">10.6.4. Overriding Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10_interfaces.html#interfaces-inheriting-methods-with-override-equivalent-signatures">10.6.5. Interfaces Inheriting Methods with Override-Equivalent Signatures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_enums.html#enumeration-integer-values">11.1. Enumeration Integer Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_enums.html#enumeration-string-values">11.2. Enumeration String Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_enums.html#enumeration-operations">11.3. Enumeration Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_errors.html#errors">12.1. Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#separate-modules">13.1. Separate Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#compilation-units-in-host-system">13.2. Compilation Units in Host System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#import-directives">13.3. Import Directives</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#bind-all-with-qualified-access">13.3.1. Bind All with Qualified Access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#simple-name-binding">13.3.2. Simple Name Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#several-bindings-for-one-import-path">13.3.3. Several Bindings for One Import Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#default-import-binding">13.3.4. Default Import Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#type-binding">13.3.5. Type Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#import-path">13.3.6. Import Path</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#default-import">13.4. Default Import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#top-level-declarations">13.5. Top-Level Declarations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#exported-declarations">13.5.1. Exported Declarations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#export-directives">13.6. Export Directives</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#selective-export-directive">13.6.1. Selective Export Directive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#export-type-directive">13.6.2. Export Type Directive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13_modules.html#re-export-directive">13.6.3. Re-Export Directive</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#top-level-statements">13.7. Top-Level Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_modules.html#program-entry-point-main">13.8. Program Entry Point (<cite>main</cite>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="14_ambients.html#ambient-variable-declarations">14.1. Ambient Variable Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_ambients.html#ambient-function-declarations">14.2. Ambient Function Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_ambients.html#ambient-class-declarations">14.3. Ambient Class Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_ambients.html#ambient-interface-declarations">14.4. Ambient Interface Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_ambients.html#ambient-namespace-declarations">14.5. Ambient Namespace Declarations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#subtyping">15.1. Subtyping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#override-equivalent-signatures">15.2. Override-Equivalent Signatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#compatible-signature">15.3. Compatible Signature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#overload-signature-compatibility">15.4. Overload Signature Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#type-compatibility">15.5. Type Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_semantics.html#compatibility-features">15.6. Compatibility Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="15_semantics.html#extended-conditional-expressions">15.6.1. Extended Conditional Expressions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#annotations">16.1. Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#gui-structs">16.2. GUI Structs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#builder-function-syntax-conventions">16.3. Builder Function Syntax Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#builder-function-restrictions">16.4. Builder Function Restrictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#annotations-list">16.5. Annotations List</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#builder-annotation">16.5.1. &#64;Builder Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#builderparam-annotation">16.5.2. &#64;BuilderParam Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#component-annotation">16.5.3. &#64;Component Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#consume-annotation">16.5.4. &#64;Consume Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#entry-annotation">16.5.5. &#64;Entry Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#link-annotation">16.5.6. &#64;Link Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#localstoragelink-annotation">16.5.7. &#64;LocalStorageLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#localstorageprop-annotation">16.5.8. &#64;LocalStorageProp Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#objectlink-annotation">16.5.9. &#64;ObjectLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#observed-annotation">16.5.10. &#64;Observed Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#prop-annotation">16.5.11. &#64;Prop Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#provide-annotation">16.5.12. &#64;Provide Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#state-annotation">16.5.13. &#64;State Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#storagelink-annotation">16.5.14. &#64;StorageLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#storageprop-annotation">16.5.15. &#64;StorageProp Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#watch-annotation">16.5.16. &#64;Watch Annotation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#callable-types">16.6. Callable Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#callable-types-with-invoke-method">16.6.1. Callable Types with Invoke Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#callable-types-with-instantiate-method">16.6.2. Callable Types with Instantiate Method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#additional-features">16.7. Additional Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#methods-returning-this">16.7.1. Methods Returning <code class="docutils literal notranslate"><span class="pre">this</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="16_gui.html#unary-operator">16.7.2. Unary operator ‘$$’</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="16_gui.html#example-of-gui-programming">16.8. Example of GUI Programming</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#character-type-and-literals">17.1. Character Type and Literals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#character-literals">17.1.1. Character Literals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#character-type-and-operations">17.1.2. Character Type and Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#array-creation-expressions">17.2. Array Creation Expressions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#runtime-evaluation-of-array-creation-expressions">17.2.1. Runtime Evaluation of Array Creation Expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#indexable-types">17.3. Indexable Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#iterable-types">17.4. Iterable Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#statements">17.5. Statements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#for-of-type-annotation">17.5.1. For-of Type Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#multiple-catch-clauses-in-try-statements">17.5.2. Multiple Catch Clauses in Try Statements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#assert-statements">17.5.3. <code class="docutils literal notranslate"><span class="pre">Assert</span></code> Statements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#function-and-method-overloading">17.6. Function and Method Overloading</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#function-overloading">17.6.1. Function Overloading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#class-method-overloading">17.6.2. Class Method Overloading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#interface-method-overloading">17.6.3. Interface Method Overloading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#constructor-overloading">17.6.4. Constructor Overloading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#declaration-distinguishable-by-signatures">17.6.5. Declaration Distinguishable by Signatures</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#native-functions-and-methods">17.7. Native Functions and Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#native-functions">17.7.1. Native Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#native-methods">17.7.2. Native Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#final-classes-and-methods">17.8. Final Classes and Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#final-classes">17.8.1. Final Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#final-methods">17.8.2. Final Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#default-and-static-interface-methods">17.9. Default and Static Interface Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#default-method-declarations">17.9.1. Default Method Declarations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#static-method-declarations">17.9.2. <em>Static</em> Method Declarations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#extension-functions">17.10. Extension Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#trailing-lambda">17.11. Trailing Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#enumeration-super-type">17.12. Enumeration Super Type</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#enumeration-types-conversions">17.12.1. Enumeration Types Conversions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#enumeration-methods">17.13. Enumeration Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#exceptions">17.14. Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#throwing-functions">17.14.1. Throwing Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#non-throwing-functions">17.14.2. Non-Throwing Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#rethrowing-functions">17.14.3. Rethrowing Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#exceptions-and-initialization-expression">17.14.4. Exceptions and Initialization Expression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#exceptions-and-errors-inside-field-initializers">17.14.5. Exceptions and Errors Inside Field Initializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#coroutines">17.15. Coroutines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#create-and-launch-a-coroutine">17.15.1. Create and Launch a Coroutine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#awaiting-a-coroutine">17.15.2. Awaiting a Coroutine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#the-promise-t-class">17.15.3. The Promise&lt;T&gt; Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#structured-coroutines">17.15.4. Structured Coroutines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#channels-classes">17.15.5. Channels Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#async-functions">17.15.6. Async Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#packages">17.16. Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#internal-access-modifier">17.16.1. Internal Access Modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#package-initializer">17.16.2. Package Initializer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#sub-entity-binding">17.16.3. Sub-Entity Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#all-static-sub-entities-binding">17.16.4. All Static Sub-Entities Binding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#import-and-overloading-of-function-names">17.16.5. Import and Overloading of Function Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#overloading-of-function-names">17.16.6. Overloading of Function Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#shadowing-of-function-names">17.16.7. Shadowing of Function Names</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="17_experimental.html#generics-experimental">17.17. Generics Experimental</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#declaration-site-variance">17.17.1. Declaration-Site Variance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17_experimental.html#nonnullish-type-parameter">17.17.2. NonNullish Type Parameter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="20_implementation.html#import-path-lookup">20.1. Import Path Lookup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20_implementation.html#how-to-get-type-via-reflection">20.2. How to get type via reflection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="21_TS_compatibility.html#undefined-is-not-a-universal-value">21.1. Undefined is Not a Universal Value</a></li>
+<li class="toctree-l2"><a class="reference internal" href="21_TS_compatibility.html#numeric-semantics">21.2. Numeric Semantics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="21_TS_compatibility.html#covariant-overriding">21.3. Covariant Overriding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="21_TS_compatibility.html#differences-in-math-pow">21.4. Differences in Math.pow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="1_intro.html" title="next chapter"><span class="section-number">1. </span>Introduction</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

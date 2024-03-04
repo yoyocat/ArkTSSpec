@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>16. Support for GUI Programming &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="17. Experimental Features" href="17_experimental.html" />
+    <link rel="prev" title="15. Semantic Rules" href="15_semantics.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="support-for-gui-programming">
+<span id="id1"></span><h1><span class="section-number">16. </span>Support for GUI Programming<a class="headerlink" href="#support-for-gui-programming" title="Permalink to this heading">¶</a></h1>
+<p>This section describes the built-in mechanisms that ArkTS provides to create
+graphical user interface (GUI) programs. The section is based on the ArkUI
+Declarative Core Language Specification available at
+&lt;<a class="reference external" href="https://gitee.com/arkui-finland/arkui-edsl-core-spec/blob/master/arkui-core-spec.md">https://gitee.com/arkui-finland/arkui-edsl-core-spec/blob/master/arkui-core-spec.md</a>&gt;.</p>
+<p>ArkUI provides a set of extensions of the standard to declaratively describe
+the programs’ GUI, and the interaction between the GUI components. ArkTS aims
+to adopt ArkUI syntax and semantics as long as they do not contradict ArkTS.</p>
+<p>This section is actively under development, and some of its parts can be still
+underspecified. In such cases please refer to the original specification.</p>
+<div class="line-block" id="index-0">
+<div class="line"><br /></div>
+</div>
+<section id="annotations">
+<span id="id2"></span><h2><span class="section-number">16.1. </span>Annotations<a class="headerlink" href="#annotations" title="Permalink to this heading">¶</a></h2>
+<p>The term <em>annotations</em> as used further in this section denotes special
+language elements that alter the semantics of classes (<em>class-level
+annotations</em>), structs (<em>struct-level annotations</em>), struct fields
+(<em>field-level annotations</em>), or functions (<em>function-level annotations</em>) in a
+predefined manner. The syntax and semantics of each annotation are defined in
+the below example that illustrates the idea in general:</p>
+<div class="highlight-typescript notranslate" id="index-1"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">@Component</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="nx">struct</span><span class="w"> </span><span class="nx">MyComponent</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="w">     </span><span class="kd">@State</span><span class="w"> </span><span class="kd">@Watch</span><span class="p">(</span><span class="s2">&quot;onValueChanged&quot;</span><span class="p">)</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="nx">onValueChanged</span><span class="p">(</span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">         </span><span class="c1">// ...</span>
+<span class="linenos"> 7</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w">     </span><span class="nx">build</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">         </span><span class="c1">// ...</span>
+<span class="linenos">11</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="gui-structs">
+<span id="id3"></span><h2><span class="section-number">16.2. </span>GUI Structs<a class="headerlink" href="#gui-structs" title="Permalink to this heading">¶</a></h2>
+<p><em>GUI structs</em> are used to define UI components. From the language
+perspective, a GUI struct is a restricted form of a non-primitive type
+that is designed to define GUI expressively and efficiently.</p>
+<p>Each GUI struct is required to implement its <em>builder</em> (i.e., the method
+responsible for the visual rendering of components).</p>
+<div class="highlight-abnf notranslate" id="index-2"><div class="highlight"><pre><span></span><span class="nc">guiStructDeclaration</span>:
+<span class="w">    </span><span class="nc">guiEntryAnnotation</span>?<span class="w"> </span><span class="nc">guiComponentAnnotation</span><span class="w"> </span>&#39;<span class="nc">struct</span>&#39;<span class="w"> </span><span class="nc">identifier</span>
+<span class="w">    </span><span class="nc">guiStructBody</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiStructBody</span>:
+<span class="w">    </span>&#39;{&#39;
+<span class="w">    </span><span class="nc">guiStructBodyDeclaration</span><span class="o">*</span>
+<span class="w">    </span><span class="nc">guiMainComponentBuilderDeclaration</span>
+<span class="w">    </span><span class="nc">guiStructBodyDeclaration</span><span class="o">*</span>
+<span class="w">    </span>&#39;}&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiStructBodyDeclaration</span>:
+<span class="w">    </span><span class="nc">guiAccessModifier</span>?
+<span class="w">    </span><span class="p">(</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiStructFieldDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiLifeCycleCallbackDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiCustomComponentBuilderDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">classFieldDeclaration</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">classMethodDeclaration</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiAccessModifier</span>:
+<span class="w">    </span>&#39;<span class="nc">private</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiStructFieldDeclaration</span>:
+<span class="w">    </span><span class="nc">guiStructFieldAnnotationDeclaration</span>
+<span class="w">    </span><span class="nc">variableDeclaration</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiStructFieldAnnotationDeclaration</span>:
+<span class="w">    </span><span class="nc">guiBuilderParamAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nc">guiDataSynchronizationAnnotation</span><span class="w"> </span><span class="nc">guiWatchAnnotation</span>?<span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiDataSynchronizationAnnotation</span>:
+<span class="w">    </span><span class="nc">guiConsumeAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiLinkAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiLocalStorageLinkAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiLocalStoragePropAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiObjectLinkAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiPropAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiProvideAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiStateAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiStorageLinkAnnotation</span>
+<span class="w">    </span>|<span class="w"> </span><span class="nc">guiStoragePropAnnotation</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiMainComponentBuilderDeclaration</span>:
+<span class="w">    </span><span class="nc">guiAccessModifier</span>?
+<span class="w">    </span>&#39;<span class="nc">build</span>&#39;
+<span class="w">    </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="p">(</span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">void</span>&#39;<span class="p">)</span>?<span class="w"> </span><span class="nc">block</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiCustomComponentBuilderDeclaration</span>:
+<span class="w">    </span><span class="nc">guiBuilderAnnotation</span>
+<span class="w">    </span><span class="nc">guiAccessModifier</span>?
+<span class="w">    </span><span class="nc">identifier</span>
+<span class="w">    </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span><span class="p">(</span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">void</span>&#39;<span class="p">)</span>?<span class="w"> </span><span class="nc">block</span>
+<span class="w">    </span><span class="c1">;</span>
+
+<span class="nc">guiLifeCycleCallbackDeclaration</span>:
+<span class="w">    </span><span class="nc">guiAccessModifier</span>?
+<span class="w">    </span><span class="p">(</span><span class="w"> </span>&#39;<span class="nc">aboutToAppear</span>&#39;<span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">aboutToDisappear</span>&#39;<span class="w"> </span><span class="p">)</span>
+<span class="w">    </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span>&#39;<span class="p">)</span>&#39;<span class="w"> </span>&#39;:&#39;<span class="w"> </span>&#39;<span class="nc">void</span>&#39;<span class="w"> </span><span class="nc">block</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="builder-function-syntax-conventions">
+<span id="id4"></span><h2><span class="section-number">16.3. </span>Builder Function Syntax Conventions<a class="headerlink" href="#builder-function-syntax-conventions" title="Permalink to this heading">¶</a></h2>
+<p>The following syntax conventions apply to any builder function (component’s
+main builder, component’s custom builder, or stand-alone global custom builder):</p>
+<ul class="simple">
+<li><p>The required result of <span class="math notranslate nohighlight">\(C(\{...\})\)</span> for any predefined or
+custom component <em>C</em> is to initialize the component with the data
+from the <span class="math notranslate nohighlight">\(\{...\}\)</span> block, and to render it. Concrete semantics
+depends on the implementation. For illustrative purposes, it can be
+expressed as <span class="math notranslate nohighlight">\((new C(\{...\})).build()\)</span>, where the object
+literal <span class="math notranslate nohighlight">\(\{...\}\)</span> is handled as an initializer of the
+component’s fields.</p></li>
+<li><p>The required result of <span class="math notranslate nohighlight">\(C() \{...\}\)</span> for any predefined or
+custom component <em>C</em> is to initialize the component, and to render it
+by passing the data from the <span class="math notranslate nohighlight">\(\{...\}\)</span> block to the component’s
+builder function. Specific semantics depends on the implementation.
+For illustrative purposes, it can be expressed as
+<span class="math notranslate nohighlight">\(new C().build(\{...\})\)</span>, where the <span class="math notranslate nohighlight">\(\{...\}\)</span> block is
+handled as a lambda to be passed as an argument to the builder.</p></li>
+</ul>
+<div class="line-block" id="index-3">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="builder-function-restrictions">
+<span id="id5"></span><h2><span class="section-number">16.4. </span>Builder Function Restrictions<a class="headerlink" href="#builder-function-restrictions" title="Permalink to this heading">¶</a></h2>
+<p>Restrictions apply to any builder function (component’s main builder,
+component’s custom builder, or stand-alone global custom builder), and
+the following is not allowed:</p>
+<ul>
+<li><p>Declaring local variables.</p></li>
+<li><p>Constructing new objects.</p></li>
+<li><p>Function calls, except the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Calling builders by name.</p></li>
+<li><p>Calling builders by the reference stored in the
+<em>&#64;BuilderParam</em>-annotated struct field.</p></li>
+<li><p>Calling a predefined builder <em>ForEach</em> for iterative rendering.</p></li>
+<li><p>Calling a function that does not mutate the program state (note that all
+logging functions are thus prohibited, as they mutate the state).</p></li>
+<li><p>Using conditional <em>if … else</em> syntax.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="line-block" id="index-4">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="annotations-list">
+<span id="id6"></span><h2><span class="section-number">16.5. </span>Annotations List<a class="headerlink" href="#annotations-list" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="builder-annotation">
+<span id="id7"></span><h3><span class="section-number">16.5.1. </span>&#64;Builder Annotation<a class="headerlink" href="#builder-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>Function-level annotation for defining a custom builder</em> is applicable to
+the following:</p>
+<ul class="simple">
+<li><p>Methods of GUI structs to define custom builder functions inside a
+GUI struct.</p></li>
+<li><p>Stand-alone functions to define global custom builders.</p></li>
+</ul>
+<div class="highlight-abnf notranslate" id="index-5"><div class="highlight"><pre><span></span><span class="nc">guiBuilderAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Builder</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="builderparam-annotation">
+<span id="id8"></span><h3><span class="section-number">16.5.2. </span>&#64;BuilderParam Annotation<a class="headerlink" href="#builderparam-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>Field-level annotation for defining a reference to a custom builder</em> is
+applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">guiBuilderParamAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">BuilderParam</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-6">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="component-annotation">
+<span id="id9"></span><h3><span class="section-number">16.5.3. </span>&#64;Component Annotation<a class="headerlink" href="#component-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>Struct-level annotation for marking a struct as a GUI struct</em> is applicable to
+any struct as long as it complies with the limitations imposed onto GUI structs.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">guiComponentAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Component</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-7">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="consume-annotation">
+<span id="id10"></span><h3><span class="section-number">16.5.4. </span>&#64;Consume Annotation<a class="headerlink" href="#consume-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;Consume</em> is a field-level annotation that establishes two-way synchronization
+between a child component <em>at an arbitrary nesting level</em>, and a parent
+component.</p>
+<p>An <em>&#64;Consume</em>-annotated field in a child component shares the same value with
+a field in the parent component. The source field of the parent component must
+be annotated with <em>&#64;Provide</em>.</p>
+<p>The annotation <em>&#64;Consume</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-8"><div class="highlight"><pre><span></span><span class="nc">guiConsumeAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Consume</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Consume</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="entry-annotation">
+<span id="id11"></span><h3><span class="section-number">16.5.5. </span>&#64;Entry Annotation<a class="headerlink" href="#entry-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>Struct-level annotation to indicate the topmost component on the page</em> is
+applicable only to GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-9"><div class="highlight"><pre><span></span><span class="nc">guiEntryAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Entry</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Entry</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="link-annotation">
+<span id="id12"></span><h3><span class="section-number">16.5.6. </span>&#64;Link Annotation<a class="headerlink" href="#link-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;Link</em> is a field-level annotation that establishes two-way synchronization
+between a child component and a parent component.</p>
+<p>An <em>&#64;Link</em>-annotated field in a child component shares the same value with a
+field in the parent component. The source field of the parent component must
+be annotated with <em>&#64;State</em>, <em>&#64;StorageLink</em>, or <em>&#64;Link</em>.</p>
+<p>The annotation <em>&#64;Link</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-10"><div class="highlight"><pre><span></span><span class="nc">guiLinkAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Link</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="localstoragelink-annotation">
+<span id="id13"></span><h3><span class="section-number">16.5.7. </span>&#64;LocalStorageLink Annotation<a class="headerlink" href="#localstoragelink-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;LocalStorageLink</em> is a field-level annotation that establishes two-way
+synchronization with a property inside a <em>LocalStorage</em>.</p>
+<p>The <em>&#64;LocalStorageLink</em> annotation is applicable only to member fields of
+GUI structs.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">guiLocalStorageLinkAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">LocalStorageLink</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-11">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="localstorageprop-annotation">
+<span id="id14"></span><h3><span class="section-number">16.5.8. </span>&#64;LocalStorageProp Annotation<a class="headerlink" href="#localstorageprop-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;LocalStorageProp</em> is a field-level annotation that establishes one-way
+synchronization with a property inside a <em>LocalStorage</em>. The synchronization
+of value is unidirectional from the <em>LocalStorage</em> to the annotated field.</p>
+<p>The annotation <em>&#64;LocalStorageProp</em> is applicable only to member fields of GUI
+structs.</p>
+<div class="highlight-abnf notranslate" id="index-12"><div class="highlight"><pre><span></span><span class="nc">guiLocalStoragePropAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">LocalStorageProp</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="objectlink-annotation">
+<span id="id15"></span><h3><span class="section-number">16.5.9. </span>&#64;ObjectLink Annotation<a class="headerlink" href="#objectlink-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;ObjectLink</em> is a field-level annotation that establishes two-way
+synchronization with objects of <em>&#64;Observed</em>-annotated classes.</p>
+<p>The annotation <em>&#64;ObjectLink</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">guiObjectLinkAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">ObjectLink</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-13">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="observed-annotation">
+<span id="id16"></span><h3><span class="section-number">16.5.10. </span>&#64;Observed Annotation<a class="headerlink" href="#observed-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;Observed</em> is a class-level annotation that establishes two-way synchronization
+between instances of an <em>&#64;Observed</em>-annotated class, and <em>&#64;ObjectLink</em>-annotated
+member fields of GUI structs.</p>
+<p>The annotation <em>&#64;Observed</em> is applicable only to non-GUI classes.</p>
+<div class="highlight-abnf notranslate" id="index-14"><div class="highlight"><pre><span></span><span class="nc">guiObservedAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Observed</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="prop-annotation">
+<span id="id17"></span><h3><span class="section-number">16.5.11. </span>&#64;Prop Annotation<a class="headerlink" href="#prop-annotation" title="Permalink to this heading">¶</a></h3>
+<p>The annotation <em>&#64;Prop</em> has the same semantics as <em>&#64;State</em>, and only differs in
+how the variable must be initialized and updated:</p>
+<ul class="simple">
+<li><p>An <em>&#64;Prop</em>-annotated field must be initialized with a primitive or
+a reference type value provided by its parent component. It must not be
+initialized locally.</p></li>
+<li><p>An <em>&#64;Prop</em>-annotated field can be modified locally, but the change
+does not propagate back to its parent component. Whenever that data
+source changes, the <em>&#64;Prop</em>-annotated field is updated, and any
+locally-made changes are overwritten. Hence, the sync of the value is
+uni-directional from the parent to the owning component.</p></li>
+</ul>
+<p>This annotation <em>&#64;Prop</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-15"><div class="highlight"><pre><span></span><span class="nc">guiPropAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Prop</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="provide-annotation">
+<span id="id18"></span><h3><span class="section-number">16.5.12. </span>&#64;Provide Annotation<a class="headerlink" href="#provide-annotation" title="Permalink to this heading">¶</a></h3>
+<p>The annotation <em>&#64;Provide</em> has the same semantics as <em>&#64;State</em> with the
+following additional features:</p>
+<ul class="simple">
+<li><p>An <em>&#64;Provide</em>-annotated field automatically becomes available to all
+components that are descendants of the providing component.</p></li>
+</ul>
+<p>The annotation <em>&#64;Provide</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-16"><div class="highlight"><pre><span></span><span class="nc">guiProvideAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Provide</span>&#39;
+<span class="w">    </span>|<span class="w"> </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Provide</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="state-annotation">
+<span id="id19"></span><h3><span class="section-number">16.5.13. </span>&#64;State Annotation<a class="headerlink" href="#state-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;State</em> is a field-level annotation, which indicates that the annotated field
+holds a part of component’s state. Changing any <em>&#64;State</em>-field triggers
+component re-rendering.</p>
+<p>The annotation <em>&#64;State</em> is applicable only to member fields of GUI structs.</p>
+<div class="highlight-abnf notranslate" id="index-17"><div class="highlight"><pre><span></span><span class="nc">guiStateAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">State</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="storagelink-annotation">
+<span id="id20"></span><h3><span class="section-number">16.5.14. </span>&#64;StorageLink Annotation<a class="headerlink" href="#storagelink-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;StorageLink</em> is a field-level annotation that establishes two-way
+synchronization with a property inside an <em>AppStorage</em>.</p>
+<p>The annotation <em>&#64;StorageLink</em> is applicable only to member fields of GUI
+structs.</p>
+<div class="highlight-abnf notranslate" id="index-18"><div class="highlight"><pre><span></span><span class="nc">guiStorageLinkAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">StorageLink</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="storageprop-annotation">
+<span id="id21"></span><h3><span class="section-number">16.5.15. </span>&#64;StorageProp Annotation<a class="headerlink" href="#storageprop-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;StorageProp</em> is a field-level annotation that establishes one-way
+synchronization with a property inside an <em>AppStorage</em>. The synchronization
+of value is uni-directional from the <em>AppStorage</em> to the annotated field.</p>
+<p>The annotation <em>&#64;StorageProp</em> is applicable only to member fields of GUI
+structs.</p>
+<div class="highlight-abnf notranslate" id="index-19"><div class="highlight"><pre><span></span><span class="nc">guiStoragePropAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">StorageProp</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="watch-annotation">
+<span id="id22"></span><h3><span class="section-number">16.5.16. </span>&#64;Watch Annotation<a class="headerlink" href="#watch-annotation" title="Permalink to this heading">¶</a></h3>
+<p><em>&#64;StorageProp</em> is a field-level annotation that specifies a callback to
+be executed when the value of the annotated field changes.</p>
+<p>The annotation <em>&#64;StorageProp</em> is applicable only to member fields of GUI
+structs with the following annotations:</p>
+<ul class="simple">
+<li><p><em>&#64;Consume</em>,</p></li>
+<li><p><em>&#64;Link</em>,</p></li>
+<li><p><em>&#64;LocalStorageLink</em>,</p></li>
+<li><p><em>&#64;LocalStorageProp</em>,</p></li>
+<li><p><em>&#64;ObjectLink</em>,</p></li>
+<li><p><em>&#64;Prop</em>,</p></li>
+<li><p><em>&#64;Provide</em>,</p></li>
+<li><p><em>&#64;State</em>,</p></li>
+<li><p><em>&#64;StorageLink</em>, and</p></li>
+<li><p><em>&#64;StorageProp</em>.</p></li>
+</ul>
+<div class="highlight-abnf notranslate" id="index-20"><div class="highlight"><pre><span></span><span class="nc">guiWatchAnnotation</span>:
+<span class="w">    </span>&#39;@&#39;<span class="w"> </span>&#39;<span class="nc">Watch</span>&#39;<span class="w"> </span>&#39;<span class="p">(</span>&#39;<span class="w"> </span><span class="nc">StringLiteral</span><span class="w"> </span>&#39;<span class="p">)</span>&#39;
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="callable-types">
+<span id="id23"></span><h2><span class="section-number">16.6. </span>Callable Types<a class="headerlink" href="#callable-types" title="Permalink to this heading">¶</a></h2>
+<p>A type is <em>callable</em> if the name of the type can be used in a call expression.
+A call expression that uses the name of a type is called a <em>type call
+expression</em>. Only class and struct types can be callable. To make a type
+callable, a static method with the name ‘<em>invoke</em>’ or ‘<em>instantiate</em>’ must
+be defined or inherited:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">invoke</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;invoked&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">3</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span><span class="w"> </span><span class="c1">// prints: invoked</span>
+<span class="linenos">5</span><span class="w"> </span><span class="nx">C</span><span class="p">.</span><span class="nx">invoke</span><span class="p">()</span><span class="w"> </span><span class="c1">// also prints: invoked</span>
+</pre></div>
+</div>
+<p>In the above example, ‘<em>C()</em>’ is a <em>type call expression</em>. It is the short
+form of the normal method call ‘<em>C.invoke()</em>’. Using an explicit call is always
+valid for the methods ‘<em>invoke</em>’ and ‘<em>instantiate</em>’.</p>
+<p><strong>Note</strong>: Only a constructor—not the methods ‘<em>invoke</em>’ or
+‘<em>instantiate</em>’—is called in a <em>new expression</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">invoke</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;invoked&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">3</span><span class="w">     </span><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;constructed&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span><span class="w"> </span><span class="c1">// constructor is called</span>
+</pre></div>
+</div>
+<p>The methods ‘<em>invoke</em>’ and ‘<em>instantiate</em>’ are similar but have differences as
+discussed below.</p>
+<p>A <span class="target" id="index-21"></span>compile-time error occurs if a callable type contains both
+the ‘<em>invoke</em>’ and ‘<em>instantiate</em>’ methods.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="callable-types-with-invoke-method">
+<span id="id24"></span><h3><span class="section-number">16.6.1. </span>Callable Types with Invoke Method<a class="headerlink" href="#callable-types-with-invoke-method" title="Permalink to this heading">¶</a></h3>
+<p>The method ‘<em>invoke</em>’ can have an arbitrary signature. It can be
+used in a <em>type call expression</em> in either case.
+If the signature has parameters, then the call must contain corresponding
+arguments.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Add</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">invoke</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">b</span>
+<span class="linenos">4</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Add</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">))</span><span class="w"> </span><span class="c1">// prints: 4</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="callable-types-with-instantiate-method">
+<span id="id25"></span><h3><span class="section-number">16.6.2. </span>Callable Types with Instantiate Method<a class="headerlink" href="#callable-types-with-instantiate-method" title="Permalink to this heading">¶</a></h3>
+<p>The method ‘<em>instantiate</em>’ can have an arbitrary signature by itself.
+If it is to be used in a <em>type call expression</em>, then its first parameter
+must be a ‘factory’ (i.e., it must be a <em>parameterless function type
+returning some class or struct type</em>).
+The method can have or not have other parameters, and those parameters can
+be arbitrary.</p>
+<p>In a <em>type call expression</em>, the argument corresponding to the ‘factory’
+parameter is passed implicitly:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">instantiate</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">C</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="nx">factory</span><span class="p">()</span>
+<span class="linenos">4</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span><span class="w"> </span><span class="c1">// factory is passed implicitly</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="w"> </span><span class="c1">// Explicit call of &#39;instantiate&#39; requires explicit &#39;factory&#39;:</span>
+<span class="linenos">9</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">C</span><span class="p">.</span><span class="nx">instantiate</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">()})</span>
+</pre></div>
+</div>
+<p>If the method ‘<em>instantiate</em>’ has additional parameters, then the call must
+contain corresponding arguments:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">3</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">instantiate</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">C</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">         </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">factory</span><span class="p">()</span>
+<span class="linenos">5</span><span class="w">         </span><span class="nx">x</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">name</span>
+<span class="linenos">6</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="nx">x</span>
+<span class="linenos">7</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">8</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">9</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">C</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// factory is passed implicitly</span>
+</pre></div>
+</div>
+<p>A <span class="target" id="index-22"></span>compile-time error occurs in a <em>type call expression</em> with type <em>T</em>,
+if:</p>
+<ul class="simple">
+<li><p><em>T</em> has neither method ‘invoke’ nor  method ‘instantiate’; or</p></li>
+<li><p><em>T</em> has the method ‘instantiate’ but its first parameter is not a ‘factory’.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="k">static</span><span class="w"> </span><span class="nx">instantiate</span><span class="p">(</span><span class="nx">factory</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="nx">factory</span><span class="p">()</span>
+<span class="linenos">4</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">C</span><span class="p">()</span><span class="w"> </span><span class="c1">// compile-time error, wrong &#39;instantiate&#39; 1st parameter</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="additional-features">
+<span id="id26"></span><h2><span class="section-number">16.7. </span>Additional Features<a class="headerlink" href="#additional-features" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="methods-returning-this">
+<span id="id27"></span><h3><span class="section-number">16.7.1. </span>Methods Returning <code class="docutils literal notranslate"><span class="pre">this</span></code><a class="headerlink" href="#methods-returning-this" title="Permalink to this heading">¶</a></h3>
+<p>A return type of an instance method of a class or a struct can be <code class="docutils literal notranslate"><span class="pre">this</span></code>.
+It means that the return type is the class or struct type the method belongs to.</p>
+<p>The extended grammar for a method signature (see <a class="reference internal" href="4_names.html#signatures"><span class="std std-ref">Signatures</span></a>) is as
+follows:</p>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">returnType</span>:
+<span class="w">    </span>&#39;:&#39;<span class="w"> </span><span class="p">(</span><span class="nc">type</span><span class="w"> </span>|<span class="w"> </span>&#39;<span class="nc">this</span>&#39;<span class="p">)</span>
+<span class="w">    </span><span class="c1">;</span>
+</pre></div>
+</div>
+<p>The only result that is allowed to be returned from such a method is <code class="docutils literal notranslate"><span class="pre">this</span></code>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">this</span>
+<span class="linenos">4</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The return type of an overridden method in a subclass must also be <code class="docutils literal notranslate"><span class="pre">this</span></code>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">D</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">2</span><span class="w">     </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">3</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">this</span>
+<span class="linenos">4</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">().</span><span class="nx">foo</span><span class="p">()</span><span class="w"> </span><span class="c1">// type of &#39;x&#39; is &#39;C&#39;</span>
+<span class="linenos">8</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">D</span><span class="p">().</span><span class="nx">foo</span><span class="p">()</span><span class="w"> </span><span class="c1">// type of &#39;y&#39; is &#39;D&#39;</span>
+</pre></div>
+</div>
+<p>Otherwise, compile-time error occurs.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="unary-operator">
+<span id="id28"></span><h3><span class="section-number">16.7.2. </span>Unary operator ‘$$’<a class="headerlink" href="#unary-operator" title="Permalink to this heading">¶</a></h3>
+<p>A prefix unary operator ‘$$’ is used to pass primitive types by reference.
+It is added to ArkTS to support the legacy ArkUI code.
+As the use of this operator is deprecated, it is to be removed in the future
+versions of the language.</p>
+<p>The operator ‘$$’ can be followed by an identifier. The code ‘<em>$$this.a</em>’ is
+considered to be the same as ‘<em>$$ this.a</em>’ and ‘<em>$$(this.a)</em>’.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="example-of-gui-programming">
+<span id="id29"></span><h2><span class="section-number">16.8. </span>Example of GUI Programming<a class="headerlink" href="#example-of-gui-programming" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="w"> </span><span class="c1">// ViewModel classes -----------------------</span>
+<span class="linenos">  2</span>
+<span class="linenos">  3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">nextId</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span>
+<span class="linenos">  4</span>
+<span class="linenos">  5</span><span class="w"> </span><span class="kd">@Observed</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">ObservedArray</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">  6</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">arr</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">  7</span><span class="w">         </span><span class="k">super</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span>
+<span class="linenos">  8</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">  9</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 10</span>
+<span class="linenos"> 11</span><span class="w"> </span><span class="kd">@Observed</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Address</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 12</span><span class="w">     </span><span class="nx">street</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 13</span><span class="w">     </span><span class="nx">zip</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 14</span><span class="w">     </span><span class="nx">city</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 15</span>
+<span class="linenos"> 16</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">street</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">zip</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 17</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">street</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">street</span>
+<span class="linenos"> 18</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">zip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">zip</span>
+<span class="linenos"> 19</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">city</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">city</span>
+<span class="linenos"> 20</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 21</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 22</span>
+<span class="linenos"> 23</span><span class="w"> </span><span class="kd">@Observed</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 24</span><span class="w">     </span><span class="nx">id_</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 25</span><span class="w">     </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 26</span><span class="w">     </span><span class="nx">address</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Address</span>
+<span class="linenos"> 27</span><span class="w">     </span><span class="nx">phones</span><span class="o">:</span><span class="w"> </span><span class="kt">ObservedArray</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+<span class="linenos"> 28</span>
+<span class="linenos"> 29</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span>
+<span class="linenos"> 30</span><span class="w">         </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="linenos"> 31</span><span class="w">         </span><span class="nx">street</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="linenos"> 32</span><span class="w">         </span><span class="nx">zip</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span>
+<span class="linenos"> 33</span><span class="w">         </span><span class="nx">city</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="linenos"> 34</span><span class="w">         </span><span class="nx">phones</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span>
+<span class="linenos"> 35</span><span class="w">     </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 36</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">nextId</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="kt">string</span>
+<span class="linenos"> 37</span><span class="w">         </span><span class="nx">nextId</span><span class="o">++</span>
+<span class="linenos"> 38</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">name</span>
+<span class="linenos"> 39</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Address</span><span class="p">(</span><span class="nx">street</span><span class="p">,</span><span class="w"> </span><span class="nx">zip</span><span class="p">,</span><span class="w"> </span><span class="nx">city</span><span class="p">)</span>
+<span class="linenos"> 40</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">ObservedArray</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">phones</span><span class="p">)</span>
+<span class="linenos"> 41</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 42</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 43</span>
+<span class="linenos"> 44</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">AddressBook</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 45</span><span class="w">     </span><span class="nx">me</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span>
+<span class="linenos"> 46</span><span class="w">     </span><span class="nx">contacts</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">ObservedArray</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;</span>
+<span class="linenos"> 47</span>
+<span class="linenos"> 48</span><span class="w">     </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">me</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span><span class="p">,</span><span class="w"> </span><span class="nx">contacts</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 49</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">me</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">me</span>
+<span class="linenos"> 50</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">ObservedArray</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">contacts</span><span class="p">)</span>
+<span class="linenos"> 51</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 52</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 53</span>
+<span class="linenos"> 54</span><span class="w"> </span><span class="c1">// @Components -----------------------</span>
+<span class="linenos"> 55</span>
+<span class="linenos"> 56</span><span class="w"> </span><span class="cm">/* Renders the name of a Person object and</span>
+<span class="linenos"> 57</span><span class="cm">    the first number in the phones ObservedArray&lt;string&gt;</span>
+<span class="linenos"> 58</span><span class="cm">    For also the phone number to update we need two</span>
+<span class="linenos"> 59</span><span class="cm">    @ObjectLink here, person and phones, cannot use</span>
+<span class="linenos"> 60</span><span class="cm">    this.person.phones. Changes of inner Array not observed.</span>
+<span class="linenos"> 61</span><span class="cm">    onClick updates selectedPerson also in</span>
+<span class="linenos"> 62</span><span class="cm">    AddressBookView, PersonEditView */</span>
+<span class="linenos"> 63</span><span class="w"> </span><span class="kd">@Component</span><span class="w"> </span><span class="nx">struct</span><span class="w"> </span><span class="nx">PersonView</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 64</span>
+<span class="linenos"> 65</span><span class="w">     </span><span class="kd">@ObjectLink</span><span class="w"> </span><span class="nx">person</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span>
+<span class="linenos"> 66</span><span class="w">     </span><span class="kd">@ObjectLink</span><span class="w"> </span><span class="nx">phones</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">ObservedArray</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+<span class="linenos"> 67</span>
+<span class="linenos"> 68</span><span class="w">     </span><span class="kd">@Link</span><span class="w"> </span><span class="nx">selectedPerson</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span>
+<span class="linenos"> 69</span>
+<span class="linenos"> 70</span><span class="w">     </span><span class="nx">build</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 71</span><span class="w">         </span><span class="nx">Flex</span><span class="p">({</span>
+<span class="linenos"> 72</span><span class="w">             </span><span class="nx">direction</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexDirection.Row</span><span class="p">,</span>
+<span class="linenos"> 73</span><span class="w">             </span><span class="nx">justifyContent</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexAlign.SpaceBetween</span><span class="w"> </span><span class="p">})</span>
+<span class="linenos"> 74</span><span class="w">         </span><span class="p">{</span>
+<span class="linenos"> 75</span><span class="w">             </span><span class="nx">Text</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">person</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+<span class="linenos"> 76</span><span class="w">             </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 77</span><span class="w">                 </span><span class="nx">Text</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<span class="linenos"> 78</span><span class="w">             </span><span class="p">}</span>
+<span class="linenos"> 79</span><span class="w">         </span><span class="p">}</span>
+<span class="linenos"> 80</span><span class="w">         </span><span class="p">.</span><span class="nx">height</span><span class="p">(</span><span class="mf">55</span><span class="p">)</span>
+<span class="linenos"> 81</span><span class="w">         </span><span class="p">.</span><span class="nx">backgroundColor</span><span class="p">(</span>
+<span class="linenos"> 82</span><span class="w">             </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">person</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;#ffa0a0&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;#ffffff&quot;</span>
+<span class="linenos"> 83</span><span class="w">         </span><span class="p">)</span>
+<span class="linenos"> 84</span><span class="w">         </span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 85</span><span class="w">             </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">person</span>
+<span class="linenos"> 86</span><span class="w">         </span><span class="p">})</span>
+<span class="linenos"> 87</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos"> 88</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 89</span>
+<span class="linenos"> 90</span><span class="w"> </span><span class="cm">/* Renders all details</span>
+<span class="linenos"> 91</span><span class="cm">    @Prop get initialized from parent AddressBookView,</span>
+<span class="linenos"> 92</span><span class="cm">    TextInput onChange modifies local copies only on</span>
+<span class="linenos"> 93</span><span class="cm">    &quot;Save Changes&quot; copy all data from @Prop to @ObjectLink,</span>
+<span class="linenos"> 94</span><span class="cm">    syncs to selectedPerson in other @Components. */</span>
+<span class="linenos"> 95</span><span class="w"> </span><span class="kd">@Component</span><span class="w"> </span><span class="nx">struct</span><span class="w"> </span><span class="nx">PersonEditView</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 96</span>
+<span class="linenos"> 97</span><span class="w">     </span><span class="kd">@Consume</span><span class="w"> </span><span class="nx">addrBook</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">AddressBook</span>
+<span class="linenos"> 98</span>
+<span class="linenos"> 99</span><span class="w">     </span><span class="cm">/* Person object and sub-objects owned by the parent Component */</span>
+<span class="linenos">100</span><span class="w">     </span><span class="kd">@Link</span><span class="w"> </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span>
+<span class="linenos">101</span>
+<span class="linenos">102</span><span class="w">     </span><span class="cm">/* editing on local copy until save is handled */</span>
+<span class="linenos">103</span><span class="w">     </span><span class="kd">@Prop</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="linenos">104</span><span class="w">     </span><span class="kd">@Prop</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Address</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">105</span><span class="w">     </span><span class="kd">@Prop</span><span class="w"> </span><span class="nx">phones</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">ObservedArray</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">106</span>
+<span class="linenos">107</span><span class="w">     </span><span class="nx">selectedPersonIndex</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">108</span><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">addrBook</span><span class="p">.</span><span class="nx">contacts</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span>
+<span class="linenos">109</span><span class="w">             </span><span class="p">(</span><span class="nx">person</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">person</span><span class="p">.</span><span class="nx">id_</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">id_</span>
+<span class="linenos">110</span><span class="w">         </span><span class="p">)</span>
+<span class="linenos">111</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">112</span>
+<span class="linenos">113</span><span class="w">     </span><span class="nx">build</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">114</span><span class="w">         </span><span class="nx">Column</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">115</span><span class="w">             </span><span class="nx">TextInput</span><span class="p">({</span><span class="w"> </span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">this.name</span><span class="p">})</span>
+<span class="linenos">116</span><span class="w">                 </span><span class="p">.</span><span class="nx">onChange</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">117</span><span class="w">                     </span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">value</span>
+<span class="linenos">118</span><span class="w">                 </span><span class="p">})</span>
+<span class="linenos">119</span>
+<span class="linenos">120</span><span class="w">             </span><span class="nx">TextInput</span><span class="p">({</span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">this.address.street</span><span class="p">})</span>
+<span class="linenos">121</span><span class="w">                 </span><span class="p">.</span><span class="nx">onChange</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">122</span><span class="w">                     </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">street</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">value</span>
+<span class="linenos">123</span><span class="w">                 </span><span class="p">})</span>
+<span class="linenos">124</span>
+<span class="linenos">125</span><span class="w">             </span><span class="nx">TextInput</span><span class="p">({</span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">this.address.city</span><span class="p">})</span>
+<span class="linenos">126</span><span class="w">                 </span><span class="p">.</span><span class="nx">onChange</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">127</span><span class="w">                     </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">city</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">value</span>
+<span class="linenos">128</span><span class="w">                 </span><span class="p">})</span>
+<span class="linenos">129</span>
+<span class="linenos">130</span><span class="w">             </span><span class="nx">TextInput</span><span class="p">({</span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">this.address.zip.toString</span><span class="p">()})</span>
+<span class="linenos">131</span><span class="w">                 </span><span class="p">.</span><span class="nx">onChange</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">132</span><span class="w">                     </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+<span class="linenos">133</span><span class="w">                     </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">zip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">result</span>
+<span class="linenos">134</span><span class="w">                 </span><span class="p">})</span>
+<span class="linenos">135</span>
+<span class="linenos">136</span><span class="w">             </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">137</span><span class="w">                 </span><span class="nx">ForEach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">phone</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">138</span><span class="w">                     </span><span class="nx">TextInput</span><span class="p">({</span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="kt">phone</span><span class="p">})</span>
+<span class="linenos">139</span><span class="w">                         </span><span class="p">.</span><span class="nx">width</span><span class="p">(</span><span class="mf">150</span><span class="p">)</span>
+<span class="linenos">140</span><span class="w">                         </span><span class="p">.</span><span class="nx">onChange</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">141</span><span class="w">                             </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;. &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; value has changed&quot;</span><span class="p">)</span>
+<span class="linenos">142</span><span class="w">                             </span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">value</span>
+<span class="linenos">143</span><span class="w">                         </span><span class="p">})</span>
+<span class="linenos">144</span><span class="w">                 </span><span class="p">},</span><span class="w"> </span><span class="p">(</span><span class="nx">phone</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">phone</span><span class="p">)</span>
+<span class="linenos">145</span><span class="w">             </span><span class="p">}</span>
+<span class="linenos">146</span>
+<span class="linenos">147</span><span class="w">             </span><span class="nx">Flex</span><span class="p">({</span>
+<span class="linenos">148</span><span class="w">                 </span><span class="nx">direction</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexDirection.Row</span><span class="p">,</span>
+<span class="linenos">149</span><span class="w">                 </span><span class="nx">justifyContent</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexAlign.SpaceBetween</span>
+<span class="linenos">150</span><span class="w">             </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">151</span><span class="w">                 </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Save Changes&quot;</span><span class="p">)</span>
+<span class="linenos">152</span><span class="w">                     </span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">153</span><span class="w">                         </span><span class="c1">// copy values from local copy to the provided ref</span>
+<span class="linenos">154</span><span class="w">                         </span><span class="c1">// to Person object owned by  parent Component.</span>
+<span class="linenos">155</span><span class="w">                         </span><span class="c1">// Avoid creating new Objects, modify properties of</span>
+<span class="linenos">156</span><span class="w">                         </span><span class="c1">// existing</span>
+<span class="linenos">157</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">name</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">name</span>
+<span class="linenos">158</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">street</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">street</span>
+<span class="linenos">159</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">city</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">city</span>
+<span class="linenos">160</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">zip</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">address</span><span class="p">.</span><span class="nx">zip</span>
+<span class="linenos">161</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">phones</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">phone</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">162</span><span class="w">                             </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">.</span><span class="nx">phones</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">phone</span>
+<span class="linenos">163</span><span class="w">                         </span><span class="p">})</span>
+<span class="linenos">164</span><span class="w">                     </span><span class="p">})</span>
+<span class="linenos">165</span>
+<span class="linenos">166</span><span class="w">                 </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPersonIndex</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">167</span><span class="w">                     </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Delete Contact&quot;</span><span class="p">)</span>
+<span class="linenos">168</span><span class="w">                         </span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">169</span><span class="w">                             </span><span class="kd">let</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPersonIndex</span><span class="p">()</span>
+<span class="linenos">170</span><span class="w">                             </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;delete contact at index &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span>
+<span class="linenos">171</span>
+<span class="linenos">172</span><span class="w">                             </span><span class="c1">// delete found contact</span>
+<span class="linenos">173</span><span class="w">                             </span><span class="k">this</span><span class="p">.</span><span class="nx">addrBook</span><span class="p">.</span><span class="nx">contacts</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="linenos">174</span>
+<span class="linenos">175</span><span class="w">                             </span><span class="c1">// determine new selectedPerson</span>
+<span class="linenos">176</span><span class="w">                             </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">addrBook</span><span class="p">.</span><span class="nx">contacts</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+<span class="linenos">177</span><span class="w">                                 </span><span class="o">?</span><span class="w"> </span><span class="nx">index</span>
+<span class="linenos">178</span><span class="w">                                 </span><span class="o">:</span><span class="w"> </span><span class="kt">index</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">179</span>
+<span class="linenos">180</span><span class="w">                             </span><span class="c1">// if no contact left, set me as selectedPerson</span>
+<span class="linenos">181</span><span class="w">                             </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">index</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="linenos">182</span><span class="w">                                 </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">addrBook</span><span class="p">.</span><span class="nx">contacts</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
+<span class="linenos">183</span><span class="w">                                 </span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">addrBook</span><span class="p">.</span><span class="nx">me</span>
+<span class="linenos">184</span><span class="w">                         </span><span class="p">})</span>
+<span class="linenos">185</span><span class="w">                 </span><span class="p">}</span>
+<span class="linenos">186</span><span class="w">             </span><span class="p">}</span>
+<span class="linenos">187</span><span class="w">         </span><span class="p">}</span>
+<span class="linenos">188</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">189</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">190</span>
+<span class="linenos">191</span><span class="w"> </span><span class="kd">@Component</span><span class="w"> </span><span class="nx">struct</span><span class="w"> </span><span class="nx">AddressBookView</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">192</span>
+<span class="linenos">193</span><span class="w">     </span><span class="kd">@ObjectLink</span><span class="w"> </span><span class="nx">me</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span>
+<span class="linenos">194</span><span class="w">     </span><span class="kd">@ObjectLink</span><span class="w"> </span><span class="nx">contacts</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">ObservedArray</span><span class="o">&lt;</span><span class="nx">Person</span><span class="o">&gt;</span>
+<span class="linenos">195</span><span class="w">     </span><span class="kd">@State</span><span class="w"> </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">Person</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">196</span>
+<span class="linenos">197</span><span class="w">     </span><span class="nx">aboutToAppear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">198</span><span class="w">         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">me</span>
+<span class="linenos">199</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">200</span>
+<span class="linenos">201</span><span class="w">     </span><span class="nx">build</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">202</span><span class="w">         </span><span class="nx">Flex</span><span class="p">({</span>
+<span class="linenos">203</span><span class="w">             </span><span class="nx">direction</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexDirection.Column</span><span class="p">,</span>
+<span class="linenos">204</span><span class="w">             </span><span class="nx">justifyContent</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexAlign.Start</span>
+<span class="linenos">205</span><span class="w">         </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">206</span><span class="w">             </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Me:&quot;</span><span class="p">)</span>
+<span class="linenos">207</span><span class="w">             </span><span class="nx">PersonView</span><span class="p">({</span>
+<span class="linenos">208</span><span class="w">                 </span><span class="nx">person</span><span class="o">:</span><span class="w"> </span><span class="kt">this.me</span><span class="p">,</span>
+<span class="linenos">209</span><span class="w">                 </span><span class="nx">phones</span><span class="o">:</span><span class="w"> </span><span class="kt">this.me.phones</span><span class="p">,</span>
+<span class="linenos">210</span><span class="w">                 </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">this.$selectedPerson</span>
+<span class="linenos">211</span><span class="w">             </span><span class="p">})</span>
+<span class="linenos">212</span>
+<span class="linenos">213</span><span class="w">             </span><span class="nx">Divider</span><span class="p">().</span><span class="nx">height</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span>
+<span class="linenos">214</span>
+<span class="linenos">215</span><span class="w">             </span><span class="nx">Flex</span><span class="p">({</span>
+<span class="linenos">216</span><span class="w">                 </span><span class="nx">direction</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexDirection.Row</span><span class="p">,</span>
+<span class="linenos">217</span><span class="w">                 </span><span class="nx">justifyContent</span><span class="o">:</span><span class="w"> </span><span class="kt">FlexAlign.SpaceBetween</span>
+<span class="linenos">218</span><span class="w">             </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">219</span><span class="w">                 </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Contacts:&quot;</span><span class="p">)</span>
+<span class="linenos">220</span><span class="w">                 </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Add&quot;</span><span class="p">)</span>
+<span class="linenos">221</span><span class="w">                     </span><span class="p">.</span><span class="nx">onClick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">222</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;+86&quot;</span><span class="p">])</span>
+<span class="linenos">223</span><span class="w">                         </span><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">selectedPerson</span><span class="p">)</span>
+<span class="linenos">224</span><span class="w">                     </span><span class="p">})</span>
+<span class="linenos">225</span><span class="w">             </span><span class="p">}</span>
+<span class="linenos">226</span><span class="w">             </span><span class="p">.</span><span class="nx">height</span><span class="p">(</span><span class="mf">50</span><span class="p">)</span>
+<span class="linenos">227</span>
+<span class="linenos">228</span><span class="w">             </span><span class="nx">ForEach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span><span class="p">,</span>
+<span class="linenos">229</span><span class="w">                 </span><span class="nx">contact</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">230</span><span class="w">                     </span><span class="nx">PersonView</span><span class="p">({</span>
+<span class="linenos">231</span><span class="w">                         </span><span class="nx">person</span><span class="o">:</span><span class="w"> </span><span class="kt">contact</span><span class="p">,</span>
+<span class="linenos">232</span><span class="w">                         </span><span class="nx">phones</span><span class="o">:</span><span class="w"> </span><span class="kt">contact.phones</span><span class="p">,</span>
+<span class="linenos">233</span><span class="w">                         </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">this.$selectedPerson</span>
+<span class="linenos">234</span><span class="w">                     </span><span class="p">})</span>
+<span class="linenos">235</span><span class="w">                 </span><span class="p">},</span><span class="w"> </span><span class="nx">contact</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">contact</span><span class="p">.</span><span class="nx">id_</span>
+<span class="linenos">236</span><span class="w">             </span><span class="p">)</span>
+<span class="linenos">237</span>
+<span class="linenos">238</span><span class="w">             </span><span class="nx">Divider</span><span class="p">().</span><span class="nx">height</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span>
+<span class="linenos">239</span>
+<span class="linenos">240</span><span class="w">             </span><span class="nx">Text</span><span class="p">(</span><span class="s2">&quot;Edit:&quot;</span><span class="p">)</span>
+<span class="linenos">241</span><span class="w">             </span><span class="nx">PersonEditView</span><span class="p">({</span>
+<span class="linenos">242</span><span class="w">                 </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">this.$selectedPerson</span><span class="p">,</span>
+<span class="linenos">243</span><span class="w">                 </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">this.selectedPerson.name</span><span class="p">,</span>
+<span class="linenos">244</span><span class="w">                 </span><span class="nx">address</span><span class="o">:</span><span class="w"> </span><span class="kt">this.selectedPerson.address</span><span class="p">,</span>
+<span class="linenos">245</span><span class="w">                 </span><span class="nx">phones</span><span class="o">:</span><span class="w"> </span><span class="kt">this.selectedPerson.phones</span>
+<span class="linenos">246</span><span class="w">             </span><span class="p">})</span>
+<span class="linenos">247</span><span class="w">         </span><span class="p">}</span>
+<span class="linenos">248</span><span class="w">         </span><span class="p">.</span><span class="nx">borderStyle</span><span class="p">(</span><span class="nx">BorderStyle</span><span class="p">.</span><span class="nx">Solid</span><span class="p">)</span>
+<span class="linenos">249</span><span class="w">         </span><span class="p">.</span><span class="nx">borderWidth</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="linenos">250</span><span class="w">         </span><span class="p">.</span><span class="nx">borderColor</span><span class="p">(</span><span class="mh">0xAFEEEE</span><span class="p">)</span>
+<span class="linenos">251</span><span class="w">         </span><span class="p">.</span><span class="nx">borderRadius</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="linenos">252</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">253</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">254</span>
+<span class="linenos">255</span><span class="w"> </span><span class="kd">@Entry</span>
+<span class="linenos">256</span><span class="w"> </span><span class="kd">@Component</span><span class="w"> </span><span class="nx">struct</span><span class="w"> </span><span class="nx">PageEntry</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">257</span><span class="w">     </span><span class="kd">@Provide</span><span class="w"> </span><span class="nx">addrBook</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">AddressBook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AddressBook</span><span class="p">(</span>
+<span class="linenos">258</span><span class="w">         </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="p">(</span>
+<span class="linenos">259</span><span class="w">             </span><span class="s2">&quot;Mighty Panda&quot;</span><span class="p">,</span>
+<span class="linenos">260</span><span class="w">             </span><span class="s2">&quot;Wonder str., 8&quot;</span><span class="p">,</span>
+<span class="linenos">261</span><span class="w">             </span><span class="mf">888</span><span class="p">,</span>
+<span class="linenos">262</span><span class="w">             </span><span class="s2">&quot;Shanghai&quot;</span><span class="p">,</span>
+<span class="linenos">263</span><span class="w">             </span><span class="p">[</span><span class="s2">&quot;+8611122223333&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8677788889999&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8655566667777&quot;</span><span class="p">]</span>
+<span class="linenos">264</span><span class="w">         </span><span class="p">),</span>
+<span class="linenos">265</span><span class="w">         </span><span class="p">[</span>
+<span class="linenos">266</span><span class="w">         </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="p">(</span>
+<span class="linenos">267</span><span class="w">             </span><span class="s2">&quot;Curious Squirrel&quot;</span><span class="p">,</span>
+<span class="linenos">268</span><span class="w">             </span><span class="s2">&quot;Wonder str., 8&quot;</span><span class="p">,</span>
+<span class="linenos">269</span><span class="w">             </span><span class="mf">888</span><span class="p">,</span>
+<span class="linenos">270</span><span class="w">             </span><span class="s2">&quot;Hangzhou&quot;</span><span class="p">,</span>
+<span class="linenos">271</span><span class="w">             </span><span class="p">[</span><span class="s2">&quot;+8611122223332&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8677788889998&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8655566667776&quot;</span><span class="p">]</span>
+<span class="linenos">272</span><span class="w">         </span><span class="p">),</span>
+<span class="linenos">273</span><span class="w">         </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="p">(</span>
+<span class="linenos">274</span><span class="w">             </span><span class="s2">&quot;Wise Tiger&quot;</span><span class="p">,</span>
+<span class="linenos">275</span><span class="w">             </span><span class="s2">&quot;Wonder str., 8&quot;</span><span class="p">,</span>
+<span class="linenos">276</span><span class="w">             </span><span class="mf">888</span><span class="p">,</span>
+<span class="linenos">277</span><span class="w">             </span><span class="s2">&quot;Nanjing&quot;</span><span class="p">,</span>
+<span class="linenos">278</span><span class="w">             </span><span class="p">[</span><span class="s2">&quot;+8610101010101&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8620202020202&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8630303030303&quot;</span><span class="p">]</span>
+<span class="linenos">279</span><span class="w">         </span><span class="p">),</span>
+<span class="linenos">280</span><span class="w">         </span><span class="ow">new</span><span class="w"> </span><span class="nx">Person</span><span class="p">(</span>
+<span class="linenos">281</span><span class="w">             </span><span class="s2">&quot;Mysterious Dragon&quot;</span><span class="p">,</span>
+<span class="linenos">282</span><span class="w">             </span><span class="s2">&quot;Wonder str., 8&quot;</span><span class="p">,</span>
+<span class="linenos">283</span><span class="w">             </span><span class="mf">888</span><span class="p">,</span>
+<span class="linenos">284</span><span class="w">             </span><span class="s2">&quot;Suzhou&quot;</span><span class="p">,</span>
+<span class="linenos">285</span><span class="w">             </span><span class="p">[</span><span class="s2">&quot;+8610000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;+8680000000000&quot;</span><span class="p">]</span>
+<span class="linenos">286</span><span class="w">         </span><span class="p">),</span>
+<span class="linenos">287</span><span class="w">     </span><span class="p">]);</span>
+<span class="linenos">288</span>
+<span class="linenos">289</span><span class="w">     </span><span class="nx">build</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">290</span><span class="w">         </span><span class="nx">AddressBookView</span><span class="p">({</span>
+<span class="linenos">291</span><span class="w">             </span><span class="nx">me</span><span class="o">:</span><span class="w"> </span><span class="kt">this.addrBook.me</span><span class="p">,</span>
+<span class="linenos">292</span><span class="w">             </span><span class="nx">contacts</span><span class="o">:</span><span class="w"> </span><span class="kt">this.addrBook.contacts</span><span class="p">,</span>
+<span class="linenos">293</span><span class="w">             </span><span class="nx">selectedPerson</span><span class="o">:</span><span class="w"> </span><span class="kt">this.addrBook.me</span>
+<span class="linenos">294</span><span class="w">         </span><span class="p">})</span>
+<span class="linenos">295</span><span class="w">     </span><span class="p">}</span>
+<span class="linenos">296</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_conversions.html">6. Contexts and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">16. Support for GUI Programming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#annotations">16.1. Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gui-structs">16.2. GUI Structs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#builder-function-syntax-conventions">16.3. Builder Function Syntax Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#builder-function-restrictions">16.4. Builder Function Restrictions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#annotations-list">16.5. Annotations List</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#builder-annotation">16.5.1. &#64;Builder Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#builderparam-annotation">16.5.2. &#64;BuilderParam Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#component-annotation">16.5.3. &#64;Component Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#consume-annotation">16.5.4. &#64;Consume Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#entry-annotation">16.5.5. &#64;Entry Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#link-annotation">16.5.6. &#64;Link Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#localstoragelink-annotation">16.5.7. &#64;LocalStorageLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#localstorageprop-annotation">16.5.8. &#64;LocalStorageProp Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#objectlink-annotation">16.5.9. &#64;ObjectLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#observed-annotation">16.5.10. &#64;Observed Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prop-annotation">16.5.11. &#64;Prop Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#provide-annotation">16.5.12. &#64;Provide Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-annotation">16.5.13. &#64;State Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storagelink-annotation">16.5.14. &#64;StorageLink Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storageprop-annotation">16.5.15. &#64;StorageProp Annotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#watch-annotation">16.5.16. &#64;Watch Annotation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#callable-types">16.6. Callable Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#callable-types-with-invoke-method">16.6.1. Callable Types with Invoke Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#callable-types-with-instantiate-method">16.6.2. Callable Types with Instantiate Method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-features">16.7. Additional Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methods-returning-this">16.7.1. Methods Returning <code class="docutils literal notranslate"><span class="pre">this</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unary-operator">16.7.2. Unary operator ‘$$’</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#example-of-gui-programming">16.8. Example of GUI Programming</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="15_semantics.html" title="previous chapter"><span class="section-number">15. </span>Semantic Rules</a></li>
+      <li>Next: <a href="17_experimental.html" title="next chapter"><span class="section-number">17. </span>Experimental Features</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/16_gui.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

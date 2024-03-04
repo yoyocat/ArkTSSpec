@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6. Contexts and Conversions &#8212; ArkTS Specification 1.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=def9ab29"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. Expressions" href="7_expressions.html" />
+    <link rel="prev" title="5. Generics" href="5_generics.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="contexts-and-conversions">
+<span id="id1"></span><h1><span class="section-number">6. </span>Contexts and Conversions<a class="headerlink" href="#contexts-and-conversions" title="Permalink to this heading">¶</a></h1>
+<p>Every expression written in the ArkTS programming language has a type that
+is inferred at compile time.</p>
+<p>In most contexts, an expression must be <em>compatible</em> with a type expected in
+that context. This type is called the <em>target type</em>.</p>
+<p>If no target type is expected in the context, then the expression
+is called a <em>standalone expression</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">expr</span><span class="w"> </span><span class="c1">// no target type is expected</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">     </span><span class="nx">expr</span><span class="w"> </span><span class="c1">// no target type is expected</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Otherwise, the expression is a <em>non-standalone expression</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">expr</span><span class="w"> </span><span class="c1">// target type of &#39;expr&#39; is number</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">expr</span><span class="p">)</span><span class="w"> </span><span class="c1">// target type of &#39;expr&#39; is string</span>
+</pre></div>
+</div>
+<p>The type of some expressions cannot be inferred from the expression itself
+(see <a class="reference internal" href="7_expressions.html#object-literal"><span class="std std-ref">Object Literal</span></a> as an example). A compile-time error occurs if
+such an expression is used as a <em>standalone expression</em>.</p>
+<p>There are two ways to facilitate the compatibility of a <em>non-standalone
+expression</em> with its surrounding context:</p>
+<ol class="arabic simple">
+<li><p>The type of some non-standalone expressions can be inferred from the
+target type (expression types can be different in different contexts).</p></li>
+<li><p>If the inferred expression type is different from the target type, then
+performing an implicit <em>conversion</em> can ensure type compatibility.
+The conversion from type <em>S</em> to type <em>T</em> causes a type <em>S</em> expression to
+be handled as a type <em>T</em> expression at compile time.</p></li>
+</ol>
+<p id="index-0">A compile-time error occurs if neither produces an appropriate expression type.</p>
+<p>The rules that determine whether a <em>target type</em> allows an implicit
+<em>conversion</em> vary for different kinds of contexts and types of expressions.
+The <em>target type</em> can influence not only the type of the expression but also,
+in some cases, its runtime behavior.</p>
+<p>Some cases of conversion require action at runtime to check the
+validity of conversion, or to translate the runtime expression value
+into a form that is appropriate for the new type <em>T</em>.</p>
+<p id="index-1">Contexts can be of the following kinds:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#assignment-like-contexts"><span class="std std-ref">Assignment-like Contexts</span></a> where the expression value is bound to a
+variable.</p></li>
+<li><p><a class="reference internal" href="#string-operator-contexts"><span class="std std-ref">String Operator Contexts</span></a> with <code class="docutils literal notranslate"><span class="pre">string</span></code> concatenation (<cite>+</cite> operator).</p></li>
+<li><p><a class="reference internal" href="#numeric-operator-contexts"><span class="std std-ref">Numeric Operator Contexts</span></a> with all numeric operators (<cite>+</cite>, <cite>-</cite>, etc.).</p></li>
+<li><p><a class="reference internal" href="#casting-contexts-and-conversions"><span class="std std-ref">Casting Contexts and Conversions</span></a>. i.e., the conversion of an
+expression value to a type explicitly specified by a cast expression (see
+<a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>).</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="assignment-like-contexts">
+<span id="id2"></span><h2><span class="section-number">6.1. </span>Assignment-like Contexts<a class="headerlink" href="#assignment-like-contexts" title="Permalink to this heading">¶</a></h2>
+<p><em>Assignment-like contexts</em> include the following:</p>
+<ul class="simple">
+<li><p><em>Declaration contexts</em> that allow setting an initial value to a variable
+(see <a class="reference internal" href="4_names.html#variable-declarations"><span class="std std-ref">Variable Declarations</span></a>), a constant (see
+<a class="reference internal" href="4_names.html#constant-declarations"><span class="std std-ref">Constant Declarations</span></a>), or a field (see <a class="reference internal" href="9_classes.html#field-declarations"><span class="std std-ref">Field Declarations</span></a>)
+with an explicit type annotation;</p></li>
+<li><p><em>Assignment contexts</em> that allow assigning (see <a class="reference internal" href="7_expressions.html#assignment"><span class="std std-ref">Assignment</span></a>) an
+expression value to a variable;</p></li>
+<li><p><em>Call contexts</em> that allow assigning an argument value to a corresponding
+formal parameter of a function, method, constructor or lambda call (see
+<a class="reference internal" href="7_expressions.html#function-call-expression"><span class="std std-ref">Function Call Expression</span></a>, <a class="reference internal" href="7_expressions.html#method-call-expression"><span class="std std-ref">Method Call Expression</span></a>,
+<a class="reference internal" href="9_classes.html#explicit-constructor-call"><span class="std std-ref">Explicit Constructor Call</span></a>, and <a class="reference internal" href="7_expressions.html#new-expressions"><span class="std std-ref">New Expressions</span></a>);</p></li>
+<li><p><em>Composite literal contexts</em> that allow setting an expression value to an
+array element (see <a class="reference internal" href="7_expressions.html#array-type-inference-from-context"><span class="std std-ref">Array Type Inference from Context</span></a>), a class, or
+an interface field (see <a class="reference internal" href="7_expressions.html#object-literal"><span class="std std-ref">Object Literal</span></a>);</p></li>
+</ul>
+<p id="index-2">The examples are presented below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w">   </span><span class="c1">// declaration contexts:</span>
+<span class="linenos"> 2</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos"> 3</span><span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">str</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;done&quot;</span>
+<span class="linenos"> 4</span><span class="w">   </span><span class="kd">class</span><span class="w"> </span><span class="nx">C</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">     </span><span class="nx">f</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aa&quot;</span>
+<span class="linenos"> 6</span><span class="w">   </span><span class="p">}</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w">   </span><span class="c1">// assignment contexts:</span>
+<span class="linenos"> 9</span><span class="w">   </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
+<span class="linenos">10</span><span class="w">   </span><span class="ow">new</span><span class="w"> </span><span class="nx">C</span><span class="p">().</span><span class="nx">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bb&quot;</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="w">   </span><span class="c1">// call contexts:</span>
+<span class="linenos">13</span><span class="w">   </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">14</span><span class="w">   </span><span class="nx">foo</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="w">   </span><span class="c1">// composite literal contexts:</span>
+<span class="linenos">17</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span><span class="w"> </span><span class="mf">11</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In all these cases, the expression type either must be equal to the <em>target
+type</em> or can be converted to the <em>target type</em> by using one of the conversions
+discussed below. Otherwise, a compile-time error occurs.</p>
+<p>Assignment-like contexts allow using of one of the following:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#widening-primitive-conversions"><span class="std std-ref">Widening Primitive Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#constant-narrowing-integer-conversions"><span class="std std-ref">Constant Narrowing Integer Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#boxing-conversions"><span class="std std-ref">Boxing Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#unboxing-conversions"><span class="std std-ref">Unboxing Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#widening-union-conversions"><span class="std std-ref">Widening Union Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#widening-reference-conversions"><span class="std std-ref">Widening Reference Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#character-to-string-conversions"><span class="std std-ref">Character to String Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#constant-string-to-character-conversions"><span class="std std-ref">Constant String to Character Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#function-types-conversions"><span class="std std-ref">Function Types Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#enumeration-to-int-conversions"><span class="std std-ref">Enumeration to Int Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#enumeration-to-string-conversions"><span class="std std-ref">Enumeration to String Conversions</span></a>.</p></li>
+</ul>
+<p>If there is no applicable conversion, then a compile-time error occurs.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="string-operator-contexts">
+<span id="id3"></span><h2><span class="section-number">6.2. </span>String Operator Contexts<a class="headerlink" href="#string-operator-contexts" title="Permalink to this heading">¶</a></h2>
+<p><em>String context</em> applies only to a non-<em>string</em> operand of the binary <code class="docutils literal notranslate"><span class="pre">+</span></code>
+operator if the other operand is a <em>string</em>.</p>
+<p><em>String conversion</em> for a non-<em>string</em> operand is evaluated as follows:</p>
+<ul>
+<li><p>The operand of nullish type that has a nullish value is converted as
+described below:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The operand <code class="docutils literal notranslate"><span class="pre">null</span></code> is converted to string <em>null</em>.</p></li>
+<li><p>The operand <code class="docutils literal notranslate"><span class="pre">undefined</span></code> is converted to string <em>undefined</em>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>An operand of <em>reference</em> type or <em>enum</em> type is converted by applying the
+method call <em>toString()</em>.</p></li>
+<li><p>An operand of <em>integer</em> type (see <a class="reference internal" href="3_types.html#integer-types-and-operations"><span class="std std-ref">Integer Types and Operations</span></a>)
+is converted to type <em>string</em> with a value that represents the operand in
+the decimal form;</p></li>
+<li><p>An operand of <em>floating-point</em> type (see <a class="reference internal" href="3_types.html#floating-point-types-and-operations"><span class="std std-ref">Floating-Point Types and Operations</span></a>)
+is converted to type <em>string</em> with a value that represents the operand in the
+decimal form (without the loss of information);</p></li>
+<li><p>An operand of type <em>boolean</em> is converted to type <em>string</em> with the values
+<code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>;</p></li>
+<li><p>An operand of type <em>char</em> is converted by using <a class="reference internal" href="#character-to-string-conversions"><span class="std std-ref">Character to String Conversions</span></a>;</p></li>
+<li><p>An operand of an enumeration type (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>)
+is converted to type <em>string</em>
+with the value of the corresponding enumeration constant
+if values of enumeration are of type <em>string</em>.</p></li>
+</ul>
+<p>If there is no applicable conversion, then a compile-time error occurs.</p>
+<p>The target type in this context is always <em>string</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;null&quot;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;value is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">123</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;value is 123&quot;</span>
+<span class="linenos">3</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;BigInt is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">123n</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;BigInt is 123&quot;</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mf">15</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; steps&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;15 steps&quot;</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">6</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;string is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">x</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;string is null&quot;</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;X&quot;</span>
+<span class="linenos">8</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;char is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">c</span><span class="p">)</span><span class="w"> </span><span class="c1">// prints &quot;char is X&quot;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="numeric-operator-contexts">
+<span id="id4"></span><h2><span class="section-number">6.3. </span>Numeric Operator Contexts<a class="headerlink" href="#numeric-operator-contexts" title="Permalink to this heading">¶</a></h2>
+<p><em>Numeric contexts</em> apply to the operands of an arithmetic operator.
+<em>Numeric contexts</em> use combinations of predefined numeric types conversions
+(see <a class="reference internal" href="#primitive-types-conversions"><span class="std std-ref">Primitive Types Conversions</span></a>), and ensure that each argument
+expression can be converted to target type <em>T</em> while the arithmetic
+operation for the values of type <em>T</em> is being defined.</p>
+<p>An operand of an enumeration type (see <a class="reference internal" href="11_enums.html#enumerations"><span class="std std-ref">Enumerations</span></a>)
+can be used in the <em>numeric context</em>
+if values of this enumeration are of type <em>int</em>.
+The type of this operand is assumed to be <em>int</em>.</p>
+<p id="index-3">The numeric contexts are actually the forms of the following expressions:</p>
+<ul class="simple">
+<li><p>Unary (see <a class="reference internal" href="7_expressions.html#unary-expressions"><span class="std std-ref">Unary Expressions</span></a>);</p></li>
+<li><p>Multiplicative (see <a class="reference internal" href="7_expressions.html#multiplicative-expressions"><span class="std std-ref">Multiplicative Expressions</span></a>);</p></li>
+<li><p>Additive (see <a class="reference internal" href="7_expressions.html#additive-expressions"><span class="std std-ref">Additive Expressions</span></a>);</p></li>
+<li><p>Shift (see <a class="reference internal" href="7_expressions.html#shift-expressions"><span class="std std-ref">Shift Expressions</span></a>);</p></li>
+<li><p>Relational (see <a class="reference internal" href="7_expressions.html#relational-expressions"><span class="std std-ref">Relational Expressions</span></a>);</p></li>
+<li><p>Equality (see <a class="reference internal" href="7_expressions.html#equality-expressions"><span class="std std-ref">Equality Expressions</span></a>);</p></li>
+<li><p>Bitwise and Logical (see <a class="reference internal" href="7_expressions.html#bitwise-and-logical-expressions"><span class="std std-ref">Bitwise and Logical Expressions</span></a>);</p></li>
+<li><p>Conditional-And (see <a class="reference internal" href="7_expressions.html#conditional-and-expression"><span class="std std-ref">Conditional-And Expression</span></a>);</p></li>
+<li><p>Conditional-Or (see <a class="reference internal" href="7_expressions.html#conditional-or-expression"><span class="std std-ref">Conditional-Or Expression</span></a>).</p></li>
+</ul>
+<div class="line-block" id="index-4">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="casting-contexts-and-conversions">
+<span id="id5"></span><h2><span class="section-number">6.4. </span>Casting Contexts and Conversions<a class="headerlink" href="#casting-contexts-and-conversions" title="Permalink to this heading">¶</a></h2>
+<p><em>Casting contexts</em> are applied to cast expressions (<a class="reference internal" href="7_expressions.html#cast-expressions"><span class="std std-ref">Cast Expressions</span></a>),
+and rely on the application of <em>casting conversions</em>.</p>
+<p id="index-5"><em>Casting conversion</em> is the conversion of an operand in a cast expression to
+an explicitly specified <em>target type</em> by using one of the following:</p>
+<ul class="simple">
+<li><p>identity conversion, if the <em>target type</em> is the same as the expression type;</p></li>
+<li><p><a class="reference internal" href="#implicit-conversions"><span class="std std-ref">Implicit Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#numeric-casting-conversions"><span class="std std-ref">Numeric Casting Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#narrowing-reference-casting-conversions"><span class="std std-ref">Narrowing Reference Casting Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#casting-conversions-from-union"><span class="std std-ref">Casting Conversions from Union</span></a>.</p></li>
+</ul>
+<p>If there is no applicable conversion, then a compile-time error occurs.</p>
+<section id="numeric-casting-conversions">
+<span id="id6"></span><h3><span class="section-number">6.4.1. </span>Numeric Casting Conversions<a class="headerlink" href="#numeric-casting-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A <em>numeric casting conversion</em> occurs if the <em>target type</em> and the expression
+type are both <em>numeric</em> or <em>char</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">process_int</span><span class="p">(</span><span class="nx">an_int</span><span class="o">:</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">process_int</span><span class="p">(</span><span class="nx">pi</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="kr">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These conversions never cause runtime errors.</p>
+<p>Numeric casting conversion of an operand of type <em>double</em> to target type
+<em>float</em> is performed in compliance with the IEEE 754 rounding rules.</p>
+<p>A double NaN is converted to a float NaN.</p>
+<p>A double infinity is converted to the same-signed floating-point infinity.
+This conversion can lose precision or range, resulting in the following:</p>
+<ul class="simple">
+<li><p>Float zero from a nonzero double; and</p></li>
+<li><p>Float infinity from a finite double.</p></li>
+</ul>
+<p>A numeric casting conversion of a <em>floating-point</em> type operand to types
+<em>short</em>, <em>byte</em>, or <em>char</em> is performed in the following two steps:</p>
+<ul class="simple">
+<li><p>First, the casting conversion to <em>int</em> is done;</p></li>
+<li><p>Then, the <em>int</em> operand is casted to the target type.</p></li>
+</ul>
+<p>A numeric casting conversion of a <em>floating-point</em> type operand to
+target types <em>long</em> or <em>int</em> is performed by the following rules:</p>
+<ul class="simple">
+<li><p>If the operand is <em>NaN</em>, then the result is 0 (zero).</p></li>
+<li><p>If the operand is positive infinity, or if the operand is too large for the
+target type, then the result is the largest representable value of the target
+type.</p></li>
+<li><p>If the operand is negative infinity, or if the operand is too small for
+the target type, then the result is the smallest representable value of
+the target type.</p></li>
+<li><p>Otherwise, the result is the value that rounds toward zero by using IEEE 754
+‘<em>round-toward-zero</em>’ mode.</p></li>
+</ul>
+<div class="line-block" id="index-6">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="narrowing-reference-casting-conversions">
+<span id="id7"></span><h3><span class="section-number">6.4.2. </span>Narrowing Reference Casting Conversions<a class="headerlink" href="#narrowing-reference-casting-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A <em>narrowing reference casting conversion</em> converts an expression of a
+supertype (superclass or superinterface) to a subclass or subinterface:</p>
+<div class="highlight-typescript notranslate" id="index-7"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived</span><span class="p">()</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Derived</span>
+</pre></div>
+</div>
+<p>A runtime error occurs (<strong>TBD: name it</strong>) during these conversion if the
+type of a converted expression cannot be converted to the <em>target type</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived1</span><span class="p">()</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="c1">// runtime error</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="casting-conversions-from-union">
+<span id="id8"></span><h3><span class="section-number">6.4.3. </span>Casting Conversions from Union<a class="headerlink" href="#casting-conversions-from-union" title="Permalink to this heading">¶</a></h3>
+<p>A <em>casting conversion from union</em> converts an expression of union type to one
+of the types of the union, or to a type that is derived from such one type.</p>
+<p>For union type <em>U</em> = <em>T</em><sub>1</sub> | … | <em>T</em><sub>N</sub>, the <em>casting conversion
+from union</em> converts an expression of type <em>U</em> to some type <em>TT</em> (<em>target type</em>).</p>
+<p>A compile-time error occurs if the target type <em>TT</em> is not one of <em>T</em><sub>i</sub>,
+and not derived from one of <em>T</em><sub>i</sub>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">meow</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">bark</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">sleep</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="nx">leap</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Spitz</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">override</span><span class="w"> </span><span class="nx">sleep</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* 18-20 hours a day */</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Cat</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Dog</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">animal</span><span class="o">:</span><span class="w"> </span><span class="kt">Animal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Spitz</span><span class="p">()</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">animal</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nx">Frog</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">frog</span><span class="o">:</span><span class="w"> </span><span class="kt">Frog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">animal</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Frog</span><span class="w"> </span><span class="c1">// Use &#39;as&#39; conversion here</span>
+<span class="linenos">11</span><span class="w">     </span><span class="nx">frog</span><span class="p">.</span><span class="nx">leap</span><span class="p">()</span><span class="w"> </span><span class="c1">// Perform an action specific for the particular union type</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">13</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">animal</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nx">Spitz</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">14</span><span class="w">     </span><span class="kd">let</span><span class="w"> </span><span class="nx">dog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">animal</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Spitz</span><span class="w"> </span><span class="c1">// Use &#39;as&#39; conversion here</span>
+<span class="linenos">15</span><span class="w">     </span><span class="nx">dog</span><span class="p">.</span><span class="nx">sleep</span><span class="p">()</span>
+<span class="linenos">16</span><span class="w">       </span><span class="c1">// Perform an action specific for the particular union type derivative</span>
+<span class="linenos">17</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>These conversions can cause a runtime error (<strong>TBD: name it</strong>) if the
+runtime type of an expression is not the <em>target type</em>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="implicit-conversions">
+<span id="id9"></span><h2><span class="section-number">6.5. </span>Implicit Conversions<a class="headerlink" href="#implicit-conversions" title="Permalink to this heading">¶</a></h2>
+<p>This section describes all implicit conversions that are  allowed. Each
+conversion is allowed in a particular context (for example, if an expression
+that initializes a local variable is subject to <a class="reference internal" href="#assignment-like-contexts"><span class="std std-ref">Assignment-like Contexts</span></a>,
+then the rules of this context define what specific conversion is implicitly
+chosen for the expression).</p>
+<div class="line-block" id="index-8">
+<div class="line"><br /></div>
+</div>
+<section id="primitive-types-conversions">
+<span id="id10"></span><h3><span class="section-number">6.5.1. </span>Primitive Types Conversions<a class="headerlink" href="#primitive-types-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A <em>primitive type conversion</em> is one of the following:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#widening-primitive-conversions"><span class="std std-ref">Widening Primitive Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#constant-narrowing-integer-conversions"><span class="std std-ref">Constant Narrowing Integer Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#boxing-conversions"><span class="std std-ref">Boxing Conversions</span></a>;</p></li>
+<li><p><a class="reference internal" href="#unboxing-conversions"><span class="std std-ref">Unboxing Conversions</span></a>.</p></li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="widening-primitive-conversions">
+<span id="id11"></span><h3><span class="section-number">6.5.2. </span>Widening Primitive Conversions<a class="headerlink" href="#widening-primitive-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Widening primitive conversions</em> converts the following:</p>
+<ul class="simple">
+<li><p>Values of a smaller numeric type to a larger type (see
+<a class="reference internal" href="3_types.html#numeric-types-hierarchy"><span class="std std-ref">Numeric Types Hierarchy</span></a>);</p></li>
+<li><p>Values of type <em>byte</em> to type <em>char</em> (see <a class="reference internal" href="17_experimental.html#character-type-and-operations"><span class="std std-ref">Character Type and Operations</span></a>);</p></li>
+<li><p>Values of type <em>char</em> to types  <em>int</em>, <em>long</em>, <em>float</em>, and <em>double</em>;</p></li>
+<li><p>Values of an <em>enumeration</em> type to types  <em>int</em>, <em>long</em>, <em>float</em>, and
+<em>double</em> (if enumeration constants of this type are of type <em>int</em>).</p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>From</p></th>
+<th class="head"><p>To</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>byte</em></p></td>
+<td><p><em>short</em>, <em>int</em>, <em>long</em>,
+<em>float</em>, <em>double</em>, or <em>char</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>short</em></p></td>
+<td><p><em>int</em>, <em>long</em>, <em>float</em>, or
+<em>double</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>int</em></p></td>
+<td><p><em>long</em>, <em>float</em>, or <em>double</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>long</em></p></td>
+<td><p><em>float</em> or <em>double</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>float</em></p></td>
+<td><p><em>double</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>char</em></p></td>
+<td><p><em>int</em>, <em>long</em>, <em>float</em>,
+or <em>double</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>enumeration</em></p></td>
+<td><p><em>int</em>, <em>long</em>, <em>float</em>,
+or <em>double</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>These conversions cause no loss of information about the overall magnitude of
+a numeric value. Some least significant bits of the value can be lost only in
+conversions from <em>integer</em> type to <em>floating-point</em> type if the IEEE 754
+‘<em>round-to-nearest</em>’ mode is used correctly. The resultant floating-point value
+is properly rounded to the integer value.</p>
+<p><em>Widening primitive conversions</em> never cause runtime errors.</p>
+<div class="line-block" id="index-9">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constant-narrowing-integer-conversions">
+<span id="id12"></span><h3><span class="section-number">6.5.3. </span>Constant Narrowing Integer Conversions<a class="headerlink" href="#constant-narrowing-integer-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Constant narrowing integer conversion</em> converts an expression of an <em>integer</em>
+type or of type <em>char</em> to a value of a smaller <em>integer</em> type provided that:</p>
+<ul class="simple">
+<li><p>The expression is a constant expression (see <a class="reference internal" href="7_expressions.html#constant-expressions"><span class="std std-ref">Constant Expressions</span></a>);</p></li>
+<li><p>The value of the expression fits into the range of the smaller type.</p></li>
+</ul>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">byte</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">127</span><span class="w"> </span><span class="c1">// ok, int -&gt; byte conversion</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x42E</span><span class="w"> </span><span class="c1">// ok, int -&gt; char conversion</span>
+<span class="linenos">3</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">128</span><span class="w"> </span><span class="c1">// compile-time-error, value is out of range</span>
+<span class="linenos">4</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="c1">// compile-time-error, floating-point value cannot be converted</span>
+</pre></div>
+</div>
+<p>These conversions never cause runtime errors.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="boxing-conversions">
+<span id="id13"></span><h3><span class="section-number">6.5.4. </span>Boxing Conversions<a class="headerlink" href="#boxing-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Boxing conversions</em> handle primitive type expressions as expressions of a
+corresponding reference type.</p>
+<p>If the unboxed <em>target type</em> is larger than the expression type, then a
+<em>widening primitive conversion</em> is performed as the first step
+of a <em>boxing conversion</em> of numeric types and type <em>char</em>.</p>
+<p>For example, a <em>boxing conversion</em> converts <em>i</em> of primitive value type <em>int</em>
+into a reference <em>n</em> of class type <em>Number</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="o">:</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">Number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="c1">// int -&gt; number -&gt; Number</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;a&#39;</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">Long</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="c1">// char -&gt; long  -&gt; Long</span>
+</pre></div>
+</div>
+<p>These conversions can cause <em>OutOfMemoryError</em> thrown if the storage
+available for the creation of a new instance of the reference type is
+not sufficient.</p>
+<div class="line-block" id="index-10">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="unboxing-conversions">
+<span id="id14"></span><h3><span class="section-number">6.5.5. </span>Unboxing Conversions<a class="headerlink" href="#unboxing-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Unboxing conversions</em> handle reference type expressions as expressions of
+a corresponding primitive type.</p>
+<p>If the <em>target type</em> is larger than the unboxed expression type, then a
+<em>widening primitive conversion</em> is performed as the second step of
+the <em>unboxing conversion</em> of numeric types and type <em>char</em>.</p>
+<p>For example, the <em>unboxing conversion</em> converts <em>i</em> of reference type <em>Int</em>
+into type  <em>long</em>:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="o">:</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="c1">// Int -&gt; int -&gt; long</span>
+</pre></div>
+</div>
+<p><em>Unboxing conversions</em> never cause runtime errors.</p>
+<div class="line-block" id="index-11">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="widening-union-conversions">
+<span id="id15"></span><h3><span class="section-number">6.5.6. </span>Widening Union Conversions<a class="headerlink" href="#widening-union-conversions" title="Permalink to this heading">¶</a></h3>
+<p>There are three options of <em>widening union conversions</em>:</p>
+<ul class="simple">
+<li><p>Conversion from a union type to a wider union type;</p></li>
+<li><p>Conversion from a non-union type to a union type;</p></li>
+<li><p>Conversion from a union type that consists of literals only to a non-union
+type.</p></li>
+</ul>
+<p>These conversions never cause runtime errors.</p>
+<p>Union type <em>U</em> (<em>U</em><sub>1</sub> | … | <em>U</em><sub>n</sub>) can be converted into a
+different union type <em>V</em> (<em>V</em><sub>1</sub> | … | <em>V</em><sub>m</sub>) if the following
+is true after normalization (see <a class="reference internal" href="3_types.html#union-types-normalization"><span class="std std-ref">Union Types Normalization</span></a>):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>For every type <em>U</em><sub>i</sub> (<em>i</em> in 1..n-normalized) there is at least one
+type <em>V</em><sub>j</sub> (<em>i</em> in 1..m-normalized), when <em>U</em><sub>i</sub> is compatible
+with <em>V</em><sub>j</sub> (see <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a>).</p></li>
+<li><p>For every value <em>U</em><sub>i</sub> there is a value <em>V</em><sub>j</sub>, when
+<em>U</em><sub>i</sub> == <em>V</em><sub>j</sub>.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Note</strong>: If union type normalization issues a single type or value, then
+this type or value is used instead of the initial set of union types or values.</p>
+<p>This concept is illustrated by the example below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u1</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u2</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">666</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="nx">u1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">u2</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="nx">u2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">u1</span><span class="w"> </span><span class="c1">// compile-time error as type of u1 is not compatible with type of u2</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u3</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="c1">// compile-time error as there is no value 3 among values of u3 type</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">10</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">11</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u4</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="p">...</span>
+<span class="linenos">14</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u5</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Derived2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="p">...</span>
+<span class="linenos">15</span><span class="w"> </span><span class="nx">u4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">u5</span><span class="w"> </span><span class="c1">// OK, u4 type is Base after normalization and Derived1 and Derived2</span>
+<span class="linenos">16</span><span class="w">    </span><span class="c1">// are compatible with Base as Note states</span>
+<span class="linenos">17</span><span class="w"> </span><span class="nx">u5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">u4</span><span class="w"> </span><span class="c1">// compile-time error as Base is not compatible with both</span>
+<span class="linenos">18</span><span class="w">    </span><span class="c1">// Derived1 and Derived2</span>
+</pre></div>
+</div>
+<p>Non-union type <em>T</em> can be converted to union type <em>U</em> = <em>U</em><sub>1</sub> | … | <em>U</em><sub>n</sub>
+if <em>T</em> is compatible with one of <em>U</em><sub>i</sub> types.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">u</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">2</span><span class="w"> </span><span class="nx">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aa&quot;</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">3</span><span class="w"> </span><span class="nx">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c1">// compile-time error</span>
+</pre></div>
+</div>
+<p>Union type <em>U</em> (<em>U</em><sub>1</sub> | … | <em>U</em><sub>n</sub>) can be converted into
+non-union type <em>T</em> if each <em>U</em><sub>i</sub> is a literal that can be implicitly
+converted to type <em>T</em>.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="c1">// ok, literals fit type &#39;int&#39;</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="c1">// ok, literals fit type &#39;number&#39;</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">d</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mf">3.14</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">e</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="c1">// ok</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">f</span><span class="o">:</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="c1">// compile-time error, 3.14 cannot be converted to &#39;int&#39;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="widening-reference-conversions">
+<span id="id16"></span><h3><span class="section-number">6.5.7. </span>Widening Reference Conversions<a class="headerlink" href="#widening-reference-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A <em>widening reference conversion</em> handles any subtype as a supertype.
+It requires no special action at runtime, and never causes an error.</p>
+<div class="highlight-typescript notranslate" id="index-12"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">BaseInterface</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">BaseClass</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 3</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">DerivedInterface</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseInterface</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">DerivedClass</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseClass</span><span class="w"> </span><span class="k">implements</span><span class="w"> </span><span class="nx">BaseInterface</span>
+<span class="linenos"> 5</span><span class="w">      </span><span class="p">{}</span>
+<span class="linenos"> 6</span><span class="w">  </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">di</span><span class="o">:</span><span class="w"> </span><span class="kt">DerivedInterface</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">bi</span><span class="o">:</span><span class="w"> </span><span class="kt">BaseInterface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DerivedClass</span><span class="p">()</span><span class="w"> </span><span class="cm">/* DerivedClass</span>
+<span class="linenos"> 8</span><span class="cm">        is a subtype of BaseInterface */</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nx">bi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">di</span><span class="w"> </span><span class="cm">/* DerivedInterface is a subtype of BaseInterface</span>
+<span class="linenos">10</span><span class="cm">        */</span>
+<span class="linenos">11</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The only exception is the cast to type <em>never</em> that is forbidden. This cast is
+a compile-time error as it can cause type-safety violations:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">a_method</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">A</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">never</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">never</span><span class="w"> </span><span class="c1">// compile-time error: no object may be assigned</span>
+<span class="linenos">4</span><span class="w"> </span><span class="c1">// to a variable of the never type</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">B</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">b_method</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">7</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">b</span><span class="o">:</span><span class="w"> </span><span class="kt">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="c1">// OK as never is a subtype of any type</span>
+<span class="linenos">8</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">b_method</span><span class="p">()</span><span class="w"> </span><span class="c1">// this breaks type-safety if as cast to never is allowed</span>
+</pre></div>
+</div>
+<p>The conversion of array types (see <a class="reference internal" href="3_types.html#array-types"><span class="std std-ref">Array Types</span></a>) also works in accordance
+with the widening style of the type of array elements as shown below:</p>
+<div class="highlight-typescript notranslate" id="index-13"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">da</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">ba</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">da</span><span class="w"> </span><span class="cm">/* Derived[] is assigned into Base[] */</span>
+<span class="linenos">5</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>This array assignment can cause <em>ArrayStoreError</em> at runtime if an object
+of incorrect type is included in the array. The runtime system performs
+runtime checks to ensure type-safety as show below:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">AnotherDerived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">4</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="w"> </span><span class="p">(</span><span class="nx">da</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">   </span><span class="kd">let</span><span class="w"> </span><span class="nx">ba</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">da</span><span class="w"> </span><span class="c1">// Derived[] is assigned into Base[]</span>
+<span class="linenos">6</span><span class="w">   </span><span class="nx">ba</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AnotherDerived</span><span class="p">()</span><span class="w"> </span><span class="c1">// This assignment of array</span>
+<span class="linenos">7</span><span class="w">       </span><span class="nx">element</span><span class="w"> </span><span class="nx">will</span><span class="w"> </span><span class="nx">cause</span><span class="w">  </span><span class="o">*</span><span class="nx">ArrayStoreError</span><span class="o">*</span>
+<span class="linenos">8</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block" id="index-14">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="character-to-string-conversions">
+<span id="id17"></span><h3><span class="section-number">6.5.8. </span>Character to String Conversions<a class="headerlink" href="#character-to-string-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Character to string conversion</em> converts a value of type <em>char</em> to type
+<em>string</em>. The resultant new string has the length equal to 1. The converted
+<em>char</em> is the single element of the new string:</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">c</span><span class="s1">&#39;X&#39;</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="c1">// s contains &quot;X&quot;</span>
+</pre></div>
+</div>
+<p>This conversion can cause <em>OutOfMemoryError</em> thrown if the storage available
+for the creation of a new string is not sufficient.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constant-string-to-character-conversions">
+<span id="id18"></span><h3><span class="section-number">6.5.9. </span>Constant String to Character Conversions<a class="headerlink" href="#constant-string-to-character-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Constant string to character conversion</em> converts an expression of type
+<em>string</em> to <em>char</em> type. The initial <em>string</em> type expression must be a constant
+expression (see <a class="reference internal" href="7_expressions.html#constant-expressions"><span class="std std-ref">Constant Expressions</span></a>) with a length equal to 1.</p>
+<p>The resultant <em>char</em> is the first character of the converted <em>string</em>.</p>
+<p>This conversion never causes runtime errors.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="function-types-conversions">
+<span id="id19"></span><h3><span class="section-number">6.5.10. </span>Function Types Conversions<a class="headerlink" href="#function-types-conversions" title="Permalink to this heading">¶</a></h3>
+<p><em>Function types conversion</em> is the conversion of one function type to another.
+A <em>function types conversion</em> is valid if the following conditions are met:</p>
+<ul class="simple">
+<li><p>Parameter types are converted by using contravariance.</p></li>
+<li><p>Return types are converted by using covariance.</p></li>
+</ul>
+<p>See <a class="reference internal" href="15_semantics.html#type-compatibility"><span class="std std-ref">Type Compatibility</span></a> for details.</p>
+<div class="highlight-typescript notranslate" id="index-15"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 2</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FuncTypeBaseBase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span>
+<span class="linenos"> 5</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FuncTypeBaseDerived</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Derived</span>
+<span class="linenos"> 6</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FuncTypeDerivedBase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span>
+<span class="linenos"> 7</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FuncTypeDerivedDerived</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Derived</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span>
+<span class="linenos">10</span><span class="w">    </span><span class="nx">bb</span><span class="o">:</span><span class="w"> </span><span class="kt">FuncTypeBaseBase</span><span class="p">,</span><span class="w"> </span><span class="nx">bd</span><span class="o">:</span><span class="w"> </span><span class="kt">FuncTypeBaseDerived</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">    </span><span class="nx">db</span><span class="o">:</span><span class="w"> </span><span class="kt">FuncTypeDerivedBase</span><span class="p">,</span><span class="w"> </span><span class="nx">dd</span><span class="o">:</span><span class="w"> </span><span class="kt">FuncTypeDerivedDerived</span><span class="o">\</span>
+<span class="linenos">12</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">13</span><span class="w">    </span><span class="nx">bb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bd</span>
+<span class="linenos">14</span><span class="w">    </span><span class="cm">/* OK: identical (invariant) parameter types, and compatible return type */</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nx">bb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">dd</span>
+<span class="linenos">16</span><span class="w">    </span><span class="cm">/* Compile-time error: compatible parameter type(covariance), type unsafe */</span>
+<span class="linenos">17</span><span class="w">    </span><span class="nx">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bd</span>
+<span class="linenos">18</span><span class="w">    </span><span class="cm">/* OK: contravariant parameter types, and compatible return type */</span>
+<span class="linenos">19</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="w"> </span><span class="c1">// Examples with lambda expressions</span>
+<span class="linenos">22</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">foo1</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived</span><span class="p">()</span>
+<span class="linenos">23</span><span class="w">  </span><span class="cm">/* OK: identical (invariant) parameter types, and compatible return type */</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">foo2</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived</span><span class="p">()</span>
+<span class="linenos">26</span><span class="w">  </span><span class="cm">/* Compile-time error: compatible parameter type(covariance), type unsafe */</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">foo2</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Derived</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="o">:</span><span class="w"> </span><span class="kt">Base</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Derived</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Derived</span><span class="p">()</span>
+<span class="linenos">29</span><span class="w">  </span><span class="cm">/* OK: contravariant parameter types, and compatible return type */</span>
+</pre></div>
+</div>
+<p>A <em>throwing function</em> type variable can have a <em>non-throwing function</em> value.</p>
+<p>A compile-time error occurs if a <em>throwing function</em> value is assigned to a
+<em>non-throwing function</em> type variable.</p>
+<div class="line-block" id="index-16">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="enumeration-to-int-conversions">
+<span id="id20"></span><h3><span class="section-number">6.5.11. </span>Enumeration to Int Conversions<a class="headerlink" href="#enumeration-to-int-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A value of an <em>enumeration</em> type is converted to type <em>int</em>
+if enumeration constants of this type are of type <em>int</em>.</p>
+<p>This conversion never causes runtime errors.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="nx">IntegerEnum</span><span class="w"> </span><span class="p">{</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="p">}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">ie</span><span class="o">:</span><span class="w"> </span><span class="kt">IntegerEnum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IntegerEnum</span><span class="p">.</span><span class="nx">a</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ie</span><span class="w"> </span><span class="c1">// n will get the value of 0</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="enumeration-to-string-conversions">
+<span id="id21"></span><h3><span class="section-number">6.5.12. </span>Enumeration to String Conversions<a class="headerlink" href="#enumeration-to-string-conversions" title="Permalink to this heading">¶</a></h3>
+<p>A value of <em>enumeration</em> type is converted to type <em>string</em>
+if enumeration constants of this type are of type <em>string</em>.</p>
+<p>This conversion never causes runtime errors.</p>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="nx">StringEnum</span><span class="w"> </span><span class="p">{</span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="p">}</span>
+<span class="linenos">2</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">se</span><span class="o">:</span><span class="w"> </span><span class="kt">StringEnum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">StringEnum</span><span class="p">.</span><span class="nx">a</span>
+<span class="linenos">3</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">se</span><span class="w"> </span><span class="c1">// n will get the value of &quot;a&quot;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ArkTS Specification</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_lexical.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_types.html">3. Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_names.html">4. Names, Declarations and Scopes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_generics.html">5. Generics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Contexts and Conversions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#assignment-like-contexts">6.1. Assignment-like Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#string-operator-contexts">6.2. String Operator Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numeric-operator-contexts">6.3. Numeric Operator Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#casting-contexts-and-conversions">6.4. Casting Contexts and Conversions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#numeric-casting-conversions">6.4.1. Numeric Casting Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#narrowing-reference-casting-conversions">6.4.2. Narrowing Reference Casting Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#casting-conversions-from-union">6.4.3. Casting Conversions from Union</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implicit-conversions">6.5. Implicit Conversions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#primitive-types-conversions">6.5.1. Primitive Types Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#widening-primitive-conversions">6.5.2. Widening Primitive Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constant-narrowing-integer-conversions">6.5.3. Constant Narrowing Integer Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boxing-conversions">6.5.4. Boxing Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unboxing-conversions">6.5.5. Unboxing Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#widening-union-conversions">6.5.6. Widening Union Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#widening-reference-conversions">6.5.7. Widening Reference Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#character-to-string-conversions">6.5.8. Character to String Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constant-string-to-character-conversions">6.5.9. Constant String to Character Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-types-conversions">6.5.10. Function Types Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enumeration-to-int-conversions">6.5.11. Enumeration to Int Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enumeration-to-string-conversions">6.5.12. Enumeration to String Conversions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="7_expressions.html">7. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_classes.html">9. Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_interfaces.html">10. Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_enums.html">11. Enumerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_errors.html">12. Error Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_modules.html">13. Compilation Units, Packages, and Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_ambients.html">14. Ambient Declarations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_semantics.html">15. Semantic Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_gui.html">16. Support for GUI Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="17_experimental.html">17. Experimental Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="18_stdlib.html">18. Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="19_grammar.html">19. Grammar Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_implementation.html">20. Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="21_TS_compatibility.html">21. ArkTS-TypeScript compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_authors.html">22. Contributors</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="5_generics.html" title="previous chapter"><span class="section-number">5. </span>Generics</a></li>
+      <li>Next: <a href="7_expressions.html" title="next chapter"><span class="section-number">7. </span>Expressions</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023 Huawei Device Co., Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/6_conversions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
